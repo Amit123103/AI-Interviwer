@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import ollama
+from app.services.llm_service import llm_service
 import json
 
 router = APIRouter()
@@ -39,7 +39,7 @@ async def generate_coding_hint(request: HintRequest):
         - Keep it brief (2-3 sentences max).
         """
         
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a helpful Coding Tutor. Give brief, guiding hints without spoiling the answer."},
             {"role": "user", "content": prompt}
         ])
@@ -72,7 +72,7 @@ async def analyze_code(request: AnalyzeRequest):
         }}
         """
         
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a Senior Software Engineer conducting Code Review. Output valid JSON only."},
             {"role": "user", "content": prompt}
         ], format='json')
@@ -131,7 +131,7 @@ async def auto_fix_code(request: AutoFixRequest):
         Keep fixes practical and specific. Max 3 fixes.
         """
         
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a Senior Code Reviewer. Output valid JSON only with concrete, actionable fixes."},
             {"role": "user", "content": prompt}
         ], format='json')
@@ -184,7 +184,7 @@ async def generate_edge_cases(request: EdgeCaseRequest):
         }}
         """
         
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a QA Engineer specializing in edge cases. Output valid JSON only."},
             {"role": "user", "content": prompt}
         ], format='json')

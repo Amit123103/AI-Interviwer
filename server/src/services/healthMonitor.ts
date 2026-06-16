@@ -13,21 +13,18 @@
  */
 
 import axios from 'axios';
-import mongoose from 'mongoose';
+
 import { Request, Response, NextFunction } from 'express';
 import { exec } from 'child_process';
 
 // ── Config ─────────────────────────────────────────────────────────
 const AI_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 const POLL_MS = 30_000; // background poll interval
 const REQ_TIMEOUT = 5_000; // per-request timeout for health pings
 
 // ── Live Status Object ──────────────────────────────────────────────
 export const ServiceStatus = {
     ai: false as boolean,
-    ollama: false as boolean,
-    mongo: false as boolean,
 };
 
 // ── Internal helpers ────────────────────────────────────────────────
@@ -40,18 +37,6 @@ async function checkAI(): Promise<boolean> {
     }
 }
 
-async function checkOllama(): Promise<boolean> {
-    try {
-        await axios.get(`${OLLAMA_URL}/api/tags`, { timeout: REQ_TIMEOUT });
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function checkMongo(): boolean {
-    return mongoose.connection.readyState === 1;
-}
 
 // ── Auto-Restart Logic ──────────────────────────────────────────────
 let consecutiveAIFailures = 0;
@@ -102,13 +87,12 @@ function attemptAIRestart(): void {
 }
 
 async function refreshAll(): Promise<void> {
-    const [ai, ollama] = await Promise.all([checkAI(), checkOllama()]);
-    const mongo = checkMongo();
+    const ai = await checkAI();
+
 
     const prev = { ...ServiceStatus };
     ServiceStatus.ai = ai;
-    ServiceStatus.ollama = ollama;
-    ServiceStatus.mongo = mongo;
+
 
     // Only log when status changes to avoid log spam
     if (prev.ai !== ai) {
@@ -117,8 +101,7 @@ async function refreshAll(): Promise<void> {
             console.log('[Health] 🎉 AI Service recovered — exiting DEGRADED mode.');
         }
     }
-    if (prev.ollama !== ollama) console.log(`[Health] Ollama: ${ollama ? '✅ Online' : '⚠️ Offline'}`);
-    if (prev.mongo !== mongo) console.log(`[Health] MongoDB: ${mongo ? '✅ Connected' : '❌ Disconnected'}`);
+
 
     // Auto-restart logic
     if (!ai) {

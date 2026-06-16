@@ -69,8 +69,8 @@ export default function CareerRoadmapPage() {
         switch (status) {
             case "completed": return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]";
             case "in-progress": return "bg-indigo-500/20 text-indigo-400 border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.3)]";
-            case "available": return "bg-white/10 text-white border-white/30 hover:bg-white/15 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
-            case "locked": return "bg-black/50 text-zinc-600 border-white/5 opacity-60";
+            case "available": return "bg-white/10 text-slate-900 dark:text-white border-white/30 hover:bg-white/15 shadow-[0_0_15px_rgba(255,255,255,0.1)]";
+            case "locked": return "bg-white dark:bg-black/50 text-zinc-600 border-slate-100 dark:border-white/5 opacity-60";
         }
     };
 
@@ -79,21 +79,21 @@ export default function CareerRoadmapPage() {
             case "completed": return <CheckCircle className="w-4 h-4 text-emerald-400" />;
             case "in-progress": return <Play className="w-4 h-4 text-indigo-400" />;
             case "locked": return <Lock className="w-4 h-4 text-zinc-600" />;
-            case "available": return <ChevronRight className="w-4 h-4 text-zinc-400" />;
+            case "available": return <ChevronRight className="w-4 h-4 text-slate-500 dark:text-zinc-400" />;
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white flex flex-col font-sans relative overflow-hidden aurora-glow">
             {/* Ambient Background Glows */}
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/10 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="absolute bottom-32 right-16 w-72 h-72 bg-emerald-500/10 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
             <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '6s' }} />
 
             {/* Topbar */}
-            <div className="h-20 border-b border-white/10 bg-zinc-950/60 backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-50">
+            <div className="h-20 border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-zinc-950/60 backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-50">
                 <div className="flex items-center gap-6">
-                    <Link href="/dashboard" className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-zinc-400 hover:text-white group">
+                    <Link href="/dashboard" className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-white/10 transition-colors text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white group">
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </Link>
                     <div className="flex items-center gap-4">
@@ -107,12 +107,12 @@ export default function CareerRoadmapPage() {
                     </div>
                 </div>
 
-                <div className="flex bg-black/60 p-1.5 rounded-2xl border border-white/10 shadow-inner hidden md:flex">
+                <div className="flex bg-white dark:bg-black/60 p-1.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-inner hidden md:flex">
                     {(["frontend", "fullstack", "backend"] as RolePath[]).map(r => (
                         <button
                             key={r}
                             onClick={() => setPath(r)}
-                            className={`px-6 py-2 rounded-xl text-sm font-black uppercase tracking-wider transition-all ${path === r ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'text-zinc-500 hover:text-zinc-300'}`}
+                            className={`px-6 py-2 rounded-xl text-sm font-black uppercase tracking-wider transition-all ${path === r ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-slate-900 dark:text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'text-zinc-500 hover:text-slate-900 dark:text-zinc-300'}`}
                         >
                             {r}
                         </button>
@@ -178,10 +178,10 @@ export default function CareerRoadmapPage() {
                                         disabled={node.status === "locked"}
                                         className={`w-64 p-5 rounded-3xl border backdrop-blur-2xl flex flex-col items-center text-center transition-all duration-300 group ${getStatusColor(node.status)} ${selectedNode?.id === node.id ? 'ring-2 ring-white ring-offset-4 ring-offset-[#050505] scale-110 z-20' : 'hover:scale-105 z-10'}`}
                                     >
-                                        <div className="absolute -top-3 right-5 bg-zinc-900 border border-white/20 rounded-full py-1 px-3 text-[10px] font-black tracking-widest text-zinc-300 flex items-center gap-1.5 shadow-lg">
-                                            <Sparkles className="w-3 h-3 text-yellow-500" /> {node.coinReward} Coins
+                                        <div className="absolute -top-3 right-5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-white/20 rounded-full py-1 px-3 text-[10px] font-black tracking-widest text-slate-600 dark:text-zinc-300 flex items-center gap-1.5 shadow-lg">
+                                            <Sparkles className="w-3 h-3 text-yellow-500" /> {node.coinReward} Intervyxa Coins
                                         </div>
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-inner border border-white/10 ${node.status === "completed" ? "bg-emerald-500/20 text-emerald-400" : node.status === "in-progress" ? "bg-indigo-500/20 text-indigo-400" : "bg-white/5 text-zinc-400"}`}>
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-inner border border-slate-200 dark:border-white/10 ${node.status === "completed" ? "bg-emerald-500/20 text-emerald-400" : node.status === "in-progress" ? "bg-indigo-500/20 text-indigo-400" : "bg-white/5 text-slate-500 dark:text-zinc-400"}`}>
                                             {node.icon}
                                         </div>
                                         <h3 className="font-black text-base mb-1.5 tracking-tight">{node.title}</h3>
@@ -191,7 +191,7 @@ export default function CareerRoadmapPage() {
                                             <span className="text-[10px] font-black uppercase tracking-widest opacity-80 flex items-center gap-1.5">
                                                 <BookOpen className="w-3.5 h-3.5" /> {node.resources} Modules
                                             </span>
-                                            <div className="p-1.5 bg-black/30 rounded-lg">
+                                            <div className="p-1.5 bg-white dark:bg-black/30 rounded-lg">
                                                 {getStatusIcon(node.status)}
                                             </div>
                                         </div>
@@ -209,39 +209,39 @@ export default function CareerRoadmapPage() {
                             initial={{ x: 400, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: 400, opacity: 0 }}
-                            className="w-[420px] bg-zinc-950/80 backdrop-blur-3xl border-l border-white/10 flex flex-col shadow-2xl z-40 relative overflow-hidden hidden lg:flex shrink-0"
+                            className="w-[420px] bg-white dark:bg-zinc-950/80 backdrop-blur-3xl border-l border-slate-200 dark:border-white/10 flex flex-col shadow-2xl z-40 relative overflow-hidden hidden lg:flex shrink-0"
                         >
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
 
                             <div className="p-8 flex-1 overflow-y-auto custom-scrollbar relative z-10 flex flex-col">
                                 <div className="flex justify-between items-start mb-8">
-                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl border border-white/10 ${getStatusColor(selectedNode.status)}`}>
+                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl border border-slate-200 dark:border-white/10 ${getStatusColor(selectedNode.status)}`}>
                                         {selectedNode.icon}
                                     </div>
-                                    <button onClick={() => setSelectedNode(null)} className="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-all">
+                                    <button onClick={() => setSelectedNode(null)} className="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white transition-all">
                                         <ArrowLeft className="w-5 h-5 rotate-180" />
                                     </button>
                                 </div>
 
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 w-max mb-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-slate-200 dark:border-white/10 w-max mb-4">
                                     <Target className="w-4 h-4 text-fuchsia-400" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-300">{selectedNode.category}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-zinc-300">{selectedNode.category}</span>
                                 </div>
 
                                 <h2 className="text-3xl font-black mb-3 tracking-tight">{selectedNode.title}</h2>
-                                <p className="text-sm text-zinc-400 mb-8 leading-relaxed font-medium">{selectedNode.description}. Master this module to unlock further career pathways, increase your interview readiness, and gain valuable experience points.</p>
+                                <p className="text-sm text-slate-500 dark:text-zinc-400 mb-8 leading-relaxed font-medium">{selectedNode.description}. Master this module to unlock further career pathways, increase your interview readiness, and gain valuable experience points.</p>
 
                                 <div className="space-y-4 mb-8">
-                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-black/50 border border-white/5 shadow-inner">
+                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-black/50 border border-slate-100 dark:border-white/5 shadow-inner">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500">
                                                 <Star className="w-5 h-5" />
                                             </div>
                                             <span className="text-sm font-bold">Reward</span>
                                         </div>
-                                        <span className="text-base font-black text-yellow-400">+{selectedNode.coinReward} AmitAI Coins</span>
+                                        <span className="text-base font-black text-yellow-400">+{selectedNode.coinReward} Intervyxa Coins</span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-black/50 border border-white/5 shadow-inner">
+                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-black/50 border border-slate-100 dark:border-white/5 shadow-inner">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
                                                 <BookOpen className="w-5 h-5" />
@@ -250,7 +250,7 @@ export default function CareerRoadmapPage() {
                                         </div>
                                         <span className="text-sm font-black text-indigo-400">{selectedNode.resources} Core Lessons</span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-black/50 border border-white/5 shadow-inner">
+                                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-black/50 border border-slate-100 dark:border-white/5 shadow-inner">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
                                                 <Zap className="w-5 h-5" />
@@ -261,8 +261,8 @@ export default function CareerRoadmapPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-auto pt-6 border-t border-white/10">
-                                    <Link href={selectedNode.status === 'completed' ? '/dashboard/metrics' : '/dashboard/code'} className={`w-full h-14 rounded-2xl flex items-center justify-center font-black text-sm shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-all uppercase tracking-widest gap-2 ${selectedNode.status === 'completed' ? 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' : 'bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:scale-[1.03]'}`}>
+                                <div className="mt-auto pt-6 border-t border-slate-200 dark:border-white/10">
+                                    <Link href={selectedNode.status === 'completed' ? '/dashboard/metrics' : '/dashboard/code'} className={`w-full h-14 rounded-2xl flex items-center justify-center font-black text-sm shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-all uppercase tracking-widest gap-2 ${selectedNode.status === 'completed' ? 'bg-zinc-800 text-slate-500 dark:text-zinc-400 hover:bg-zinc-700' : 'bg-gradient-to-r from-indigo-500 to-violet-500 text-slate-900 dark:text-white hover:scale-[1.03]'}`}>
                                         {selectedNode.status === 'completed' ? (
                                             <>Review Mastery <CheckCircle className="w-4 h-4" /></>
                                         ) : (
@@ -282,12 +282,12 @@ export default function CareerRoadmapPage() {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             exit={{ y: "100%" }}
-                            className="lg:hidden absolute bottom-0 left-0 right-0 max-h-[85vh] bg-zinc-950/95 backdrop-blur-3xl border-t border-white/10 rounded-t-[2.5rem] p-8 shadow-[0_-30px_60px_rgba(0,0,0,0.6)] z-50 flex flex-col"
+                            className="lg:hidden absolute bottom-0 left-0 right-0 max-h-[85vh] bg-white dark:bg-zinc-950/95 backdrop-blur-3xl border-t border-slate-200 dark:border-white/10 rounded-t-[2.5rem] p-8 shadow-[0_-30px_60px_rgba(0,0,0,0.6)] z-50 flex flex-col"
                         >
                             <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-8" />
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border border-white/10 ${getStatusColor(selectedNode.status)}`}>
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border border-slate-200 dark:border-white/10 ${getStatusColor(selectedNode.status)}`}>
                                         {selectedNode.icon}
                                     </div>
                                     <div>
@@ -295,24 +295,24 @@ export default function CareerRoadmapPage() {
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-fuchsia-400">{selectedNode.category}</span>
                                     </div>
                                 </div>
-                                <button onClick={() => setSelectedNode(null)} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 transition-colors">
+                                <button onClick={() => setSelectedNode(null)} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-500 dark:text-zinc-400 transition-colors">
                                     <ArrowLeft className="w-5 h-5 -rotate-90" />
                                 </button>
                             </div>
-                            <p className="text-sm text-zinc-400 mb-8 font-medium leading-relaxed">{selectedNode.description}. Master this module to unlock further career pathways and technical depth.</p>
+                            <p className="text-sm text-slate-500 dark:text-zinc-400 mb-8 font-medium leading-relaxed">{selectedNode.description}. Master this module to unlock further career pathways and technical depth.</p>
 
                             <div className="grid grid-cols-2 gap-4 mb-8">
-                                <div className="bg-black/40 border border-white/5 p-4 rounded-2xl flex flex-col gap-2">
+                                <div className="bg-white dark:bg-black/40 border border-slate-100 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2">
                                     <span className="text-[10px] font-black uppercase text-zinc-500">Reward</span>
-                                    <span className="text-sm font-black text-yellow-400">+{selectedNode.coinReward} AmitAI Coins</span>
+                                    <span className="text-sm font-black text-yellow-400">+{selectedNode.coinReward} Intervyxa Coins</span>
                                 </div>
-                                <div className="bg-black/40 border border-white/5 p-4 rounded-2xl flex flex-col gap-2">
+                                <div className="bg-white dark:bg-black/40 border border-slate-100 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2">
                                     <span className="text-[10px] font-black uppercase text-zinc-500">Resources</span>
                                     <span className="text-sm font-black text-indigo-400">{selectedNode.resources} Lessons</span>
                                 </div>
                             </div>
 
-                            <Link href="/dashboard/code" className={`w-full h-14 rounded-2xl flex items-center justify-center font-black text-sm uppercase tracking-widest gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white mt-auto`}>
+                            <Link href="/dashboard/code" className={`w-full h-14 rounded-2xl flex items-center justify-center font-black text-sm uppercase tracking-widest gap-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-slate-900 dark:text-white mt-auto`}>
                                 Engage Module <Play className="w-4 h-4 fill-current" />
                             </Link>
                         </motion.div>

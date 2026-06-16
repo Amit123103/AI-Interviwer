@@ -6,166 +6,141 @@ import { Quote, Star, TrendingUp, Award, Sparkles, Users, Briefcase, Trophy, Gra
 
 const TESTIMONIALS = [
     {
-        name: "ALEX RIVERA",
+        name: "Alex Rivera",
         role: "Senior Frontend Engineer @ Google",
-        text: "The architectural depth of the AI interviewer is staggering. It didn't just ask about coding; it challenged my system design intuition. I went into my final loops with zero anxiety.",
+        text: "The AI interviewer challenged my system design thinking in ways I didn't expect. I went into my final rounds with zero anxiety.",
         growth: "+45% Confidence",
-        accentColor: "text-violet-400",
-        borderHover: "hover:border-violet-500/20",
-        badgeBg: "bg-violet-500/10 border-violet-500/20",
+        accentColor: "text-indigo-600",
+        borderHover: "hover:border-indigo-300",
+        badgeBg: "bg-indigo-50 border-indigo-200",
     },
     {
-        name: "PRIYA SHARMA",
+        name: "Priya Sharma",
         role: "Fullstack Developer @ Uber",
-        text: "The real-time sentiment analysis was a game changer. AMITAI caught when I was getting too defensive during technical disagreements in the mock interview.",
+        text: "The real-time feedback caught when I was getting too defensive. After a few sessions, my communication skills improved dramatically.",
         growth: "+30% Communication",
-        accentColor: "text-blue-400",
-        borderHover: "hover:border-blue-500/20",
-        badgeBg: "bg-blue-500/10 border-blue-500/20",
+        accentColor: "text-blue-600",
+        borderHover: "hover:border-blue-300",
+        badgeBg: "bg-blue-50 border-blue-200",
     },
     {
-        name: "MARCUS CHEN",
+        name: "Marcus Chen",
         role: "Staff Engineer @ Meta",
-        text: "The 'Crystalline' UI isn't just aesthetic—it's functional. The live telemetry helped me visualize exactly where my technical explanations were losing clarity.",
+        text: "The live performance metrics helped me see exactly where my explanations were losing clarity. Game changer for system design interviews.",
         growth: "Offered L6 Role",
-        accentColor: "text-emerald-400",
-        borderHover: "hover:border-emerald-500/20",
-        badgeBg: "bg-emerald-500/10 border-emerald-500/20",
+        accentColor: "text-emerald-600",
+        borderHover: "hover:border-emerald-300",
+        badgeBg: "bg-emerald-50 border-emerald-200",
     },
     {
-        name: "SOFIA MARTINEZ",
+        name: "Sofia Martinez",
         role: "ML Engineer @ Amazon",
-        text: "I was skeptical about AI interview prep. After 5 sessions, I nailed every behavioral question and got a 40% higher offer than expected. The adaptive difficulty is next-level.",
+        text: "I was skeptical at first. After 5 sessions, I nailed every behavioral question and got a 40% higher offer than expected.",
         growth: "+40% Offer",
-        accentColor: "text-amber-400",
-        borderHover: "hover:border-amber-500/20",
-        badgeBg: "bg-amber-500/10 border-amber-500/20",
+        accentColor: "text-amber-600",
+        borderHover: "hover:border-amber-300",
+        badgeBg: "bg-amber-50 border-amber-200",
     },
     {
-        name: "JAMES WILSON",
+        name: "James Wilson",
         role: "Backend Lead @ Stripe",
-        text: "AMITAI's knowledge of distributed systems is remarkable. It pushed me on CAP theorem trade-offs that I hadn't considered. My system design rounds went from weak to dominant.",
+        text: "It pushed me on CAP theorem trade-offs I hadn't considered. My system design rounds went from weak to my strongest area.",
         growth: "+52% Technical",
-        accentColor: "text-rose-400",
-        borderHover: "hover:border-rose-500/20",
-        badgeBg: "bg-rose-500/10 border-rose-500/20",
+        accentColor: "text-rose-600",
+        borderHover: "hover:border-rose-300",
+        badgeBg: "bg-rose-50 border-rose-200",
     },
     {
-        name: "AISHA PATEL",
+        name: "Aisha Patel",
         role: "iOS Engineer @ Apple",
-        text: "The voice analysis caught my habit of filler words. After 3 sessions, I reduced my 'um's by 80%. My interviewer at Apple commented on how articulate I was.",
+        text: "The voice analysis caught my filler words. After 3 sessions, I reduced them by 80%. My interviewer commented on how articulate I was.",
         growth: "Landed Dream Job",
-        accentColor: "text-cyan-400",
-        borderHover: "hover:border-cyan-500/20",
-        badgeBg: "bg-cyan-500/10 border-cyan-500/20",
+        accentColor: "text-teal-600",
+        borderHover: "hover:border-teal-300",
+        badgeBg: "bg-teal-50 border-teal-200",
     },
 ]
 
 export default function SuccessWall() {
     return (
-        <section className="w-full py-40 relative px-6 bg-zinc-950/20 overflow-hidden">
-            {/* Background glows */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/[0.03] blur-[180px] rounded-full pointer-events-none" />
-            <div className="absolute top-[20%] right-0 w-[300px] h-[300px] bg-violet-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[10%] left-0 w-[300px] h-[300px] bg-blue-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
+        <section id="testimonials" className="w-full py-24 sm:py-32 relative px-4 sm:px-6">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
 
             <div className="container mx-auto">
-                <div className="flex flex-col items-center text-center mb-24 space-y-6">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/[0.06] border border-emerald-500/15 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
-                        <Award className="w-3 h-3" /> Candidate Success Stories
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-[0.9]">
-                        <span className="gradient-text">REAL RESULTS</span> <br /> <span className="text-zinc-500">FROM</span> <span className="text-emerald-400">ELITE</span> <span className="text-blue-400">TALENT</span>
+                <div className="flex flex-col items-center text-center mb-20 space-y-4">
+                    <p className="text-sm font-medium text-emerald-600 flex items-center gap-2">
+                        <Award className="w-4 h-4" /> Success Stories
+                    </p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-zinc-900">
+                        What engineers{" "}
+                        <span className="bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent">say</span>
                     </h2>
-                    <p className="text-zinc-500 max-w-lg font-medium">Hear from <span className="text-violet-400 font-bold">engineers</span> who used <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent font-bold">AMITAI</span> to land positions at the world's <span className="text-emerald-400 font-bold">top tech companies</span>.</p>
-                    <div className="h-1 w-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-full" />
+                    <p className="text-zinc-500 max-w-lg text-lg">
+                        Real results from engineers who used Intervyxa to land positions at top tech companies.
+                    </p>
                 </div>
 
-                {/* Success stats row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-3xl mx-auto mb-16">
                     {[
-                        { icon: <Users className="w-5 h-5" />, value: "50K+", label: "Active Users", color: "text-violet-400", bg: "bg-violet-500/10" },
-                        { icon: <Briefcase className="w-5 h-5" />, value: "89%", label: "Got Hired", color: "text-blue-400", bg: "bg-blue-500/10" },
-                        { icon: <Trophy className="w-5 h-5" />, value: "12K+", label: "FAANG Offers", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-                        { icon: <GraduationCap className="w-5 h-5" />, value: "4.9★", label: "Avg Rating", color: "text-amber-400", bg: "bg-amber-500/10" },
+                        { icon: <Users className="w-5 h-5" />, value: "50K+", label: "Active Users", color: "text-indigo-600", bg: "bg-indigo-50 border-indigo-200" },
+                        { icon: <Briefcase className="w-5 h-5" />, value: "89%", label: "Got Hired", color: "text-blue-600", bg: "bg-blue-50 border-blue-200" },
+                        { icon: <Trophy className="w-5 h-5" />, value: "12K+", label: "FAANG Offers", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" },
+                        { icon: <GraduationCap className="w-5 h-5" />, value: "4.9★", label: "Avg Rating", color: "text-amber-600", bg: "bg-amber-50 border-amber-200" },
                     ].map((s, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 15 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="flex flex-col items-center gap-3 p-6 bg-white/[0.02] border border-white/[0.06] rounded-2xl hover:border-white/15 transition-all"
-                        >
-                            <div className={`w-10 h-10 rounded-xl ${s.bg} flex items-center justify-center ${s.color}`}>{s.icon}</div>
-                            <span className={`text-2xl font-black italic tracking-tighter ${s.color}`}>{s.value}</span>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-zinc-600">{s.label}</span>
+                        <motion.div key={i} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+                            className="flex flex-col items-center gap-2.5 p-5 bg-white border border-zinc-200 rounded-2xl hover:border-zinc-300 transition-all hover:shadow-md">
+                            <div className={`w-10 h-10 rounded-xl ${s.bg} border flex items-center justify-center ${s.color}`}>{s.icon}</div>
+                            <span className={`text-2xl font-bold tracking-tight ${s.color}`}>{s.value}</span>
+                            <span className="text-xs text-zinc-400">{s.label}</span>
                         </motion.div>
                     ))}
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {TESTIMONIALS.map((t, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className={`bg-white/[0.02] backdrop-blur-3xl border border-white/[0.06] p-10 rounded-[3rem] space-y-8 relative group ${t.borderHover} transition-all duration-500 shadow-[0_0_50px_rgba(0,0,0,0.2)]`}
-                        >
-                            {/* Top highlight edge */}
-                            <div className="absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent rounded-full" />
-
-                            <div className="absolute top-10 right-10 text-white/[0.03] group-hover:text-white/[0.06] transition-colors">
-                                <Quote className="w-16 h-16" />
+                        <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+                            className={`bg-white border border-zinc-200 p-7 rounded-2xl space-y-6 relative group ${t.borderHover} transition-all duration-300 hover:shadow-lg`}>
+                            <div className="absolute top-7 right-7 text-zinc-100 group-hover:text-zinc-200 transition-colors">
+                                <Quote className="w-12 h-12" />
                             </div>
-
-                            <div className="space-y-4">
-                                <div className="flex gap-1 text-amber-400">
+                            <div className="space-y-3">
+                                <div className="flex gap-0.5 text-amber-400">
                                     {[...Array(5)].map((_, j) => <Star key={j} className="w-3 h-3 fill-current" />)}
                                 </div>
-                                <p className="text-[15px] text-zinc-300 font-medium leading-relaxed italic">
-                                    &ldquo;{t.text}&rdquo;
-                                </p>
+                                <p className="text-sm text-zinc-600 leading-relaxed">&ldquo;{t.text}&rdquo;</p>
                             </div>
-
-                            <div className="flex items-end justify-between pt-6 border-t border-white/[0.04]">
-                                <div className="space-y-1">
-                                    <h4 className={`text-[11px] font-black uppercase tracking-[0.2em] italic ${t.accentColor}`}>{t.name}</h4>
-                                    <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{t.role}</p>
+                            <div className="flex items-end justify-between pt-4 border-t border-zinc-100">
+                                <div>
+                                    <h4 className={`text-sm font-semibold ${t.accentColor}`}>{t.name}</h4>
+                                    <p className="text-xs text-zinc-400 mt-0.5">{t.role}</p>
                                 </div>
-                                <div className={`flex items-center gap-2 px-3 py-1.5 ${t.badgeBg} border rounded-xl`}>
+                                <div className={`flex items-center gap-1.5 px-2.5 py-1 ${t.badgeBg} border rounded-lg`}>
                                     <TrendingUp className={`w-3 h-3 ${t.accentColor}`} />
-                                    <span className={`text-[9px] font-black uppercase tracking-[0.1em] ${t.accentColor}`}>{t.growth}</span>
+                                    <span className={`text-xs font-medium ${t.accentColor}`}>{t.growth}</span>
                                 </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
 
-                <div className="mt-20 flex flex-col items-center gap-8">
-                    <p className="text-zinc-600 font-black uppercase tracking-[0.4em] text-[10px] flex items-center gap-2">
-                        <Sparkles className="w-3 h-3 text-violet-400/50" />
-                        Trusted by engineers from
-                        <Sparkles className="w-3 h-3 text-violet-400/50" />
+                <div className="mt-16 flex flex-col items-center gap-6">
+                    <p className="text-xs text-zinc-400 font-medium flex items-center gap-2">
+                        <Sparkles className="w-3 h-3 text-indigo-400" /> Trusted by engineers from <Sparkles className="w-3 h-3 text-indigo-400" />
                     </p>
-                    <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
+                    <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
                         {[
-                            { name: "GOOGLE", color: "text-blue-400" },
-                            { name: "UBER", color: "text-violet-400" },
-                            { name: "META", color: "text-cyan-400" },
-                            { name: "AMAZON", color: "text-amber-400" },
-                            { name: "APPLE", color: "text-zinc-300" },
-                            { name: "STRIPE", color: "text-emerald-400" },
-                            { name: "NETFLIX", color: "text-rose-400" },
-                            { name: "MICROSOFT", color: "text-blue-300" },
+                            { name: "Google", color: "text-blue-500" },
+                            { name: "Uber", color: "text-zinc-600" },
+                            { name: "Meta", color: "text-teal-500" },
+                            { name: "Amazon", color: "text-amber-500" },
+                            { name: "Apple", color: "text-zinc-600" },
+                            { name: "Stripe", color: "text-emerald-500" },
+                            { name: "Netflix", color: "text-rose-500" },
+                            { name: "Microsoft", color: "text-blue-600" },
                         ].map((brand) => (
-                            <motion.span
-                                key={brand.name}
-                                whileHover={{ scale: 1.1 }}
-                                className={`text-xl font-black italic tracking-tighter ${brand.color} opacity-40 hover:opacity-100 transition-all cursor-default`}
-                            >
+                            <span key={brand.name} className={`text-lg font-bold tracking-tight ${brand.color} opacity-30 hover:opacity-80 transition-all cursor-default`}>
                                 {brand.name}
-                            </motion.span>
+                            </span>
                         ))}
                     </div>
                 </div>

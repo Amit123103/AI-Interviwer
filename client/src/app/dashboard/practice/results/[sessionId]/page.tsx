@@ -8,7 +8,7 @@ import {
     Trophy, TrendingUp, TrendingDown, Target, Brain,
     Award, ArrowRight, RotateCcw, Home, CheckCircle2, AlertCircle, Sparkles
 } from "lucide-react"
-import AmitAICoin from "@/components/reward-system/AmitAICoin"
+import IntervyxaCoin from "@/components/reward-system/IntervyxaCoin"
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link"
 
@@ -38,7 +38,7 @@ export default function PracticeResultsPage() {
         ) / 3
         setOverallScore(Math.round(avg))
 
-        // Award AmitAI Coins (mock logic for results page)
+        // Award Intervyxa Coins (mock logic for results page)
         const earned = Math.round(avg * 2); // e.g., 100% = 200 coins
         setSessionData((prev: any) => ({ ...prev, coinsEarned: earned }))
     }, [sessionId, router])
@@ -81,7 +81,7 @@ export default function PracticeResultsPage() {
     const performance = getPerformanceLevel(overallScore)
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
             <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
@@ -91,7 +91,7 @@ export default function PracticeResultsPage() {
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">
                         Practice Complete!
                     </h1>
-                    <p className="text-lg text-zinc-400">
+                    <p className="text-lg text-slate-500 dark:text-zinc-400">
                         Great job! Here's your performance summary
                     </p>
                 </div>
@@ -101,7 +101,7 @@ export default function PracticeResultsPage() {
                     <CardContent className="p-6 sm:p-8 text-center">
                         <div className="space-y-4">
                             <div>
-                                <div className="text-sm text-zinc-400 mb-2">Overall Performance</div>
+                                <div className="text-sm text-slate-500 dark:text-zinc-400 mb-2">Overall Performance</div>
                                 <div className="text-6xl sm:text-7xl font-black text-primary mb-2">
                                     {overallScore}%
                                 </div>
@@ -118,10 +118,12 @@ export default function PracticeResultsPage() {
                                 </div>
                                 <div className="w-px h-8 bg-white/10" />
                                 <div>
-                                    <div className="text-zinc-500">Reward</div>
-                                    <div className="text-xl font-bold flex items-center gap-2">
-                                        <AmitAICoin size={20} animate />
-                                        +{sessionData.coinsEarned || 0}
+                                    <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 font-mono text-sm">
+                                        <div className="flex items-center gap-2">
+                                            <IntervyxaCoin size={18} animate={false} />
+                                            <span>Coins Gained</span>
+                                        </div>
+                                        <span className="text-yellow-500 font-bold">+{sessionData.coinsEarned || 0}</span>
                                     </div>
                                 </div>
                             </div>
@@ -131,9 +133,9 @@ export default function PracticeResultsPage() {
 
                 {/* Performance Breakdown */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm text-zinc-400">Confidence</CardTitle>
+                            <CardTitle className="text-sm text-slate-500 dark:text-zinc-400">Confidence</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -145,9 +147,9 @@ export default function PracticeResultsPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm text-zinc-400">Clarity</CardTitle>
+                            <CardTitle className="text-sm text-slate-500 dark:text-zinc-400">Clarity</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -159,9 +161,9 @@ export default function PracticeResultsPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader className="pb-3">
-                            <CardTitle className="text-sm text-zinc-400">Technical Accuracy</CardTitle>
+                            <CardTitle className="text-sm text-slate-500 dark:text-zinc-400">Technical Accuracy</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -177,7 +179,7 @@ export default function PracticeResultsPage() {
                 {/* Strengths & Weaknesses */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Strengths */}
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                                 <TrendingUp className="w-5 h-5 text-green-500" />
@@ -189,7 +191,7 @@ export default function PracticeResultsPage() {
                                 {mockStrengths.map((strength, index) => (
                                     <div key={index} className="flex items-start gap-3">
                                         <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm text-zinc-300">{strength}</span>
+                                        <span className="text-sm text-slate-600 dark:text-zinc-300">{strength}</span>
                                     </div>
                                 ))}
                             </div>
@@ -197,7 +199,7 @@ export default function PracticeResultsPage() {
                     </Card>
 
                     {/* Weaknesses */}
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                                 <TrendingDown className="w-5 h-5 text-orange-500" />
@@ -209,7 +211,7 @@ export default function PracticeResultsPage() {
                                 {mockWeaknesses.map((weakness, index) => (
                                     <div key={index} className="flex items-start gap-3">
                                         <AlertCircle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm text-zinc-300">{weakness}</span>
+                                        <span className="text-sm text-slate-600 dark:text-zinc-300">{weakness}</span>
                                     </div>
                                 ))}
                             </div>
@@ -218,7 +220,7 @@ export default function PracticeResultsPage() {
                 </div>
 
                 {/* Recommendations */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                             <Target className="w-5 h-5 text-primary" />
@@ -230,10 +232,10 @@ export default function PracticeResultsPage() {
                             {mockRecommendations.map((rec, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-start gap-3 p-3 bg-zinc-900/50 rounded-lg border border-white/5"
+                                    className="flex items-start gap-3 p-3 bg-white/60 dark:bg-zinc-900/50 rounded-lg border border-slate-100 dark:border-white/5"
                                 >
                                     <Brain className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                                    <span className="text-sm text-zinc-300">{rec}</span>
+                                    <span className="text-sm text-slate-600 dark:text-zinc-300">{rec}</span>
                                 </div>
                             ))}
                         </div>
@@ -241,7 +243,7 @@ export default function PracticeResultsPage() {
                 </Card>
 
                 {/* Achievement Badges */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                             <Award className="w-5 h-5 text-primary" />
@@ -255,7 +257,7 @@ export default function PracticeResultsPage() {
                                     key={badge.id}
                                     className={`p-4 rounded-xl text-center transition-all ${badge.earned
                                         ? "bg-primary/20 border-2 border-primary"
-                                        : "bg-zinc-900/50 border border-white/5 opacity-50"
+                                        : "bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 opacity-50"
                                         }`}
                                 >
                                     <div className="text-3xl mb-2">{badge.icon}</div>
@@ -278,7 +280,7 @@ export default function PracticeResultsPage() {
                     <Button
                         onClick={() => router.push("/dashboard/analytics")}
                         variant="outline"
-                        className="h-14 border-white/10 hover:bg-white/5"
+                        className="h-14 border-slate-200 dark:border-white/10 hover:bg-white/5"
                     >
                         <TrendingUp className="w-5 h-5 mr-2" />
                         View Analytics
@@ -286,7 +288,7 @@ export default function PracticeResultsPage() {
                     <Button
                         onClick={() => router.push("/dashboard")}
                         variant="outline"
-                        className="h-14 border-white/10 hover:bg-white/5"
+                        className="h-14 border-slate-200 dark:border-white/10 hover:bg-white/5"
                     >
                         <Home className="w-5 h-5 mr-2" />
                         Dashboard
@@ -299,7 +301,7 @@ export default function PracticeResultsPage() {
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div>
                                 <h3 className="font-bold text-lg mb-1">Keep the momentum going!</h3>
-                                <p className="text-sm text-zinc-400">
+                                <p className="text-sm text-slate-500 dark:text-zinc-400">
                                     Practice daily to improve your interview skills and build confidence
                                 </p>
                             </div>

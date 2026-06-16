@@ -54,7 +54,7 @@ export default function ProfileStats({ userId }: { userId: string }) {
                 <Card className="bg-zinc-900 border-zinc-800 p-6 flex flex-col items-center">
                     <h3 className="text-zinc-400 font-bold mb-4">Solved Problems</h3>
                     <div className="w-40 h-40 relative">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                             <PieChart>
                                 <Pie
                                     data={data}

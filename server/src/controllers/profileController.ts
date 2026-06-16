@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Profile from '../models/Profile';
+import prisma from '../prisma';
 import axios from 'axios';
 import fs from 'fs';
 import FormData from 'form-data';
@@ -12,7 +12,7 @@ const parseResumeWithAI = async (resumePath: string) => {
         formData.append('file', fs.createReadStream(resumePath));
         const aiRes = await axios.post(`${AI_SERVICE_URL}/resume/parse`, formData, {
             headers: formData.getHeaders(),
-            timeout: 15000 // 15 seconds timeout
+            timeout: 15000 
         });
 
         if (aiRes.data && aiRes.data.parsed) {
@@ -28,7 +28,7 @@ const parseResumeWithAI = async (resumePath: string) => {
 };
 
 export const createOrUpdateProfile = async (req: any, res: Response) => {
-    const { fullName, course, department, dreamCompany } = req.body;
+    const { fullName, course, department, dreamCompany, bio } = req.body;
     const resumePath = req.file ? req.file.path : undefined;
 
     if (!req.user) {
@@ -36,7 +36,7 @@ export const createOrUpdateProfile = async (req: any, res: Response) => {
     }
 
     try {
-        let profile = await Profile.findOne({ userId: req.user._id });
+        const userId = req.user.id || req.user._id;
 
         // Prepare data to update/create
         const profileFields: any = {};
@@ -44,6 +44,7 @@ export const createOrUpdateProfile = async (req: any, res: Response) => {
         if (course) profileFields.course = course;
         if (department) profileFields.department = department;
         if (dreamCompany) profileFields.dreamCompany = dreamCompany;
+        if (bio) profileFields.bio = bio;
         if (resumePath) profileFields.resumePath = resumePath;
 
         // If a new resume is uploaded, parse it
@@ -51,7 +52,6 @@ export const createOrUpdateProfile = async (req: any, res: Response) => {
             const aiData = await parseResumeWithAI(resumePath);
             if (aiData) {
                 profileFields.resumeText = aiData.text;
-                // Merge parsed data
                 const { skills, projects, internships, tools, certifications, achievements } = aiData.parsed;
                 if (skills) profileFields.skills = skills;
                 if (projects) profileFields.projects = projects;
@@ -62,21 +62,16 @@ export const createOrUpdateProfile = async (req: any, res: Response) => {
             }
         }
 
-        if (profile) {
-            // Update
-            profile = await Profile.findOneAndUpdate(
-                { userId: req.user._id },
-                { $set: profileFields },
-                { returnDocument: 'after' }
-            );
-            return res.json(profile);
-        } else {
-            // Create
-            profileFields.userId = req.user._id;
-            profile = new Profile(profileFields);
-            await profile.save();
-            res.status(201).json(profile);
-        }
+        const profile = await prisma.profile.upsert({
+            where: { userId },
+            update: profileFields,
+            create: {
+                ...profileFields,
+                userId
+            }
+        });
+
+        return res.json(profile);
 
     } catch (error: any) {
         console.error("Profile Controller Error:", error.message);
@@ -86,12 +81,26 @@ export const createOrUpdateProfile = async (req: any, res: Response) => {
 
 export const getProfile = async (req: any, res: Response) => {
     try {
-        const profile = await Profile.findOne({ userId: req.user._id }).populate('userId', 'subscriptionStatus email username');
+        const userId = req.user.id || req.user._id;
+        const profile = await prisma.profile.findUnique({
+            where: { userId },
+            include: {
+                user: {
+                    select: {
+                        email: true,
+                        username: true
+                    }
+                }
+            }
+        });
+
         if (!profile) {
             return res.status(404).json({ message: 'Profile not found' });
         }
         res.json(profile);
     } catch (error) {
+        console.error("Get Profile Error:", error);
         res.status(500).json({ message: 'Server error' });
     }
 };
+

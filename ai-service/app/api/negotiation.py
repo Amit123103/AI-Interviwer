@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import ollama
+from app.services.llm_service import llm_service
 import json
 from app.services.tts_service import tts_service
 
@@ -28,7 +28,7 @@ async def generate_negotiation_response(request: NegotiationRequest):
         Return JSON with response_text, new_offer, sentiment, and is_final.
         """
         
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": f"You are a professional {request.persona}. Output valid JSON only."},
             {"role": "user", "content": prompt}
         ], format='json')

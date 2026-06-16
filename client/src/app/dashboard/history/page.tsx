@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { History, ArrowRight, Calendar, Trophy, TrendingUp, BarChart3, Sparkles } from "lucide-react"
-import AmitAICoin from "@/components/reward-system/AmitAICoin"
+import IntervyxaCoin from "@/components/reward-system/IntervyxaCoin"
 import Link from "next/link"
 import DashboardHeader from "@/components/dashboard/DashboardHeader"
 import MeshBackground from "../components/MeshBackground"
@@ -62,7 +62,7 @@ function QuickStats({ history }: { history: any[] }) {
             border: "border-amber-500/20"
         },
         {
-            icon: <AmitAICoin size={20} animate />,
+            icon: <IntervyxaCoin size={20} animate={false} />,
             label: "Coins Earned",
             value: `${totalCoins.toLocaleString()}`,
             sub: "from interviews",
@@ -84,9 +84,9 @@ function QuickStats({ history }: { history: any[] }) {
                         <CardContent className="p-4 flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                                 {s.icon}
-                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{s.label}</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">{s.label}</p>
                             </div>
-                            <p className="text-3xl font-black text-white leading-none">{s.value}</p>
+                            <p className="text-3xl font-black text-slate-900 dark:text-white leading-none">{s.value}</p>
                             <p className="text-[11px] text-zinc-500 font-medium capitalize">{s.sub}</p>
                         </CardContent>
                     </Card>
@@ -122,7 +122,7 @@ export default function HistoryPage() {
     }, [])
 
     return (
-        <div className="min-h-screen bg-transparent text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -149,7 +149,7 @@ export default function HistoryPage() {
                             Loading history...
                         </div>
                     ) : history.length === 0 ? (
-                        <Card className="bg-zinc-900/50 border-zinc-800">
+                        <Card className="bg-white/60 dark:bg-zinc-900/50 border-zinc-800">
                             <CardContent className="py-20 text-center">
                                 <Calendar className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
                                 <p className="text-zinc-500 text-lg">No interview history found.</p>
@@ -168,7 +168,7 @@ export default function HistoryPage() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.04 }}
                                 >
-                                    <Card className="group hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-300 bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900/80 hover-shine">
+                                    <Card className="group hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-300 bg-white/60 dark:bg-zinc-900/50 border-zinc-800 hover:bg-white dark:bg-zinc-900/80 hover-shine">
                                         <CardContent className="p-4 sm:p-6">
                                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                                 {/* Left Section */}
@@ -177,7 +177,7 @@ export default function HistoryPage() {
                                                         <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-violet-400" />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <h3 className="font-bold text-base sm:text-lg text-white truncate">
+                                                        <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white truncate">
                                                             {item.sector || 'General'} Mock Interview
                                                         </h3>
                                                         <div className="flex items-center gap-2 flex-wrap">
@@ -187,10 +187,12 @@ export default function HistoryPage() {
                                                                 })}
                                                             </p>
                                                             {readiness && (
-                                                                <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
+                                                                <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-zinc-800 text-slate-500 dark:text-zinc-400 border border-zinc-700">
                                                                     {readiness}
                                                                 </span>
                                                             )}
+                                                            <IntervyxaCoin size={14} animate={false} />
+                                                            <span className="text-yellow-500 font-bold">+{item.coinsGained}</span>
                                                             {item.targetCompany && (
                                                                 <span className="text-[10px] font-bold text-violet-400/70">
                                                                     @ {item.targetCompany}
@@ -204,14 +206,14 @@ export default function HistoryPage() {
                                                 <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-8">
                                                     <div className="text-left sm:text-right hidden md:block">
                                                         <p className="text-xs uppercase text-zinc-500 font-bold">Focus</p>
-                                                        <p className="font-medium text-sm text-zinc-300">{item.persona || 'General'}</p>
+                                                        <p className="font-medium text-sm text-slate-600 dark:text-zinc-300">{item.persona || 'General'}</p>
                                                     </div>
 
                                                     {/* Reward */}
                                                     <div className="text-left sm:text-right hidden sm:block">
                                                         <p className="text-xs uppercase text-zinc-500 font-bold">Reward</p>
                                                         <p className="font-bold text-sm text-yellow-500 flex items-center justify-end gap-1">
-                                                            +{item.coinsGained || 0} <AmitAICoin size={14} />
+                                                            +{item.coinsGained || 0} <IntervyxaCoin size={14} animate={false} />
                                                         </p>
                                                     </div>
 

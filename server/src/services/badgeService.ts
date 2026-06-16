@@ -1,5 +1,3 @@
-import { IUser } from '../models/User';
-
 export interface Badge {
     id: string;
     name: string;
@@ -9,8 +7,8 @@ export interface Badge {
 
 export const BADGES: Record<string, Badge> = {
     first_step: { id: 'first_step', name: 'First Step', description: 'Completed your first interview', icon: 'footprints' },
-    hat_trick: { id: 'hat_trick', name: 'Elite Earner', description: 'Earned over 1000 AmitAI Coins', icon: 'coins' },
-    on_fire: { id: 'on_fire', name: 'Coin Magnet', description: 'Earned over 5000 AmitAI Coins', icon: 'sparkles' },
+    hat_trick: { id: 'hat_trick', name: 'Elite Earner', description: 'Earned over 1000 Intervyxa Coins', icon: 'coins' },
+    on_fire: { id: 'on_fire', name: 'Coin Magnet', description: 'Earned over 5000 Intervyxa Coins', icon: 'sparkles' },
     marathon: { id: 'marathon', name: 'Marathoner', description: 'Completed 10 interviews', icon: 'trophy' },
     code_ninja: { id: 'code_ninja', name: 'Code Ninja', description: 'Wrote over 1000 lines of code', icon: 'code' },
     night_owl: { id: 'night_owl', name: 'Night Owl', description: 'Completed an interview after 10 PM', icon: 'moon' },
@@ -20,29 +18,35 @@ export const BADGES: Record<string, Badge> = {
     negotiator: { id: 'negotiator', name: 'Deal Maker', description: 'Successfully negotiated an offer', icon: 'briefcase' }
 };
 
-export const checkBadges = (user: IUser, context: any = {}): any[] => {
+export const checkBadges = (user: any, context: any = {}): any[] => {
     const newBadges: any[] = [];
     const now = new Date();
+    
+    // In Prisma, achievements is in Profile and might be Json
+    const achievements = (user.profile?.achievements as any[]) || [];
 
     const award = (badgeId: string) => {
-        if (!user.achievements.find(a => a.id === badgeId)) {
+        if (!achievements.find(a => a.id === badgeId)) {
             const badge = BADGES[badgeId];
             if (badge) {
                 const achievement = { ...badge, unlockedAt: now };
-                user.achievements.push(achievement);
+                achievements.push(achievement);
                 newBadges.push(achievement);
             }
         }
     };
 
     // --- Coin Milestones ---
-    if (user.amitaiCoins >= 1000) award('hat_trick');
-    if (user.amitaiCoins >= 5000) award('on_fire');
+    if (user.intervyxaCoins >= 1000) award('hat_trick');
+    if (user.intervyxaCoins >= 5000) award('on_fire');
 
     // --- Count Badges ---
-    if (user.stats.totalInterviews >= 1) award('first_step');
-    if (user.stats.totalInterviews >= 10) award('marathon');
-    if (user.stats.totalCodeLines >= 1000) award('code_ninja');
+    const totalInterviews = user.profile?.totalInterviews || 0;
+    const totalCodeLines = user.profile?.totalCodeLines || 0;
+
+    if (totalInterviews >= 1) award('first_step');
+    if (totalInterviews >= 10) award('marathon');
+    if (totalCodeLines >= 1000) award('code_ninja');
 
     // --- Context Specific Badges ---
     // Time based
@@ -56,6 +60,11 @@ export const checkBadges = (user: IUser, context: any = {}): any[] => {
     if (context.integrityScore === 100) award('integrity_master');
     if (context.type === 'peer') award('social_butterfly');
     if (context.type === 'negotiation_success') award('negotiator');
+
+    // Important: we modified 'achievements' array, so let's update it in user.profile if we can
+    if (user.profile) {
+        user.profile.achievements = achievements;
+    }
 
     return newBadges;
 };

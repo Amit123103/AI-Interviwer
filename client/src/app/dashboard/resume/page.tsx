@@ -57,7 +57,7 @@ export default function ResumePage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -72,7 +72,7 @@ export default function ResumePage() {
                 />
 
                 <TiltCard className="max-w-4xl">
-                    <Card className="bg-zinc-900/50 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden group hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
+                    <Card className="bg-white/60 dark:bg-zinc-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden group hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
                         <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <CardHeader className="pb-4">
                             <CardTitle className="text-2xl font-black italic uppercase tracking-tighter group-hover:text-violet-400 transition-colors"><span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Neural</span> Uplink (PDF)</CardTitle>
@@ -85,14 +85,14 @@ export default function ResumePage() {
                                         type="file"
                                         accept=".pdf"
                                         onChange={handleFileChange}
-                                        className="bg-black/40 border-white/10 text-white h-12 rounded-xl focus-visible:ring-primary/50 transition-all cursor-pointer file:bg-primary file:text-black file:font-black file:uppercase file:text-[9px] file:rounded-md file:border-none file:px-3 file:mr-4"
+                                        className="bg-white dark:bg-black/40 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white h-12 rounded-xl focus-visible:ring-primary/50 transition-all cursor-pointer file:bg-primary file:text-black file:font-black file:uppercase file:text-[9px] file:rounded-md file:border-none file:px-3 file:mr-4"
                                     />
                                     <div className="absolute -inset-0.5 bg-violet-500/20 rounded-xl blur opacity-0 group-hover/input:opacity-100 transition-opacity -z-10" />
                                 </div>
                                 <Button
                                     onClick={handleUpload}
                                     disabled={!file || analyzing}
-                                    className="bg-gradient-to-r from-violet-500 to-cyan-500 text-white hover:from-violet-400 hover:to-cyan-400 h-12 px-8 font-black uppercase tracking-widest text-xs rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-all duration-500"
+                                    className="bg-gradient-to-r from-violet-500 to-cyan-500 text-slate-900 dark:text-white hover:from-violet-400 hover:to-cyan-400 h-12 px-8 font-black uppercase tracking-widest text-xs rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-all duration-500"
                                 >
                                     {analyzing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
                                     {analyzing ? "Scanning..." : "Initiate Scan"}
@@ -106,7 +106,7 @@ export default function ResumePage() {
                     <div className="space-y-4 sm:space-y-6 animate-in fade-in slide-in-from-bottom-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <TiltCard>
-                                <Card className="bg-zinc-900/40 backdrop-blur-xl border-emerald-500/20 group hover:border-emerald-500/40 transition-all rounded-[2rem] h-full overflow-hidden relative">
+                                <Card className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border-emerald-500/20 group hover:border-emerald-500/40 transition-all rounded-[2rem] h-full overflow-hidden relative">
                                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-emerald-500">
                                         <CheckCircle size={100} />
                                     </div>
@@ -119,7 +119,7 @@ export default function ResumePage() {
                                     <CardContent>
                                         <ul className="space-y-3">
                                             {analysis.strengths?.map((s: string, i: number) => (
-                                                <li key={i} className="text-zinc-400 text-sm font-medium flex items-start gap-3 group-hover:text-zinc-200 transition-colors">
+                                                <li key={i} className="text-slate-500 dark:text-zinc-400 text-sm font-medium flex items-start gap-3 group-hover:text-slate-900 dark:text-zinc-200 transition-colors">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_5px_rgba(16,185,129,0.5)]" />
                                                     {s}
                                                 </li>
@@ -130,7 +130,7 @@ export default function ResumePage() {
                             </TiltCard>
 
                             <TiltCard>
-                                <Card className="bg-zinc-900/40 backdrop-blur-xl border-red-500/20 group hover:border-red-500/40 transition-all rounded-[2rem] h-full overflow-hidden relative">
+                                <Card className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border-red-500/20 group hover:border-red-500/40 transition-all rounded-[2rem] h-full overflow-hidden relative">
                                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-red-500">
                                         <AlertCircle size={100} />
                                     </div>
@@ -143,7 +143,7 @@ export default function ResumePage() {
                                     <CardContent>
                                         <ul className="space-y-3">
                                             {analysis.weaknesses?.map((w: string, i: number) => (
-                                                <li key={i} className="text-zinc-400 text-sm font-medium flex items-start gap-3 group-hover:text-zinc-200 transition-colors">
+                                                <li key={i} className="text-slate-500 dark:text-zinc-400 text-sm font-medium flex items-start gap-3 group-hover:text-slate-900 dark:text-zinc-200 transition-colors">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0 shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
                                                     {w}
                                                 </li>
@@ -154,7 +154,7 @@ export default function ResumePage() {
                             </TiltCard>
                         </div>
 
-                        <Card className="bg-zinc-900/50 backdrop-blur-2xl border-zinc-800 hover:border-violet-500/15 transition-all duration-300">
+                        <Card className="bg-white/60 dark:bg-zinc-900/50 backdrop-blur-2xl border-zinc-800 hover:border-violet-500/15 transition-all duration-300">
                             <CardHeader>
                                 <CardTitle><span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">ATS Keywords</span> Missing</CardTitle>
                             </CardHeader>

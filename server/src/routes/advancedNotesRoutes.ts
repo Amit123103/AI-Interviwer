@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { AdvancedNote } from '../models/AdvancedNote';
+import prisma from '../prisma';
 import { protect } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -7,7 +7,7 @@ const router = Router();
 // GET all notes for a user (list view)
 router.get('/user/:userId', protect, async (req: Request, res: Response): Promise<void> => {
     try {
-        const { userId } = req.params;
+        const userId = req.params.userId as string;
         const authReq = req as any;
 
         if (authReq.user?.id !== userId) {
@@ -15,9 +15,17 @@ router.get('/user/:userId', protect, async (req: Request, res: Response): Promis
             return;
         }
 
-        const notes = await AdvancedNote.find({ userId })
-            .select('title previewText createdAt updatedAt')
-            .sort({ updatedAt: -1 });
+        const notes = await prisma.advancedNote.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                title: true,
+                previewText: true,
+                createdAt: true,
+                updatedAt: true
+            },
+            orderBy: { updatedAt: 'desc' }
+        });
 
         res.status(200).json({ success: true, count: notes.length, data: notes });
     } catch (error: any) {
@@ -29,7 +37,10 @@ router.get('/user/:userId', protect, async (req: Request, res: Response): Promis
 // GET single note by ID
 router.get('/:id', protect, async (req: Request, res: Response): Promise<void> => {
     try {
-        const note = await AdvancedNote.findById(req.params.id);
+        const id = req.params.id as string;
+        const note = await prisma.advancedNote.findUnique({
+            where: { id }
+        });
 
         if (!note) {
             res.status(404).json({ success: false, error: 'Note not found' });
@@ -37,7 +48,7 @@ router.get('/:id', protect, async (req: Request, res: Response): Promise<void> =
         }
 
         const authReq = req as any;
-        if (note.userId.toString() !== authReq.user?.id) {
+        if (note.userId !== authReq.user?.id) {
             res.status(403).json({ success: false, error: 'Not authorized' });
             return;
         }
@@ -53,13 +64,15 @@ router.get('/:id', protect, async (req: Request, res: Response): Promise<void> =
 router.post('/', protect, async (req: Request, res: Response): Promise<void> => {
     try {
         const authReq = req as any;
-        const userId = authReq.user?.id;
+        const userId = authReq.user?.id as string;
         const { title, pages } = req.body;
 
-        const note = await AdvancedNote.create({
-            userId,
-            title: title || 'Untitled Note',
-            pages: pages || []
+        const note = await prisma.advancedNote.create({
+            data: {
+                userId,
+                title: title || 'Untitled Note',
+                pages: pages || []
+            }
         });
 
         res.status(201).json({ success: true, data: note });
@@ -72,7 +85,10 @@ router.post('/', protect, async (req: Request, res: Response): Promise<void> => 
 // PUT update note (autosave)
 router.put('/:id', protect, async (req: Request, res: Response): Promise<void> => {
     try {
-        let note = await AdvancedNote.findById(req.params.id);
+        const id = req.params.id as string;
+        let note = await prisma.advancedNote.findUnique({
+            where: { id }
+        });
 
         if (!note) {
             res.status(404).json({ success: false, error: 'Note not found' });
@@ -80,14 +96,14 @@ router.put('/:id', protect, async (req: Request, res: Response): Promise<void> =
         }
 
         const authReq = req as any;
-        if (note.userId.toString() !== authReq.user?.id) {
+        if (note.userId !== authReq.user?.id) {
             res.status(403).json({ success: false, error: 'Not authorized' });
             return;
         }
 
-        note = await AdvancedNote.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
+        note = await prisma.advancedNote.update({
+            where: { id },
+            data: req.body
         });
 
         res.status(200).json({ success: true, data: note });
@@ -100,7 +116,10 @@ router.put('/:id', protect, async (req: Request, res: Response): Promise<void> =
 // DELETE a note
 router.delete('/:id', protect, async (req: Request, res: Response): Promise<void> => {
     try {
-        const note = await AdvancedNote.findById(req.params.id);
+        const id = req.params.id as string;
+        const note = await prisma.advancedNote.findUnique({
+            where: { id }
+        });
 
         if (!note) {
             res.status(404).json({ success: false, error: 'Note not found' });
@@ -108,12 +127,14 @@ router.delete('/:id', protect, async (req: Request, res: Response): Promise<void
         }
 
         const authReq = req as any;
-        if (note.userId.toString() !== authReq.user?.id) {
+        if (note.userId !== authReq.user?.id) {
             res.status(403).json({ success: false, error: 'Not authorized' });
             return;
         }
 
-        await note.deleteOne();
+        await prisma.advancedNote.delete({
+            where: { id }
+        });
 
         res.status(200).json({ success: true, data: {} });
     } catch (error: any) {

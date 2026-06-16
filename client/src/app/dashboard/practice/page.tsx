@@ -68,7 +68,7 @@ export default function PracticePage() {
 
     const handleStartPractice = (module: PracticeModule) => {
         localStorage.setItem("selected_practice_module", JSON.stringify(module))
-        router.push("/interview/setup")
+        router.push("/dashboard/interview/setup")
     }
 
     const PracticeCard = ({ module }: { module: PracticeModule }) => {
@@ -76,7 +76,7 @@ export default function PracticePage() {
         return (
             <TiltCard
                 key={module.id}
-                className="group relative overflow-hidden rounded-2xl bg-zinc-900/50 border border-white/5 hover:bg-zinc-900/80 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)] transition-all duration-500 cursor-pointer backdrop-blur-2xl hover-shine"
+                className="group relative overflow-hidden rounded-2xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 hover:bg-white dark:bg-zinc-900/80 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)] transition-all duration-500 cursor-pointer backdrop-blur-2xl hover-shine"
                 onClick={() => handleStartPractice(module)}
             >
                 <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
@@ -86,7 +86,7 @@ export default function PracticePage() {
 
                 <CardContent className="p-6 relative z-10">
                     <div className="flex justify-between items-start mb-5">
-                        <div className={`w-12 h-12 rounded-2xl bg-zinc-950 border border-white/5 flex items-center justify-center ${module.color} shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-xl relative overflow-hidden`}>
+                        <div className={`w-12 h-12 rounded-2xl bg-white dark:bg-zinc-950 border border-slate-100 dark:border-white/5 flex items-center justify-center ${module.color} shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-xl relative overflow-hidden`}>
                             <div className="absolute inset-0 bg-white/5 animate-pulse" />
                             {Icon ? <Icon className="w-6 h-6 relative z-10" /> : <Activity className="w-6 h-6 relative z-10" />}
                         </div>
@@ -94,24 +94,24 @@ export default function PracticePage() {
                             {module.difficultyLevels.includes("Expert") && (
                                 <span className="px-2.5 py-1 bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-md border border-red-500/20">Elite</span>
                             )}
-                            <span className="px-2.5 py-1 bg-white/5 text-zinc-500 text-[9px] font-black uppercase tracking-widest rounded-md border border-white/5 group-hover:bg-white/10 transition-colors">
+                            <span className="px-2.5 py-1 bg-white/5 text-zinc-500 text-[9px] font-black uppercase tracking-widest rounded-md border border-slate-100 dark:border-white/5 group-hover:bg-white/10 transition-colors">
                                 {module.category}
                             </span>
                         </div>
                     </div>
 
-                    <h3 className="text-xl font-black tracking-tight text-white mb-2 group-hover:text-primary transition-colors italic">{module.title}</h3>
-                    <p className="text-xs text-zinc-400 line-clamp-2 h-10 mb-5 group-hover:text-zinc-300 transition-colors leading-relaxed font-medium">{module.description}</p>
+                    <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors italic">{module.title}</h3>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 line-clamp-2 h-10 mb-5 group-hover:text-slate-900 dark:text-zinc-300 transition-colors leading-relaxed font-medium">{module.description}</p>
 
                     <div className="flex flex-wrap gap-1.5 mb-6">
                         {module.topics.slice(0, 3).map(topic => (
-                            <span key={topic} className="px-2 py-1 text-[9px] font-black uppercase tracking-wider bg-black/40 border border-white/5 rounded-md text-zinc-600 group-hover:border-primary/20 group-hover:text-zinc-400 transition-all">
+                            <span key={topic} className="px-2 py-1 text-[9px] font-black uppercase tracking-wider bg-white dark:bg-black/40 border border-slate-100 dark:border-white/5 rounded-md text-zinc-600 group-hover:border-primary/20 group-hover:text-slate-900 dark:text-zinc-400 transition-all">
                                 {topic}
                             </span>
                         ))}
                     </div>
 
-                    <Button className="w-full bg-gradient-to-r from-violet-500/10 to-cyan-500/10 text-zinc-300 hover:text-white border border-violet-500/15 hover:border-violet-500/30 hover:from-violet-500 hover:to-cyan-500 hover:text-white font-black uppercase tracking-[0.2em] h-10 rounded-xl transition-all duration-500 text-[10px] shadow-lg group-hover:shadow-violet-500/20">
+                    <Button className="w-full bg-gradient-to-r from-violet-500/10 to-cyan-500/10 text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:text-white border border-violet-500/15 hover:border-violet-500/30 hover:from-violet-500 hover:to-cyan-500 hover:text-slate-900 dark:text-white font-black uppercase tracking-[0.2em] h-10 rounded-xl transition-all duration-500 text-[10px] shadow-lg group-hover:shadow-violet-500/20">
                         Initiate Prep
                     </Button>
                 </CardContent>
@@ -120,7 +120,7 @@ export default function PracticePage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -144,12 +144,12 @@ export default function PracticePage() {
                             placeholder={activeTab === "companies" ? "Search Google, Amazon, TCS..." : "Search Roles, Govt, Medical..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 h-12 bg-zinc-900/50 border-white/10 text-white placeholder:text-zinc-500 rounded-xl text-sm focus-visible:ring-primary/50 transition-all focus:bg-zinc-900"
+                            className="pl-10 h-12 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-zinc-500 rounded-xl text-sm focus-visible:ring-primary/50 transition-all focus:bg-white dark:bg-zinc-900"
                         />
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery("")}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-slate-900 dark:text-white"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -158,14 +158,14 @@ export default function PracticePage() {
                 </div>
 
                 <Tabs defaultValue="companies" value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-                    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between sticky top-0 z-10 bg-zinc-950/40 backdrop-blur-3xl py-4 -mx-4 px-4 border-b border-white/5 md:static md:bg-transparent md:border-0 md:p-0 md:backdrop-blur-none">
-                        <TabsList className="bg-zinc-900/50 p-1 border border-white/10 h-14 w-full md:w-auto inline-flex rounded-2xl overflow-hidden relative">
+                    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between sticky top-0 z-10 bg-white dark:bg-zinc-950/40 backdrop-blur-3xl py-4 -mx-4 px-4 border-b border-slate-100 dark:border-white/5 md:static md:bg-transparent md:border-0 md:p-0 md:backdrop-blur-none">
+                        <TabsList className="bg-white/60 dark:bg-zinc-900/50 p-1 border border-slate-200 dark:border-white/10 h-14 w-full md:w-auto inline-flex rounded-2xl overflow-hidden relative">
                             {/* Animated focus background */}
-                            <TabsTrigger value="companies" className="h-12 px-8 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_20px_rgba(139,92,246,0.2)] text-[10px] font-black uppercase tracking-widest transition-all z-10">
+                            <TabsTrigger value="companies" className="h-12 px-8 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_20px_rgba(139,92,246,0.2)] text-[10px] font-black uppercase tracking-widest transition-all z-10">
                                 <Store className="w-4 h-4 mr-2" />
                                 Companies ({COMPANY_TRACKS.length})
                             </TabsTrigger>
-                            <TabsTrigger value="roles" className="h-12 px-8 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_20px_rgba(6,182,212,0.2)] text-[10px] font-black uppercase tracking-widest transition-all z-10">
+                            <TabsTrigger value="roles" className="h-12 px-8 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_20px_rgba(6,182,212,0.2)] text-[10px] font-black uppercase tracking-widest transition-all z-10">
                                 <Users className="w-4 h-4 mr-2" />
                                 Roles ({ROLE_TRACKS.length})
                             </TabsTrigger>
@@ -180,8 +180,8 @@ export default function PracticePage() {
                                             key={cat.id}
                                             onClick={() => setSelectedCompanyCategory(cat.id)}
                                             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap border duration-300 ${selectedCompanyCategory === cat.id
-                                                ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]"
-                                                : "bg-zinc-900/50 text-zinc-400 border-white/5 hover:border-violet-500/20 hover:text-white"
+                                                ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-slate-900 dark:text-white border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+                                                : "bg-white/60 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 border-slate-100 dark:border-white/5 hover:border-violet-500/20 hover:text-slate-900 dark:text-white"
                                                 }`}
                                         >
                                             {cat.name}
@@ -195,8 +195,8 @@ export default function PracticePage() {
                                             key={cat.id}
                                             onClick={() => setSelectedRoleCategory(cat.id)}
                                             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap border duration-300 ${selectedRoleCategory === cat.id
-                                                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
-                                                : "bg-zinc-900/50 text-zinc-400 border-white/5 hover:border-cyan-500/20 hover:text-white"
+                                                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-900 dark:text-white border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+                                                : "bg-white/60 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 border-slate-100 dark:border-white/5 hover:border-cyan-500/20 hover:text-slate-900 dark:text-white"
                                                 }`}
                                         >
                                             {cat.name}
@@ -213,7 +213,7 @@ export default function PracticePage() {
                                 {filteredCompanies.map(module => <PracticeCard key={module.id} module={module} />)}
                             </div>
                         ) : (
-                            <div className="text-center py-20 bg-zinc-900/30 rounded-2xl border border-white/5 border-dashed">
+                            <div className="text-center py-20 bg-white dark:bg-zinc-900/30 rounded-2xl border border-slate-100 dark:border-white/5 border-dashed">
                                 <Store className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
                                 <h3 className="text-xl font-bold mb-2">No companies found</h3>
                                 <p className="text-zinc-500 max-w-md mx-auto mb-6">We couldn't find any company tracks matching "{searchQuery}" in the selected category.</p>
@@ -228,7 +228,7 @@ export default function PracticePage() {
                                 {filteredRoles.map(module => <PracticeCard key={module.id} module={module} />)}
                             </div>
                         ) : (
-                            <div className="text-center py-20 bg-zinc-900/30 rounded-2xl border border-white/5 border-dashed">
+                            <div className="text-center py-20 bg-white dark:bg-zinc-900/30 rounded-2xl border border-slate-100 dark:border-white/5 border-dashed">
                                 <Users className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
                                 <h3 className="text-xl font-bold mb-2">No roles found</h3>
                                 <p className="text-zinc-500 max-w-md mx-auto mb-6">We couldn't find any roles matching "{searchQuery}" in the selected category.</p>

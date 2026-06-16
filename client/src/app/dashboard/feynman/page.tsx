@@ -2,10 +2,16 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, BookOpen, Brain, MessageSquare, Send, Sparkles, Star, Target, Lightbulb, User, ShieldCheck, ChevronRight, CheckCircle, Coins } from "lucide-react"
-import AmitAICoin from "@/components/reward-system/AmitAICoin"
+import { ArrowLeft, BookOpen, Brain, MessageSquare, Send, Sparkles, Star, Target, Lightbulb, User, ShieldCheck, ChevronRight, CheckCircle, Coins, Sun, Moon } from "lucide-react"
+import IntervyxaCoin from "@/components/reward-system/IntervyxaCoin"
 import Link from "next/link"
 import Logo from "@/components/ui/Logo"
+import { useTheme } from "next-themes"
+
+// Theme Helper
+function t(dark: boolean, darkClass: string, lightClass: string) {
+    return dark ? darkClass : lightClass;
+}
 
 // Types
 type ChatMessage = {
@@ -30,6 +36,9 @@ const TOPICS: Topic[] = [
 ];
 
 export default function FeynmanExplainerPage() {
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState("");
@@ -42,8 +51,14 @@ export default function FeynmanExplainerPage() {
     };
 
     useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
         scrollToBottom();
     }, [messages, isTyping]);
+
+    const isDark = mounted && theme === 'dark';
 
     const handleSelectTopic = (topic: Topic) => {
         setSelectedTopic(topic);
@@ -113,36 +128,57 @@ export default function FeynmanExplainerPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans relative overflow-hidden aurora-glow">
+        <div className={`min-h-screen flex flex-col font-sans relative overflow-hidden transition-colors duration-700 ${t(isDark, 'bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white', 'bg-slate-50 text-slate-900')}`}>
             {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-10 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] orb-float pointer-events-none" />
-            <div className="absolute bottom-0 right-10 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '2s' }} />
+            <div className={`absolute top-0 left-10 w-[500px] h-[500px] rounded-full blur-[150px] orb-float pointer-events-none transition-colors duration-1000 ${t(isDark, 'bg-blue-500/10', 'bg-blue-300/30')}`} />
+            <div className={`absolute bottom-0 right-10 w-[400px] h-[400px] rounded-full blur-[120px] orb-float pointer-events-none transition-colors duration-1000 ${t(isDark, 'bg-indigo-500/10', 'bg-indigo-300/30')}`} style={{ animationDelay: '2s' }} />
 
             {/* Header */}
-            <div className="h-20 border-b border-white/10 bg-zinc-950/60 backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-50">
-                <div className="flex items-center gap-6">
-                    <Link href="/dashboard" className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-zinc-400 hover:text-white group">
+            <div className={`h-24 border-b backdrop-blur-2xl flex items-center justify-between px-8 shrink-0 relative z-50 transition-colors duration-500 ${t(isDark, 'bg-white/80 dark:bg-zinc-950/60 border-slate-200 dark:border-white/10', 'bg-white/80 border-slate-200 shadow-sm')}`}>
+                <div className="flex items-center gap-6 py-4">
+                    <Link href="/dashboard" className={`w-11 h-11 flex items-center justify-center rounded-xl border transition-all group ${t(isDark, 'bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white', 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-900 shadow-sm')}`}>
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </Link>
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                            <Brain className="w-6 h-6 text-blue-400" />
+                    <div className="flex items-center gap-4 hidden sm:flex">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shadow-lg ${t(isDark, 'bg-blue-500/10 border-blue-500/20 shadow-blue-500/20', 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 shadow-blue-200/50')}`}>
+                            <Brain className={`w-6 h-6 ${t(isDark, 'text-blue-400', 'text-blue-600')}`} />
                         </div>
                         <div>
-                            <h1 className="font-black text-2xl tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Feynman Explainer</h1>
-                            <p className="text-sm font-medium text-zinc-500">Learn by teaching. Break down concepts simply.</p>
+                            <h1 className="font-black text-2xl tracking-tight bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Feynman Explainer</h1>
+                            <p className={`text-sm font-bold ${t(isDark, 'text-zinc-500', 'text-slate-500')}`}>Learn by teaching. Break down concepts simply.</p>
                         </div>
                     </div>
                 </div>
 
-                {sessionPhase === "chat" && (
-                    <button
-                        onClick={handleEndSession}
-                        className="px-6 py-2 rounded-xl text-sm font-black uppercase tracking-wider bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-105 transition-all"
-                    >
-                        End & Evaluate
-                    </button>
-                )}
+                <div className="flex items-center gap-6">
+                    {sessionPhase === "chat" && (
+                        <button
+                            onClick={handleEndSession}
+                            className="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white shadow-lg shadow-blue-500/30 hover:scale-105 transition-all"
+                        >
+                            End & Evaluate
+                        </button>
+                    )}
+                    
+                    {/* Dark Mode Toggle */}
+                    {mounted && (
+                        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            className={`relative w-16 h-9 rounded-full transition-all duration-500 flex items-center px-1 ${
+                                isDark
+                                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/30'
+                                    : 'bg-gradient-to-r from-amber-400 to-orange-400 shadow-lg shadow-amber-400/30'
+                            }`}>
+                            <motion.div
+                                layout
+                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                className={`w-7 h-7 rounded-full flex items-center justify-center shadow-md ${
+                                    isDark ? 'bg-white ml-auto' : 'bg-white'
+                                }`}>
+                                {isDark ? <Moon className="w-4 h-4 text-indigo-600" /> : <Sun className="w-4 h-4 text-amber-500" />}
+                            </motion.div>
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Main Content Area */}
@@ -153,45 +189,47 @@ export default function FeynmanExplainerPage() {
 
                     {/* Active Topic Card */}
                     {selectedTopic ? (
-                        <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
+                        <div className={`backdrop-blur-xl border rounded-[32px] p-8 shadow-2xl relative overflow-hidden group transition-colors duration-500 ${t(isDark, 'bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10', 'bg-white border-slate-200 shadow-slate-200/50')}`}>
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20">
-                                    <Lightbulb className="w-6 h-6" />
+                            <div className="flex items-start justify-between mb-6">
+                                <div className={`p-4 rounded-[20px] border ${t(isDark, 'bg-blue-500/10 text-blue-400 border-blue-500/20', 'bg-blue-50 text-blue-600 border-blue-100')}`}>
+                                    <Lightbulb className="w-7 h-7" />
                                 </div>
-                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-white/5 rounded-lg border border-white/10 ${selectedTopic.difficulty === 'Beginner' ? 'text-emerald-400' :
-                                    selectedTopic.difficulty === 'Intermediate' ? 'text-yellow-400' : 'text-rose-400'
-                                    }`}>
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border shadow-sm ${
+                                    selectedTopic.difficulty === 'Beginner' ? t(isDark, 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', 'bg-emerald-50 border-emerald-200 text-emerald-600') :
+                                    selectedTopic.difficulty === 'Intermediate' ? t(isDark, 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400', 'bg-yellow-50 border-yellow-200 text-yellow-600') : 
+                                    t(isDark, 'bg-rose-500/10 border-rose-500/20 text-rose-400', 'bg-rose-50 border-rose-200 text-rose-600')
+                                }`}>
                                     {selectedTopic.difficulty}
                                 </span>
                             </div>
-                            <h2 className="text-xl font-black mb-2">{selectedTopic.title}</h2>
-                            <p className="text-sm text-zinc-400 leading-relaxed font-medium">{selectedTopic.description}</p>
+                            <h2 className={`text-2xl font-black mb-3 ${t(isDark, 'text-slate-900 dark:text-white', 'text-slate-900')}`}>{selectedTopic.title}</h2>
+                            <p className={`text-[15px] leading-relaxed font-bold ${t(isDark, 'text-slate-500 dark:text-zinc-400', 'text-slate-600')}`}>{selectedTopic.description}</p>
 
                             <button
                                 onClick={() => { setSelectedTopic(null); setSessionPhase("select"); setMessages([]); }}
-                                className="mt-6 text-[11px] font-black uppercase text-zinc-500 hover:text-white transition-colors flex items-center gap-1"
+                                className={`mt-8 text-xs font-black uppercase tracking-wider transition-colors flex items-center gap-2 ${t(isDark, 'text-zinc-500 hover:text-slate-900 dark:text-white', 'text-slate-500 hover:text-blue-600')}`}
                             >
-                                <ArrowLeft className="w-3 h-3" /> Change Topic
+                                <ArrowLeft className="w-4 h-4" /> Change Topic
                             </button>
                         </div>
                     ) : (
-                        <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl flex-1 overflow-y-auto custom-scrollbar">
-                            <h2 className="text-lg font-black mb-6 flex items-center gap-2">
-                                <Target className="w-5 h-5 text-blue-400" /> Select a Topic
+                        <div className={`backdrop-blur-xl border rounded-[32px] p-8 shadow-2xl flex-1 overflow-y-auto custom-scrollbar transition-colors duration-500 ${t(isDark, 'bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10', 'bg-white border-slate-200 shadow-slate-200/50')}`}>
+                            <h2 className={`text-xl font-black mb-8 flex items-center gap-3 ${t(isDark, 'text-slate-900 dark:text-white', 'text-slate-900')}`}>
+                                <div className={`p-2 rounded-xl ${t(isDark, 'bg-blue-500/10 text-blue-400', 'bg-blue-50 text-blue-600')}`}><Target className="w-5 h-5" /></div> Select a Topic
                             </h2>
                             <div className="space-y-4">
                                 {TOPICS.map(topic => (
                                     <button
                                         key={topic.id}
                                         onClick={() => handleSelectTopic(topic)}
-                                        className="w-full text-left p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group"
+                                        className={`w-full text-left p-6 rounded-[24px] border transition-all group ${t(isDark, 'bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5', 'bg-slate-50 border-slate-200 hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg hover:shadow-blue-100/40')}`}
                                     >
-                                        <div className="flex justify-between items-center mb-2">
-                                            <h3 className="font-bold text-sm group-hover:text-blue-400 transition-colors">{topic.title}</h3>
-                                            <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+                                        <div className="flex justify-between items-center mb-3">
+                                            <h3 className={`font-black text-[15px] transition-colors ${t(isDark, 'text-slate-900 dark:text-white group-hover:text-blue-400', 'text-slate-800 group-hover:text-blue-600')}`}>{topic.title}</h3>
+                                            <ChevronRight className={`w-5 h-5 transition-all group-hover:translate-x-1 ${t(isDark, 'text-zinc-600 group-hover:text-blue-400', 'text-slate-900 dark:text-slate-400 group-hover:text-blue-600')}`} />
                                         </div>
-                                        <p className="text-xs text-zinc-500 line-clamp-2">{topic.description}</p>
+                                        <p className={`text-[13px] font-bold line-clamp-2 leading-relaxed ${t(isDark, 'text-zinc-500', 'text-slate-500')}`}>{topic.description}</p>
                                     </button>
                                 ))}
                             </div>
@@ -199,10 +237,10 @@ export default function FeynmanExplainerPage() {
                     )}
 
                     {/* How it works card */}
-                    <div className="bg-zinc-900/30 border border-white/5 rounded-3xl p-6 shadow-inner text-sm text-zinc-400 leading-relaxed font-medium hidden lg:block">
-                        <strong className="text-white">The Feynman Technique:</strong>
-                        <ol className="list-decimal pl-4 mt-3 space-y-2 opacity-80">
-                            <li>Choose a concept</li>
+                    <div className={`border rounded-[32px] p-8 shadow-sm text-[13px] leading-relaxed font-bold hidden lg:block transition-colors duration-500 ${t(isDark, 'bg-white dark:bg-zinc-900/40 border-slate-100 dark:border-white/5 text-slate-500 dark:text-zinc-400', 'bg-white/60 border-slate-200 text-slate-600')}`}>
+                        <strong className={`flex items-center gap-2 text-[14px] mb-4 ${t(isDark, 'text-slate-900 dark:text-white', 'text-slate-900')}`}><BookOpen className="w-5 h-5" /> The Feynman Technique:</strong>
+                        <ol className="list-decimal pl-5 space-y-3 opacity-90 marker:text-blue-500 marker:font-black">
+                            <li>Choose a concept to master</li>
                             <li>Teach it to a beginner (the AI)</li>
                             <li>Identify your knowledge gaps</li>
                             <li>Review and simplify</li>
@@ -211,59 +249,62 @@ export default function FeynmanExplainerPage() {
                 </div>
 
                 {/* Right Area (Chat & Interactions) */}
-                <div className="flex-1 bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl flex flex-col relative overflow-hidden">
+                <div className={`flex-1 backdrop-blur-xl border rounded-[32px] shadow-2xl flex flex-col relative overflow-hidden transition-colors duration-500 ${t(isDark, 'bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10', 'bg-white border-slate-200 shadow-slate-200/50')}`}>
 
                     {sessionPhase === "select" ? (
                         <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-                            <div className="w-24 h-24 bg-blue-500/5 rounded-full flex items-center justify-center mb-6 border border-blue-500/10 shadow-[0_0_50px_rgba(59,130,246,0.1)]">
-                                <MessageSquare className="w-10 h-10 text-blue-400 opacity-50" />
+                            <div className={`w-32 h-32 rounded-[32px] flex items-center justify-center mb-8 border shadow-2xl ${t(isDark, 'bg-blue-500/5 border-blue-500/10 shadow-blue-500/10', 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 shadow-blue-200/40')}`}>
+                                <MessageSquare className={`w-14 h-14 ${t(isDark, 'text-blue-400 opacity-50', 'text-blue-500')}`} />
                             </div>
-                            <h3 className="text-2xl font-black text-zinc-300 mb-4">Awaiting Topic Selection</h3>
-                            <p className="text-zinc-500 max-w-md mx-auto">Pick a topic from the sidebar you wish to master. Once selected, you'll enter teaching mode where our AI will act as your curious student.</p>
+                            <h3 className={`text-4xl font-black mb-5 tracking-tight ${t(isDark, 'text-slate-600 dark:text-zinc-300', 'text-slate-800')}`}>Awaiting Topic Selection</h3>
+                            <p className={`max-w-md mx-auto font-bold text-[15px] leading-relaxed ${t(isDark, 'text-zinc-500', 'text-slate-500')}`}>Pick a topic from the sidebar you wish to master. Once selected, you'll enter teaching mode where our AI will act as your curious student.</p>
                         </div>
                     ) : sessionPhase === "evaluation" ? (
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
                             <AnimatePresence>
                                 {isTyping ? (
-                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-full gap-4">
-                                        <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/20">
-                                            <Brain className="w-8 h-8 text-blue-400 animate-pulse" />
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-full gap-5">
+                                        <div className={`w-24 h-24 rounded-[32px] flex items-center justify-center border shadow-xl ${t(isDark, 'bg-blue-500/10 border-blue-500/20 shadow-blue-500/20', 'bg-blue-50 border-blue-200 shadow-blue-200/40')}`}>
+                                            <Brain className={`w-12 h-12 animate-pulse ${t(isDark, 'text-blue-400', 'text-blue-600')}`} />
                                         </div>
-                                        <h3 className="text-lg font-black text-blue-400 bg-clip-text">Evaluating your explanation...</h3>
+                                        <h3 className="text-2xl font-black bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent tracking-tight">Evaluating your explanation...</h3>
                                     </motion.div>
                                 ) : (
                                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-8 pb-10">
-                                        <div className="text-center space-y-4 mb-10">
-                                            <div className="inline-flex w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.2)] mb-2">
-                                                <ShieldCheck className="w-10 h-10 text-emerald-400" />
+                                        <div className="text-center space-y-4 mb-12 mt-8">
+                                            <div className={`inline-flex w-24 h-24 border rounded-full items-center justify-center shadow-2xl mb-4 ${t(isDark, 'bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/20', 'bg-emerald-50 border-emerald-200 shadow-emerald-200/40')}`}>
+                                                <ShieldCheck className={`w-12 h-12 ${t(isDark, 'text-emerald-400', 'text-emerald-500')}`} />
                                             </div>
-                                            <h2 className="text-4xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Great Job!</h2>
-                                            <p className="text-zinc-400 text-lg">You scored <span className="text-white font-bold">85% Mastery</span> on {selectedTopic?.title}.</p>
+                                            <h2 className="text-5xl font-black bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent tracking-tighter">Great Job!</h2>
+                                            <p className={`text-lg font-bold ${t(isDark, 'text-slate-500 dark:text-zinc-400', 'text-slate-600')}`}>You scored <span className={t(isDark, 'text-slate-900 dark:text-white', 'text-slate-900')}>85% Mastery</span> on {selectedTopic?.title}.</p>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="p-6 bg-black/40 border border-white/5 rounded-3xl">
-                                                <h4 className="text-emerald-400 font-black mb-4 flex items-center gap-2"><CheckCircle className="w-5 h-5" /> What you got right</h4>
-                                                <ul className="space-y-3 text-sm text-zinc-300">
-                                                    <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Clearly explained the primary purpose.</li>
-                                                    <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Used an excellent real-world analogy.</li>
-                                                    <li className="flex items-start gap-2"><span className="text-emerald-500 mt-0.5">•</span> Handled follow-up questions well.</li>
+                                            <div className={`p-8 border rounded-[32px] transition-colors ${t(isDark, 'bg-white dark:bg-black/40 border-slate-100 dark:border-white/5', 'bg-emerald-50/50 border-emerald-100 shadow-sm')}`}>
+                                                <h4 className={`font-black mb-6 flex items-center gap-3 text-lg ${t(isDark, 'text-emerald-400', 'text-emerald-600')}`}><CheckCircle className="w-6 h-6" /> What you got right</h4>
+                                                <ul className={`space-y-4 font-bold text-[15px] ${t(isDark, 'text-slate-600 dark:text-zinc-300', 'text-slate-700')}`}>
+                                                    <li className="flex items-start gap-4"><span className="text-emerald-500 mt-0.5">●</span> Clearly explained the primary purpose.</li>
+                                                    <li className="flex items-start gap-4"><span className="text-emerald-500 mt-0.5">●</span> Used an excellent real-world analogy.</li>
+                                                    <li className="flex items-start gap-4"><span className="text-emerald-500 mt-0.5">●</span> Handled follow-up questions well.</li>
                                                 </ul>
                                             </div>
-                                            <div className="p-6 bg-black/40 border border-white/5 rounded-3xl">
-                                                <h4 className="text-yellow-400 font-black mb-4 flex items-center gap-2"><Star className="w-5 h-5" /> Areas to improve</h4>
-                                                <ul className="space-y-3 text-sm text-zinc-300">
-                                                    <li className="flex items-start gap-2"><span className="text-yellow-500 mt-0.5">•</span> You skipped over edge-case scenarios.</li>
-                                                    <li className="flex items-start gap-2"><span className="text-yellow-500 mt-0.5">•</span> Jargon usage: try to explain "asynchronous" more simply next time.</li>
+                                            <div className={`p-8 border rounded-[32px] transition-colors ${t(isDark, 'bg-white dark:bg-black/40 border-slate-100 dark:border-white/5', 'bg-amber-50/50 border-amber-100 shadow-sm')}`}>
+                                                <h4 className={`font-black mb-6 flex items-center gap-3 text-lg ${t(isDark, 'text-yellow-400', 'text-amber-600')}`}><Star className="w-6 h-6" /> Areas to improve</h4>
+                                                <ul className={`space-y-4 font-bold text-[15px] ${t(isDark, 'text-slate-600 dark:text-zinc-300', 'text-slate-700')}`}>
+                                                    <li className="flex items-start gap-4"><span className="text-amber-500 mt-0.5">●</span> You skipped over edge-case scenarios.</li>
+                                                    <li className="flex items-start gap-4"><span className="text-amber-500 mt-0.5">●</span> Jargon usage: try to explain "asynchronous" more simply next time.</li>
                                                 </ul>
                                             </div>
                                         </div>
 
-                                        <div className="p-6 bg-yellow-500/5 border border-yellow-500/20 rounded-3xl">
-                                            <h4 className="font-black text-yellow-400 mb-2 flex items-center gap-2">
-                                                <AmitAICoin size={18} animate /> AmitAI Coins Earned
-                                            </h4>
-                                            <p className="text-2xl font-black text-white">+500 Coins</p>
+                                        <div className={`p-8 border rounded-[32px] flex items-center justify-between ${t(isDark, 'bg-yellow-500/5 border-yellow-500/20', 'bg-amber-50 border-amber-200 shadow-sm')}`}>
+                                            <div>
+                                                <h4 className={`font-black mb-2 flex items-center gap-3 text-xl ${t(isDark, 'text-yellow-400', 'text-amber-600')}`}>
+                                                    <IntervyxaCoin size={24} animate={true} /> Intervyxa Coins Earned
+                                                </h4>
+                                                <p className={`text-[15px] font-bold ${t(isDark, 'text-slate-500 dark:text-zinc-400', 'text-amber-700/70')}`}>Reward for completing a teaching session.</p>
+                                            </div>
+                                            <p className={`text-4xl font-black tracking-tighter ${t(isDark, 'text-slate-900 dark:text-white', 'text-amber-600')}`}>+500</p>
                                         </div>
                                     </motion.div>
                                 )}
@@ -272,27 +313,33 @@ export default function FeynmanExplainerPage() {
                     ) : (
                         <>
                             {/* Chat Messages */}
-                            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+                            <div className={`flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 space-y-8 ${t(isDark, '', 'bg-slate-50/50')}`}>
                                 <AnimatePresence>
                                     {messages.map((msg) => (
                                         <motion.div
                                             key={msg.id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
+                                            initial={{ opacity: 0, scale: 0.95, originY: 1 }}
+                                            animate={{ opacity: 1, scale: 1 }}
                                             className={`flex ${msg.role === 'student' ? 'justify-end' : msg.role === 'system' ? 'justify-center' : 'justify-start'}`}
                                         >
                                             {msg.role === 'system' ? (
-                                                <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
+                                                <div className={`px-6 py-3 border rounded-full text-[11px] uppercase tracking-[0.2em] font-black shadow-sm ${t(isDark, 'bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 dark:text-zinc-400', 'bg-white border-slate-200 text-slate-500')}`}>
                                                     {msg.content}
                                                 </div>
                                             ) : (
-                                                <div className={`flex gap-4 max-w-[80%] ${msg.role === 'student' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                                    <div className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center shadow-lg border ${msg.role === 'ai' ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400' : 'bg-blue-500/20 border-blue-500/30 text-blue-400'
+                                                <div className={`flex gap-5 max-w-[85%] lg:max-w-[75%] ${msg.role === 'student' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                                    <div className={`w-12 h-12 shrink-0 rounded-[20px] flex items-center justify-center shadow-lg border ${
+                                                        msg.role === 'ai' 
+                                                            ? t(isDark, 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400', 'bg-indigo-100 border-indigo-200 text-indigo-600') 
+                                                            : t(isDark, 'bg-blue-500/20 border-blue-500/30 text-blue-400', 'bg-blue-100 border-blue-200 text-blue-600')
                                                         }`}>
-                                                        {msg.role === 'ai' ? <Brain className="w-5 h-5" /> : <User className="w-5 h-5" />}
+                                                        {msg.role === 'ai' ? <Brain className="w-6 h-6" /> : <User className="w-6 h-6" />}
                                                     </div>
-                                                    <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${msg.role === 'student' ? 'bg-blue-600/20 border border-blue-500/20 text-blue-50' : 'bg-black/50 border border-white/10 text-zinc-300'
-                                                        } ${msg.role === 'student' ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}>
+                                                    <div className={`p-6 rounded-3xl text-[16px] font-medium leading-relaxed shadow-lg ${
+                                                        msg.role === 'student' 
+                                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-slate-900 dark:text-white rounded-tr-sm' 
+                                                            : t(isDark, 'bg-white dark:bg-black/50 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-300 rounded-tl-sm', 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm')
+                                                        }`}>
                                                         {msg.content}
                                                     </div>
                                                 </div>
@@ -300,15 +347,15 @@ export default function FeynmanExplainerPage() {
                                         </motion.div>
                                     ))}
                                     {isTyping && (
-                                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
-                                            <div className="flex gap-4 max-w-[80%]">
-                                                <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shadow-lg">
-                                                    <Brain className="w-5 h-5" />
+                                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex justify-start">
+                                            <div className="flex gap-5 max-w-[85%]">
+                                                <div className={`w-12 h-12 shrink-0 rounded-[20px] flex items-center justify-center shadow-lg border ${t(isDark, 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400', 'bg-indigo-100 border-indigo-200 text-indigo-600')}`}>
+                                                    <Brain className="w-6 h-6" />
                                                 </div>
-                                                <div className="p-4 rounded-2xl bg-black/50 border border-white/10 flex items-center gap-2 rounded-tl-sm">
-                                                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" />
-                                                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                                                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0.4s' }} />
+                                                <div className={`px-6 py-5 rounded-3xl border flex items-center gap-2.5 rounded-tl-sm shadow-lg ${t(isDark, 'bg-white dark:bg-black/50 border-slate-200 dark:border-white/10', 'bg-white border-slate-200')}`}>
+                                                    <span className={`w-2.5 h-2.5 rounded-full animate-bounce ${t(isDark, 'bg-indigo-400', 'bg-indigo-500')}`} />
+                                                    <span className={`w-2.5 h-2.5 rounded-full animate-bounce ${t(isDark, 'bg-indigo-400', 'bg-indigo-500')}`} style={{ animationDelay: '0.2s' }} />
+                                                    <span className={`w-2.5 h-2.5 rounded-full animate-bounce ${t(isDark, 'bg-indigo-400', 'bg-indigo-500')}`} style={{ animationDelay: '0.4s' }} />
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -318,10 +365,10 @@ export default function FeynmanExplainerPage() {
                             </div>
 
                             {/* Chat Input */}
-                            <div className="p-6 bg-black/40 border-t border-white/5">
+                            <div className={`p-6 border-t ${t(isDark, 'bg-white dark:bg-black/40 border-slate-100 dark:border-white/5', 'bg-white border-slate-200')}`}>
                                 <form
                                     onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
-                                    className="flex gap-4"
+                                    className="flex gap-4 max-w-4xl mx-auto"
                                 >
                                     <div className="flex-1 relative">
                                         <input
@@ -329,20 +376,20 @@ export default function FeynmanExplainerPage() {
                                             value={inputValue}
                                             onChange={e => setInputValue(e.target.value)}
                                             placeholder="Explain the concept simply..."
-                                            className="w-full h-14 bg-zinc-900 border border-white/10 hover:border-white/20 focus:border-blue-500/50 rounded-2xl px-6 outline-none transition-all placeholder:text-zinc-600 text-sm shadow-inner"
+                                            className={`w-full h-16 border rounded-[22px] px-8 outline-none transition-all font-bold text-[16px] shadow-sm ${t(isDark, 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 hover:border-white/20 focus:border-blue-500/50 text-slate-900 dark:text-white placeholder:text-zinc-600', 'bg-slate-50 border-slate-200 hover:border-slate-300 focus:border-blue-500 text-slate-900 placeholder:text-slate-900 dark:text-slate-400')}`}
                                             disabled={isTyping}
                                         />
                                     </div>
                                     <button
                                         type="submit"
                                         disabled={!inputValue.trim() || isTyping}
-                                        className="h-14 w-14 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-2xl flex items-center justify-center transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] shrink-0"
+                                        className="h-16 w-16 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 text-slate-900 dark:text-white rounded-[22px] flex items-center justify-center transition-transform active:scale-95 shadow-lg shadow-blue-500/30 shrink-0"
                                     >
-                                        <Send className="w-5 h-5 ml-1" />
+                                        <Send className="w-6 h-6 ml-1 drop-shadow-md" />
                                     </button>
                                 </form>
-                                <p className="text-center text-[10px] text-zinc-600 font-medium uppercase tracking-widest mt-4 flex items-center justify-center gap-1.5">
-                                    <Sparkles className="w-3 h-3 text-zinc-500" /> AI powered learning
+                                <p className={`text-center text-[10px] font-black uppercase tracking-[0.25em] mt-5 flex items-center justify-center gap-2 ${t(isDark, 'text-zinc-600', 'text-slate-900 dark:text-slate-400')}`}>
+                                    <Sparkles className="w-3.5 h-3.5 text-blue-500" /> AI powered learning module
                                 </p>
                             </div>
                         </>

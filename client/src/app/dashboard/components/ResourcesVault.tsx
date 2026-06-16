@@ -13,10 +13,9 @@ interface Resource {
     url: string
     type: 'pdf' | 'video' | 'link' | 'doc'
     category: string
-    isProOnly: boolean
 }
 
-export default function ResourcesVault({ isPro }: { isPro: boolean }) {
+export default function ResourcesVault() {
     const [resources, setResources] = useState<Resource[]>([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
@@ -76,13 +75,13 @@ export default function ResourcesVault({ isPro }: { isPro: boolean }) {
                             placeholder="Search assets..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full sm:w-64 bg-zinc-950/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 text-xs font-bold focus:border-emerald-500/40 outline-none transition-all"
+                            className="w-full sm:w-64 bg-white dark:bg-zinc-950/50 border border-white/5 rounded-2xl pl-12 pr-4 py-3 text-xs font-bold focus:border-emerald-500/40 outline-none transition-all"
                         />
                     </div>
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="bg-zinc-950/50 border border-white/5 rounded-2xl px-4 py-3 text-xs font-bold focus:border-emerald-500/40 outline-none transition-all text-zinc-400"
+                        className="bg-white dark:bg-zinc-950/50 border border-white/5 rounded-2xl px-4 py-3 text-xs font-bold focus:border-emerald-500/40 outline-none transition-all text-slate-900 dark:text-zinc-400"
                     >
                         <option value="all">All formats</option>
                         <option value="pdf">PDF documents</option>
@@ -98,7 +97,7 @@ export default function ResourcesVault({ isPro }: { isPro: boolean }) {
                         <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
                     </div>
                 ) : filteredResources.length === 0 ? (
-                    <div className="col-span-full py-20 text-center text-zinc-600 font-semibold bg-zinc-900/40 rounded-2xl border border-white/5 border-dashed">
+                    <div className="col-span-full py-20 text-center text-zinc-600 font-semibold bg-white dark:bg-zinc-900/40 rounded-2xl border border-white/5 border-dashed">
                         No resources found
                     </div>
                 ) : (
@@ -108,20 +107,9 @@ export default function ResourcesVault({ isPro }: { isPro: boolean }) {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.05 }}
-                            className="group relative bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 hover:border-emerald-500/40 hover:bg-zinc-900/60 transition-all duration-500 overflow-hidden"
+                            className="group relative bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 hover:border-emerald-500/40 hover:bg-white dark:bg-zinc-900/60 transition-all duration-500 overflow-hidden"
                         >
-                            {res.isProOnly && !isPro && (
-                                <div className="absolute inset-0 z-20 bg-zinc-950/60 backdrop-blur-[2px] flex flex-col items-center justify-center p-8 text-center">
-                                    <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-500 mb-4 border border-amber-500/20">
-                                        <Lock className="w-6 h-6" />
-                                    </div>
-                                    <h4 className="text-sm font-semibold text-white mb-2">Pro Only</h4>
-                                    <p className="text-xs text-zinc-400 mb-6 leading-relaxed">This resource requires a Pro subscription</p>
-                                    <Button className="h-10 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs px-6 rounded-xl">
-                                        <Sparkles className="w-3.5 h-3.5 mr-2" /> Upgrade Access
-                                    </Button>
-                                </div>
-                            )}
+
 
                             <div className="flex justify-between items-start mb-6">
                                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-500">
@@ -132,17 +120,17 @@ export default function ResourcesVault({ isPro }: { isPro: boolean }) {
                                 </span>
                             </div>
 
-                            <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors truncate">{res.title}</h3>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-emerald-400 transition-colors truncate">{res.title}</h3>
                             <p className="text-xs font-medium text-emerald-500/60 mb-4">{res.category}</p>
-                            <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed h-8 mb-8">{res.description}</p>
+                            <p className="text-xs text-slate-900 dark:text-zinc-400 line-clamp-2 leading-relaxed h-8 mb-8">{res.description}</p>
 
                             <div className="pt-6 border-t border-white/5 flex items-center justify-between">
                                 <span className="text-xs text-zinc-600 font-medium">Verified</span>
                                 <a
-                                    href={isPro || !res.isProOnly ? res.url : '#'}
+                                    href={res.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`flex items-center gap-2 text-xs font-semibold transition-all ${isPro || !res.isProOnly ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-700 pointer-events-none'}`}
+                                    className={`flex items-center gap-2 text-xs font-semibold transition-all text-emerald-400 hover:text-emerald-300`}
                                 >
                                     Open resource <ExternalLink className="w-3.5 h-3.5" />
                                 </a>

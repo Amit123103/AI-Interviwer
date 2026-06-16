@@ -68,10 +68,10 @@ export default function OnsiteLobbyPage() {
         }
     }
 
-    if (loading) return <div className="flex justify-center items-center h-screen bg-black"><Loader2 className="animate-spin text-primary" /></div>
+    if (loading) return <div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-black"><Loader2 className="animate-spin text-primary" /></div>
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -88,12 +88,12 @@ export default function OnsiteLobbyPage() {
 
                     <Dialog open={creating} onOpenChange={setCreating}>
                         <DialogTrigger asChild>
-                            <Button className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-white hover:from-violet-500 hover:via-fuchsia-500 hover:to-cyan-500 gap-3 font-black px-10 h-16 rounded-2xl shadow-[0_0_50px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] hover:scale-105 transition-all text-lg uppercase tracking-widest border-0">
+                            <Button className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-slate-900 dark:text-white hover:from-violet-500 hover:via-fuchsia-500 hover:to-cyan-500 gap-3 font-black px-10 h-16 rounded-2xl shadow-[0_0_50px_rgba(139,92,246,0.3)] hover:shadow-[0_0_60px_rgba(139,92,246,0.5)] hover:scale-105 transition-all text-lg uppercase tracking-widest border-0">
                                 <Plus className="w-6 h-6 stroke-[3]" /> INITIALIZE NEW LOOP
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="bg-zinc-950/80 border-white/[0.06] max-w-5xl max-h-[90vh] overflow-hidden p-0 rounded-[2.5rem] backdrop-blur-3xl shadow-2xl">
-                            <div className="p-8 border-b border-white/5 bg-zinc-900/50 relative">
+                        <DialogContent className="bg-white dark:bg-zinc-950/80 border-white/[0.06] max-w-5xl max-h-[90vh] overflow-hidden p-0 rounded-[2.5rem] backdrop-blur-3xl shadow-2xl">
+                            <div className="p-8 border-b border-slate-100 dark:border-white/5 bg-white/60 dark:bg-zinc-900/50 relative">
                                 <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
                                     <Building2 size={120} />
                                 </div>
@@ -103,16 +103,16 @@ export default function OnsiteLobbyPage() {
                                 </DialogHeader>
                             </div>
 
-                            <div className="p-8 bg-black/40 overflow-y-auto max-h-[60vh] scrollbar-hide">
+                            <div className="p-8 bg-white dark:bg-black/40 overflow-y-auto max-h-[60vh] scrollbar-hide">
                                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {COMPANIES.map(company => (
                                         <TiltCard key={company.id}>
                                             <div
                                                 onClick={() => startNewLoop(company)}
-                                                className="group relative p-8 bg-zinc-900/40 border border-white/5 rounded-3xl cursor-pointer hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all overflow-hidden h-full"
+                                                className="group relative p-8 bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 rounded-3xl cursor-pointer hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all overflow-hidden h-full"
                                             >
                                                 <div className="relative z-10 space-y-6">
-                                                    <div className={`w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center transition-all group-hover:bg-primary/10 group-hover:border-primary/20 shadow-xl`}>
+                                                    <div className={`w-14 h-14 rounded-2xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 flex items-center justify-center transition-all group-hover:bg-primary/10 group-hover:border-primary/20 shadow-xl`}>
                                                         <company.logo className="w-8 h-8" />
                                                     </div>
                                                     <div>
@@ -137,7 +137,7 @@ export default function OnsiteLobbyPage() {
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-primary/5 border-t border-white/5 flex items-center gap-4">
+                            <div className="p-6 bg-primary/5 border-t border-slate-100 dark:border-white/5 flex items-center gap-4">
                                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
                                     <Info className="text-primary w-4 h-4" />
                                 </div>
@@ -155,7 +155,7 @@ export default function OnsiteLobbyPage() {
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="col-span-full py-32 border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center text-center space-y-6"
+                                className="col-span-full py-32 border-2 border-dashed border-slate-100 dark:border-white/5 rounded-[40px] flex flex-col items-center text-center space-y-6"
                             >
                                 <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center">
                                     <Building2 className="w-12 h-12 text-zinc-700" />
@@ -172,7 +172,7 @@ export default function OnsiteLobbyPage() {
                                 <TiltCard key={loop._id}>
                                     <div
                                         onClick={() => router.push(`/dashboard/onsite/${loop._id}`)}
-                                        className="group relative bg-zinc-950/40 backdrop-blur-3xl border border-white/[0.06] rounded-[2.5rem] p-10 cursor-pointer hover:border-violet-500/30 hover:bg-zinc-900/40 hover:shadow-[0_0_40px_rgba(139,92,246,0.08)] transition-all shadow-2xl overflow-hidden"
+                                        className="group relative bg-white dark:bg-zinc-950/40 backdrop-blur-3xl border border-white/[0.06] rounded-[2.5rem] p-10 cursor-pointer hover:border-violet-500/30 hover:bg-white dark:bg-zinc-900/40 hover:shadow-[0_0_40px_rgba(139,92,246,0.08)] transition-all shadow-2xl overflow-hidden"
                                     >
                                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
                                         <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
@@ -181,7 +181,7 @@ export default function OnsiteLobbyPage() {
 
                                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
                                             <div className="flex items-center gap-8">
-                                                <div className="w-24 h-24 bg-zinc-950 border border-white/10 rounded-3xl flex items-center justify-center group-hover:bg-primary/10 transition-all shadow-inner relative overflow-hidden">
+                                                <div className="w-24 h-24 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-3xl flex items-center justify-center group-hover:bg-primary/10 transition-all shadow-inner relative overflow-hidden">
                                                     <div className="absolute inset-0 bg-primary/5 animate-pulse" />
                                                     <Building2 className="w-12 h-12 text-zinc-500 group-hover:text-primary transition-colors relative z-10" />
                                                 </div>
@@ -204,11 +204,11 @@ export default function OnsiteLobbyPage() {
                                                         <TooltipProvider key={i}>
                                                             <Tooltip>
                                                                 <TooltipTrigger asChild>
-                                                                    <div className={`w-14 h-14 rounded-2xl border-2 border-black flex items-center justify-center shadow-xl transition-all hover:scale-110 hover:-translate-y-2 z-10 ${round.status === 'Completed' ? 'bg-primary text-black' : 'bg-zinc-900 text-zinc-600 border-white/5'}`}>
+                                                                    <div className={`w-14 h-14 rounded-2xl border-2 border-black flex items-center justify-center shadow-xl transition-all hover:scale-110 hover:-translate-y-2 z-10 ${round.status === 'Completed' ? 'bg-primary text-black' : 'bg-white dark:bg-zinc-900 text-zinc-600 border-slate-100 dark:border-white/5'}`}>
                                                                         {round.status === 'Completed' ? <CheckCircle2 className="w-7 h-7" /> : <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />}
                                                                     </div>
                                                                 </TooltipTrigger>
-                                                                <TooltipContent className="bg-zinc-900 border-white/10 text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-xl shadow-2xl">
+                                                                <TooltipContent className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-xl shadow-2xl">
                                                                     {round.roundName}
                                                                 </TooltipContent>
                                                             </Tooltip>
@@ -218,7 +218,7 @@ export default function OnsiteLobbyPage() {
 
                                                 <div className="h-14 w-[1px] bg-white/10 mx-2 hidden lg:block" />
 
-                                                <Button variant="ghost" className="h-20 px-10 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] text-primary/80 hover:text-white group-hover:bg-primary/5 transition-all">
+                                                <Button variant="ghost" className="h-20 px-10 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] text-primary/80 hover:text-slate-900 dark:text-white group-hover:bg-primary/5 transition-all">
                                                     CONTINUE SIMULATION <ArrowRight className="ml-4 w-6 h-6 stroke-[3] group-hover:translate-x-2 transition-transform" />
                                                 </Button>
                                             </div>

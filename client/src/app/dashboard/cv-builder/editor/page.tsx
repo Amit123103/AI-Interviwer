@@ -185,7 +185,7 @@ function EditorContent() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+            <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-black text-slate-900 dark:text-white">
                 <div className="flex flex-col items-center gap-4 text-cyan-500">
                     <Loader2 className="w-12 h-12 animate-spin" />
                     <p className="font-mono text-sm uppercase tracking-widest">{mode === 'linkedin' ? 'Extracting Neural Data Link...' : 'Initializing Canvas...'}</p>
@@ -197,17 +197,17 @@ function EditorContent() {
     const CurrentTemplate = templateId === 'classic' ? ClassicTemplate : templateId === 'minimal' ? MinimalTemplate : ModernTemplate
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden flex flex-col h-screen">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden flex flex-col h-screen">
             <MeshBackground />
-            <div className="relative z-10 flex-none px-6 py-4 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl flex items-center justify-between">
+            <div className="relative z-10 flex-none px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-950/80 backdrop-blur-xl flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/dashboard/cv-builder/templates">
                         <Button variant="ghost" size="icon" className="hover:bg-white/10 rounded-full">
-                            <ArrowLeft className="w-5 h-5 text-zinc-400" />
+                            <ArrowLeft className="w-5 h-5 text-slate-500 dark:text-zinc-400" />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-xl font-bold tracking-tight text-white">Live Editor</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Live Editor</h1>
                         <p className="text-xs text-zinc-500 font-medium">Auto-syncing changes to preview</p>
                     </div>
                 </div>
@@ -223,60 +223,60 @@ function EditorContent() {
 
             <div className="flex-1 flex overflow-hidden relative z-10">
                 {/* Editor Sidebar */}
-                <div className="w-[45%] lg:w-[40%] bg-zinc-950/90 backdrop-blur-xl border-r border-white/5 overflow-y-auto custom-scrollbar p-6">
+                <div className="w-[45%] lg:w-[40%] bg-white dark:bg-zinc-950/90 backdrop-blur-xl border-r border-slate-100 dark:border-white/5 overflow-y-auto custom-scrollbar p-6">
                     <div className="space-y-10 max-w-xl mx-auto pb-20">
                         {/* Personal Details */}
                         <section className="space-y-4">
-                            <div className="flex items-center gap-3 border-b border-white/10 pb-2">
+                            <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/10 pb-2">
                                 <div className="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
-                                <h2 className="text-lg font-bold uppercase tracking-wider text-zinc-200">Personal Identity</h2>
+                                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-200">Personal Identity</h2>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">First Name</label>
-                                    <Input value={data.personal.firstName} onChange={(e) => updatePersonal('firstName', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.firstName} onChange={(e) => updatePersonal('firstName', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Last Name</label>
-                                    <Input value={data.personal.lastName} onChange={(e) => updatePersonal('lastName', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.lastName} onChange={(e) => updatePersonal('lastName', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Professional Title</label>
-                                    <Input value={data.personal.title} onChange={(e) => updatePersonal('title', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.title} onChange={(e) => updatePersonal('title', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Email</label>
-                                    <Input value={data.personal.email} onChange={(e) => updatePersonal('email', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.email} onChange={(e) => updatePersonal('email', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Phone</label>
-                                    <Input value={data.personal.phone} onChange={(e) => updatePersonal('phone', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.phone} onChange={(e) => updatePersonal('phone', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Location</label>
-                                    <Input value={data.personal.location} onChange={(e) => updatePersonal('location', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.location} onChange={(e) => updatePersonal('location', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">LinkedIn</label>
-                                    <Input value={data.personal.linkedin} onChange={(e) => updatePersonal('linkedin', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.linkedin} onChange={(e) => updatePersonal('linkedin', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Website</label>
-                                    <Input value={data.personal.website} onChange={(e) => updatePersonal('website', e.target.value)} className="bg-white/5 border-white/10 max-h-10" />
+                                    <Input value={data.personal.website} onChange={(e) => updatePersonal('website', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 max-h-10" />
                                 </div>
                                 <div className="col-span-2 space-y-1.5">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500">Professional Summary</label>
-                                    <Textarea value={data.personal.summary} onChange={(e) => updatePersonal('summary', e.target.value)} className="bg-white/5 border-white/10 min-h-[100px]" />
+                                    <Textarea value={data.personal.summary} onChange={(e) => updatePersonal('summary', e.target.value)} className="bg-white/5 border-slate-200 dark:border-white/10 min-h-[100px]" />
                                 </div>
                             </div>
                         </section>
 
                         {/* Experience */}
                         <section className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                                    <h2 className="text-lg font-bold uppercase tracking-wider text-zinc-200">Experience</h2>
+                                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-200">Experience</h2>
                                 </div>
                                 <Button onClick={addExperience} variant="ghost" size="sm" className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 h-8 px-2">
                                     <Plus className="w-4 h-4 mr-1" /> Add
@@ -285,36 +285,36 @@ function EditorContent() {
 
                             <div className="space-y-6">
                                 {data.experience.map((exp, index) => (
-                                    <div key={exp.id} className="p-4 rounded-xl bg-white/5 border border-white/10 relative group">
+                                    <div key={exp.id} className="p-4 rounded-xl bg-white/5 border border-slate-200 dark:border-white/10 relative group">
                                         <button onClick={() => removeExperience(exp.id)} className="absolute top-3 right-3 text-zinc-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                         <div className="grid grid-cols-2 gap-3 pr-6">
                                             <div className="col-span-2 space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Role / Title</label>
-                                                <Input value={exp.role} onChange={e => updateExperience(exp.id, 'role', e.target.value)} className="bg-black/40 border-white/5 h-9" />
+                                                <Input value={exp.role} onChange={e => updateExperience(exp.id, 'role', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" />
                                             </div>
                                             <div className="col-span-2 space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Company</label>
-                                                <Input value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} className="bg-black/40 border-white/5 h-9" />
+                                                <Input value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" />
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Start Date</label>
-                                                <Input value={exp.startDate} onChange={e => updateExperience(exp.id, 'startDate', e.target.value)} className="bg-black/40 border-white/5 h-9" placeholder="e.g. 2021" />
+                                                <Input value={exp.startDate} onChange={e => updateExperience(exp.id, 'startDate', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" placeholder="e.g. 2021" />
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">End Date</label>
-                                                <Input value={exp.endDate} onChange={e => updateExperience(exp.id, 'endDate', e.target.value)} disabled={exp.current} className="bg-black/40 border-white/5 h-9 disabled:opacity-50" placeholder="e.g. Present" />
+                                                <Input value={exp.endDate} onChange={e => updateExperience(exp.id, 'endDate', e.target.value)} disabled={exp.current} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9 disabled:opacity-50" placeholder="e.g. Present" />
                                             </div>
                                             <div className="col-span-2 mt-2">
-                                                <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
-                                                    <input type="checkbox" checked={exp.current} onChange={e => updateExperience(exp.id, 'current', e.target.checked)} className="rounded border-zinc-700 bg-black/50" />
+                                                <label className="flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-400 cursor-pointer">
+                                                    <input type="checkbox" checked={exp.current} onChange={e => updateExperience(exp.id, 'current', e.target.checked)} className="rounded border-zinc-700 bg-white dark:bg-black/50" />
                                                     I currently work here
                                                 </label>
                                             </div>
                                             <div className="col-span-2 space-y-1 mt-2">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Description / Achievements</label>
-                                                <Textarea value={exp.description} onChange={e => updateExperience(exp.id, 'description', e.target.value)} className="bg-black/40 border-white/5 min-h-[80px]" />
+                                                <Textarea value={exp.description} onChange={e => updateExperience(exp.id, 'description', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 min-h-[80px]" />
                                             </div>
                                         </div>
                                     </div>
@@ -324,10 +324,10 @@ function EditorContent() {
 
                         {/* Education */}
                         <section className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                                    <h2 className="text-lg font-bold uppercase tracking-wider text-zinc-200">Education</h2>
+                                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-200">Education</h2>
                                 </div>
                                 <Button onClick={addEducation} variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 h-8 px-2">
                                     <Plus className="w-4 h-4 mr-1" /> Add
@@ -336,22 +336,22 @@ function EditorContent() {
 
                             <div className="space-y-4">
                                 {data.education.map((edu) => (
-                                    <div key={edu.id} className="p-4 rounded-xl bg-white/5 border border-white/10 relative group">
+                                    <div key={edu.id} className="p-4 rounded-xl bg-white/5 border border-slate-200 dark:border-white/10 relative group">
                                         <button onClick={() => removeEducation(edu.id)} className="absolute top-3 right-3 text-zinc-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                         <div className="grid grid-cols-2 gap-3 pr-6">
                                             <div className="col-span-2 space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Institution</label>
-                                                <Input value={edu.institution} onChange={e => updateEducation(edu.id, 'institution', e.target.value)} className="bg-black/40 border-white/5 h-9" />
+                                                <Input value={edu.institution} onChange={e => updateEducation(edu.id, 'institution', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" />
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Degree</label>
-                                                <Input value={edu.degree} onChange={e => updateEducation(edu.id, 'degree', e.target.value)} className="bg-black/40 border-white/5 h-9" />
+                                                <Input value={edu.degree} onChange={e => updateEducation(edu.id, 'degree', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" />
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Graduation Year</label>
-                                                <Input value={edu.year} onChange={e => updateEducation(edu.id, 'year', e.target.value)} className="bg-black/40 border-white/5 h-9" />
+                                                <Input value={edu.year} onChange={e => updateEducation(edu.id, 'year', e.target.value)} className="bg-white dark:bg-black/40 border-slate-100 dark:border-white/5 h-9" />
                                             </div>
                                         </div>
                                     </div>
@@ -361,16 +361,16 @@ function EditorContent() {
 
                         {/* Skills */}
                         <section className="space-y-4">
-                            <div className="flex items-center gap-3 border-b border-white/10 pb-2">
+                            <div className="flex items-center gap-3 border-b border-slate-200 dark:border-white/10 pb-2">
                                 <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                                <h2 className="text-lg font-bold uppercase tracking-wider text-zinc-200">Skills</h2>
+                                <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-200">Skills</h2>
                             </div>
                             <div className="space-y-1.5">
                                 <label className="text-[10px] uppercase font-bold text-zinc-500">Comma Separated Skills</label>
                                 <Textarea
                                     value={data.skills.join(", ")}
                                     onChange={e => setData(prev => ({ ...prev, skills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))}
-                                    className="bg-white/5 border-white/10 min-h-[80px]"
+                                    className="bg-white/5 border-slate-200 dark:border-white/10 min-h-[80px]"
                                     placeholder="React, CSS, Machine Learning, Leadership..."
                                 />
                             </div>
@@ -380,7 +380,7 @@ function EditorContent() {
                 </div>
 
                 {/* Live Preview Area */}
-                <div className="flex-1 bg-black/60 overflow-y-auto p-4 md:p-8 flex justify-center custom-scrollbar">
+                <div className="flex-1 bg-white dark:bg-black/60 overflow-y-auto p-4 md:p-8 flex justify-center custom-scrollbar">
                     {/* CV Paper Constraint */}
                     <div
                         ref={resumeRef}
@@ -398,7 +398,7 @@ function EditorContent() {
 
 export default function CvEditorPage() {
     return (
-        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black text-white"><Loader2 className="w-12 h-12 animate-spin text-cyan-500" /></div>}>
+        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-black text-slate-900 dark:text-white"><Loader2 className="w-12 h-12 animate-spin text-cyan-500" /></div>}>
             <EditorContent />
         </React.Suspense>
     )

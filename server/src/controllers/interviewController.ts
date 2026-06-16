@@ -1,9 +1,7 @@
-
 import { Request, Response } from 'express';
-import InterviewSession from '../models/InterviewSession';
-import Problem from '../models/Problem';
+import prisma from '../prisma';
 import axios from 'axios';
-import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
@@ -12,8 +10,12 @@ export const initiateInterview = async (req: Request, res: Response) => {
     try {
         const { userId, resumeText, difficulty } = req.body;
 
-        // 1. Analyze Resume for Skills (Reuse existing logic or rely on generate-questions)
-        // We can pass resumeText directly to generate-questions.
+        console.log(`[INITIATE] New session request for User: ${userId}, Difficulty: ${difficulty}`);
+
+        if (!userId) {
+            console.error("[ERROR] Missing userId in initiateInterview request body.");
+            return res.status(400).json({ error: "User ID is required to start an interview session." });
+        }
 
         let skills = {
             languages: ['JavaScript', 'Python'],
@@ -25,73 +27,104 @@ export const initiateInterview = async (req: Request, res: Response) => {
         // 2. Generate Questions via AI Service
         let problems: any[] = [];
         try {
-            console.log("Requesting Questions from AI Service...");
+            console.log(`[AI] Requesting Questions from AI Service at ${AI_SERVICE_URL}...`);
             const aiRes = await axios.post(`${AI_SERVICE_URL}/resume/generate-questions`, {
                 resume_text: resumeText || "",
-                count: 3, // Default to 3 questions for a round
+                count: 3,
                 difficulty: difficulty || 'Medium',
                 topic: 'General'
-            });
+            }, { timeout: 8000 }); // Add timeout to prevent hanging
 
             const generatedQuestions = aiRes.data.questions;
 
-            if (generatedQuestions && Array.isArray(generatedQuestions)) {
-                // Bulk save generated questions
-                const problemDocs = generatedQuestions.map((q: any) => ({
-                    ...q,
-                    isGenerated: true,
-                    // Slug needs to be unique. 
-                    slug: q.slug + '-' + new mongoose.Types.ObjectId().toString(),
-                    stats: { accepted: 0, submissions: 0, acceptanceRate: 0 }
+            if (generatedQuestions && Array.isArray(generatedQuestions) && generatedQuestions.length > 0) {
+                console.log(`[AI] Successfully generated ${generatedQuestions.length} questions.`);
+                // Save generated problems
+                const savedProblems = await Promise.all(generatedQuestions.map(async (q: any) => {
+                    return prisma.problem.create({
+                        data: {
+                            title: q.title || "Untitled Problem",
+                            description: q.description || q.title || "No description provided.",
+                            difficulty: (q.difficulty as any) || 'Medium',
+                            category: q.category || 'General',
+                            slug: (q.slug || 'gen-' + uuidv4().substring(0, 8)) + '-' + uuidv4().substring(0, 8),
+                            starterCode: q.starterCode || {},
+                            testCases: q.testCases || [],
+                            examples: q.examples || [],
+                            isGenerated: true,
+                            stats: { accepted: 0, submissions: 0, acceptanceRate: 0 }
+                        }
+                    });
                 }));
 
-                const savedProblems = await Problem.insertMany(problemDocs);
                 problems = savedProblems.map(p => ({
-                    problemId: p._id,
+                    problemId: p.id,
                     status: 'Pending',
                     score: 0
                 }));
+            } else {
+                console.warn("[AI] AI Service returned empty question array. Falling back to DB...");
+                throw new Error("Empty questions from AI");
             }
-        } catch (err) {
-            console.error("AI Question Generation Failed:", err);
-            // Fallback: Pick random existing problems
+        } catch (err: any) {
+            console.warn(`[FALLBACK] AI Question Generation Failed (${err.message}). Using database challenges...`);
+            
             const targetDifficulty = difficulty || 'Medium';
-            const existingProblems = await Problem.find({ difficulty: targetDifficulty }).limit(3);
+            let existingProblems = await prisma.problem.findMany({
+                where: { difficulty: targetDifficulty as any },
+                take: 3,
+                orderBy: { createdAt: 'desc' }
+            });
+
+            if (existingProblems.length === 0) {
+                console.warn(`[FALLBACK] No ${targetDifficulty} problems found. Fetching any 3 available problems...`);
+                existingProblems = await prisma.problem.findMany({
+                    take: 3,
+                    orderBy: { createdAt: 'desc' }
+                });
+            }
+
             problems = existingProblems.map(p => ({
-                problemId: p._id,
+                problemId: p.id,
                 status: 'Pending',
                 score: 0
             }));
         }
 
         if (problems.length === 0) {
-            return res.status(500).json({ error: "Failed to generate or find problems." });
+            console.error("[CRITICAL] Failed to generate or find ANY problems in the database.");
+            return res.status(500).json({ 
+                error: "The Interview Lab is currently undergoing maintenance (No problems available). Please try again in 5 minutes.",
+                code: "NO_PROBLEMS_AVAILABLE"
+            });
         }
 
         // 3. Create Session
-        const session = new InterviewSession({
-            userId,
-            problems: problems,
-            currentProblemIndex: 0,
-            status: 'Setup',
-            resumeText,
-            extractedSkills: skills,
-            startTime: new Date(),
-            durationMinutes: 60 // 3 questions -> 60 mins
+        console.log(`[DB] Creating InterviewSession for User: ${userId} with ${problems.length} problems.`);
+        const session = await prisma.interviewSession.create({
+            data: {
+                userId,
+                problems: problems as any,
+                currentProblemIndex: 0,
+                status: 'Setup',
+                resumeText,
+                extractedSkills: skills as any,
+                startTime: new Date(),
+                durationMinutes: 60
+            }
         });
 
-        await session.save();
-
+        console.log(`[SUCCESS] Session created: ${session.id}`);
         res.json({
-            sessionId: session._id,
+            sessionId: session.id,
             problemCount: problems.length,
             firstProblemId: problems[0].problemId,
             skills
         });
 
     } catch (error: any) {
-        console.error("Initiate Error:", error);
-        res.status(500).json({ error: error.message });
+        console.error("[FATAL] Initiate Error:", error);
+        res.status(500).json({ error: "Internal Server Error during session initiation. " + (error.message || "") });
     }
 };
 
@@ -99,30 +132,71 @@ export const initiateInterview = async (req: Request, res: Response) => {
 export const startInterview = async (req: Request, res: Response) => {
     try {
         const { sessionId } = req.body;
-        const session = await InterviewSession.findById(sessionId)
-            .populate('problems.problemId'); // Populate the problems array
 
-        if (!session) return res.status(404).json({ error: "Session not found" });
-        if (session.status !== 'Setup') return res.status(400).json({ error: "Interview already started or completed" });
+        console.log(`[START] Attempting to start session: ${sessionId}`);
 
-        session.status = 'Live';
-        session.startTime = new Date();
-        // Set end time based on duration
-        const endTime = new Date(session.startTime.getTime() + session.durationMinutes * 60000);
-        session.endTime = endTime;
+        const session = await prisma.interviewSession.findUnique({
+            where: { id: sessionId }
+        });
 
-        await session.save();
+        if (!session) {
+            console.error(`[START] Session ${sessionId} not found.`);
+            return res.status(404).json({ error: "Session not found" });
+        }
 
-        // Return the first problem
-        const currentProblemIndex = session.currentProblemIndex || 0;
-        const currentProblem = session.problems[currentProblemIndex].problemId;
+        // Idempotency check: If already Live, just return the data
+        if (session.status === 'Live') {
+            console.log(`[START] Session ${sessionId} is already Live. Returning current state.`);
+            const problems = session.problems as any[];
+            const currentProblemIndex = session.currentProblemIndex || 0;
+            const currentProblemRef = problems[currentProblemIndex];
+            
+            const currentProblem = await prisma.problem.findUnique({
+                where: { id: currentProblemRef.problemId }
+            });
 
+            return res.json({
+                session,
+                problem: currentProblem,
+                message: "Session already in progress"
+            });
+        }
+
+        if (session.status !== 'Setup') {
+            console.warn(`[START] Session ${sessionId} has invalid status for start: ${session.status}`);
+            return res.status(400).json({ error: `Interview cannot be started in ${session.status} status.` });
+        }
+
+        const startTime = new Date();
+        const endTime = new Date(startTime.getTime() + session.durationMinutes * 60000);
+
+        console.log(`[START] Transitioning Session ${sessionId} to Live...`);
+        const updatedSession = await prisma.interviewSession.update({
+            where: { id: sessionId },
+            data: {
+                status: 'Live',
+                startTime,
+                endTime
+            }
+        });
+
+        // Get the first problem details
+        const problems = updatedSession.problems as any[];
+        const currentProblemIndex = updatedSession.currentProblemIndex || 0;
+        const firstProblemRef = problems[currentProblemIndex];
+        
+        const currentProblem = await prisma.problem.findUnique({
+            where: { id: firstProblemRef.problemId }
+        });
+
+        console.log(`[SUCCESS] Session ${sessionId} is now Live.`);
         res.json({
-            session,
+            session: updatedSession,
             problem: currentProblem
         });
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        console.error("[FATAL] Start Interview Error:", error);
+        res.status(500).json({ error: "Failed to start interview session. " + (error.message || "") });
     }
 };
 
@@ -130,20 +204,18 @@ export const startInterview = async (req: Request, res: Response) => {
 export const submitInterview = async (req: Request, res: Response) => {
     try {
         const { sessionId, code, language } = req.body;
-        const session = await InterviewSession.findById(sessionId);
+        const session = await prisma.interviewSession.findUnique({
+            where: { id: sessionId }
+        });
 
         if (!session) return res.status(404).json({ error: "Session not found" });
 
-        // 1. Evaluate Code (Mock or basic check for now)
-        // In real world, we'd run test cases here via ExecutionService.
-
         let qualityScore = 0;
-        let correctnessScore = Math.floor(Math.random() * 40) + 60; // Mock correctness
+        let correctnessScore = Math.floor(Math.random() * 40) + 60; 
 
         // 2. Generate AI Feedback Report
         let feedback = "Good effort. Consider optimizing for time complexity.";
         try {
-            // Call AI Service for Code Analysis & Feedback
             const aiRes = await axios.post(`${AI_SERVICE_URL}/coding/analyze`, {
                 problem_title: "Interview Problem",
                 user_code: code,
@@ -157,23 +229,28 @@ export const submitInterview = async (req: Request, res: Response) => {
             console.error("AI Analysis Failed", err);
         }
 
-        session.status = 'Completed';
-        session.codeSnapshot = code;
-        session.score = {
+        const score = {
             correctness: correctnessScore,
             quality: qualityScore,
-            efficiency: 80, // Placeholder
+            efficiency: 80,
             total: (correctnessScore + qualityScore + 80) / 3
         };
-        session.feedback = feedback;
-        session.endTime = new Date(); // Actual end time
 
-        await session.save();
+        const updatedSession = await prisma.interviewSession.update({
+            where: { id: sessionId },
+            data: {
+                status: 'Completed',
+                codeSnapshot: code,
+                score: score as any,
+                feedback: feedback,
+                endTime: new Date()
+            }
+        });
 
         res.json({
             message: "Interview Submitted",
-            score: session.score,
-            feedback: session.feedback
+            score: updatedSession.score,
+            feedback: updatedSession.feedback
         });
 
     } catch (error: any) {
@@ -184,11 +261,22 @@ export const submitInterview = async (req: Request, res: Response) => {
 // Get Session Status/Details
 export const getSession = async (req: Request, res: Response) => {
     try {
-        const session = await InterviewSession.findById(req.params.id)
-            .populate('problems.problemId'); // Populate
+        const session = await prisma.interviewSession.findUnique({
+            where: { id: req.params.id as string }
+        });
+        
         if (!session) return res.status(404).json({ error: "Session not found" });
-        res.json(session);
+        
+        // Populate problems manually since they are stored as JSON references
+        const problemRefs = session.problems as any[];
+        const populatedProblems = await Promise.all(problemRefs.map(async (ref: any) => {
+            const problem = await prisma.problem.findUnique({ where: { id: ref.problemId } });
+            return { ...ref, problemId: problem };
+        }));
+
+        res.json({ ...session, problems: populatedProblems });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
 };
+

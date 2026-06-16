@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState, useRef, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import React, { useState, useRef, useEffect, useCallback, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
     Mic, MicOff, Video, CheckCircle2, MessageSquare, Settings, ShieldCheck, ArrowRight,
@@ -23,7 +23,7 @@ import MeshBackground from "@/app/dashboard/components/MeshBackground"
 import HolographicHud from "@/components/ui/HolographicHud"
 import TiltCard from "@/components/ui/TiltCard"
 
-export default function InterviewPage() {
+function InterviewContent() {
     const router = useRouter()
     const videoRef = useRef<HTMLVideoElement>(null)
     const [isRecording, setIsRecording] = useState(false)
@@ -67,7 +67,7 @@ export default function InterviewPage() {
             const checkInactivity = () => {
                 const idleTime = Date.now() - lastSpeechTimeRef.current
                 if (idleTime > 8000) { // 8 seconds of silence
-                    setVisionFeedback({ message: "AMITAI: Whenever you're ready, I'm listening.", color: "text-primary" })
+                    setVisionFeedback({ message: "INTERVYXA: Whenever you're ready, I'm listening.", color: "text-primary" })
                     setTimeout(() => setVisionFeedback(null), 3000)
                     lastSpeechTimeRef.current = Date.now() // Reset to avoid spam
                 }
@@ -77,12 +77,12 @@ export default function InterviewPage() {
         }
     }, [isRecording, isSpeaking, isProcessing])
 
-    // Anti-cheat hook — wired to socket and toast feedback
+    // Anti-cheat hook â€” wired to socket and toast feedback
     const handleAntiCheatViolation = useCallback((type: string, detail: string) => {
         setVisionFeedback({
-            message: type === 'paste' ? '⚠️ Paste blocked during interview'
-                : type === 'tabSwitch' ? '⚠️ Tab switch detected'
-                    : `⚠️ ${detail}`,
+            message: type === 'paste' ? 'âš ï¸ Paste blocked during interview'
+                : type === 'tabSwitch' ? 'âš ï¸ Tab switch detected'
+                    : `âš ï¸ ${detail}`,
             color: 'text-red-500'
         })
         setTimeout(() => setVisionFeedback(null), 4000)
@@ -95,6 +95,15 @@ export default function InterviewPage() {
         onViolation: handleAntiCheatViolation,
     })
 
+    const searchParams = useSearchParams()
+    
+    // Auto-start if redirecting from setup
+    useEffect(() => {
+        if (searchParams.get("autoStart") === "true") {
+            setHasStarted(true)
+        }
+    }, [searchParams])
+
     // Monitoring: Tab Switching & Window Blur
     useEffect(() => {
         // Load interview config from localStorage
@@ -103,7 +112,7 @@ export default function InterviewPage() {
         if (!socket) return
 
         const handleVisibilityChange = () => {
-            if (document.hidden) {
+            if (document.hidden && hasStarted && isRecording && !isSpeaking) {
                 console.log("Tab Hidden - Pausing Recording")
                 setIsRecording(false)
                 setFocusAlert(true)
@@ -116,14 +125,16 @@ export default function InterviewPage() {
         }
 
         const handleWindowBlur = () => {
-            console.log("Window Blurred - Pausing Recording")
-            setIsRecording(false)
-            setFocusAlert(true)
-            setVisionFeedback({ message: "Recording Paused: Window lost focus!", color: "text-red-500" })
-            socket.emit('monitoring-event', {
-                type: 'window_blur',
-                timestamp: Date.now()
-            })
+            // Only pause if we're actively recording (not during AI speech or processing)
+            if (hasStarted && isRecording && !isSpeaking && !isProcessing) {
+                setIsRecording(false)
+                setFocusAlert(true)
+                setVisionFeedback({ message: "Recording Paused: Window lost focus!", color: "text-red-500" })
+                socket.emit('monitoring-event', {
+                    type: 'window_blur',
+                    timestamp: Date.now()
+                })
+            }
         }
 
         document.addEventListener("visibilitychange", handleVisibilityChange)
@@ -133,7 +144,7 @@ export default function InterviewPage() {
             document.removeEventListener("visibilitychange", handleVisibilityChange)
             window.removeEventListener("blur", handleWindowBlur)
         }
-    }, [socket])
+    }, [socket, hasStarted, isRecording, isSpeaking, isProcessing])
 
     const handleEndSession = async () => {
         setIsProcessing(true)
@@ -154,7 +165,12 @@ export default function InterviewPage() {
                 if (onsiteId) {
                     router.push(`/dashboard/onsite/${onsiteId}`)
                 } else {
-                    router.push(`/dashboard/report/${reportId}`)
+                    const finalId = reportId || (typeof reportId === 'object' ? (reportId as any).id || (reportId as any)._id : null);
+                    if (finalId) {
+                        router.push(`/dashboard/report/${finalId}`)
+                    } else {
+                        router.push("/dashboard")
+                    }
                 }
                 return
             }
@@ -195,7 +211,12 @@ export default function InterviewPage() {
             if (onsiteId) {
                 router.push(`/dashboard/onsite/${onsiteId}`)
             } else {
-                router.push(`/dashboard/report/${data._id}`)
+                const finalId = data.id || data._id || data.reportId;
+                if (finalId) {
+                    router.push(`/dashboard/report/${finalId}`)
+                } else {
+                    router.push("/dashboard")
+                }
             }
         } catch (error) {
             console.error("Error generating report:", error)
@@ -348,35 +369,36 @@ export default function InterviewPage() {
                     language: localStorage.getItem("interview_language") || "English",
                     onsiteId: localStorage.getItem("interview_onsiteId"),
                     round: parseInt(localStorage.getItem("interview_round") || "0"),
-                    prebuiltQuestions  // RAG-generated from setup build-context
+                    prebuiltQuestions,  // RAG-generated from setup build-context
+                    apiKey: localStorage.getItem("sarah_nvidia_key") || undefined
                 })
             }
         })
 
-        // ─── Processing state from server ─────────────────────────
+        // â”€â”€â”€ Processing state from server â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         socket.on('processing-start', () => {
-            console.log("🔄 Server processing audio...")
+            console.log("ðŸ”„ Server processing audio...")
             isServerProcessingRef.current = true
             setIsProcessing(true)
-            // Auto-dismiss after 2s max — instant flow means it should clear fast
+            // Auto-dismiss after 2s max â€” instant flow means it should clear fast
             setTimeout(() => setIsProcessing(false), 2000)
         })
 
         socket.on('processing-end', () => {
-            console.log("✅ Server finished processing")
+            console.log("âœ… Server finished processing")
             isServerProcessingRef.current = false
             setIsProcessing(false)
             setAiThinking(false)
         })
 
-        // ── Interviewer "thinking" indicator ──────────────────────
+        // â”€â”€ Interviewer "thinking" indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         socket.on('interviewer:thinking', () => {
             setAiThinking(true)
             // Auto-clear after 4s in case server doesn't send processing-end
             setTimeout(() => setAiThinking(false), 4000)
         })
 
-        // ─── Delayed TTS audio (sent separately from question text) ──
+        // â”€â”€â”€ Delayed TTS audio (sent separately from question text) â”€â”€
         socket.on('tts-audio', (data: any) => {
             if (data?.audio) {
                 try {
@@ -386,8 +408,18 @@ export default function InterviewPage() {
                     const blob = new Blob([audioArray], { type: 'audio/mp3' })
                     const url = URL.createObjectURL(blob)
                     const audioEl = new Audio(url)
+                    
+                    // Stop any fallback browser speech before playing high-quality AI audio
+                    if (window.speechSynthesis) window.speechSynthesis.cancel()
+                    if (aiAudioRef.current) {
+                        aiAudioRef.current.pause()
+                        aiAudioRef.current.currentTime = 0
+                    }
+                    aiAudioRef.current = audioEl
+                    
                     audioEl.onended = () => {
                         URL.revokeObjectURL(url)
+                        if (aiAudioRef.current === audioEl) aiAudioRef.current = null
                     }
                     audioEl.play().catch(() => { /* browser may block autoplay */ })
                 } catch (e) {
@@ -462,7 +494,7 @@ export default function InterviewPage() {
                 audioQueueRef.current.push({ audio, isLast: !!isLast })
                 processAudioQueue()
             } else {
-                // NO base64 audio — use browser's native TTS as fallback
+                // NO base64 audio â€” use browser's native TTS as fallback
                 // This ensures the student ALWAYS hears the question
                 console.log("No audio from AI service, using browser TTS fallback...")
                 speakWithBrowserTTS(text, !!isLast)
@@ -471,7 +503,7 @@ export default function InterviewPage() {
         })
 
         socket.on('transcript-update', (data: any) => {
-            // Only handle USER messages here — AI messages come via 'ai-response'
+            // Only handle USER messages here â€” AI messages come via 'ai-response'
             if (data.role === 'user') {
                 setChat(prev => [...prev, { role: 'user', text: data.text }])
 
@@ -521,19 +553,34 @@ export default function InterviewPage() {
         })
 
         socket.on('error', (data: any) => {
-            console.error("Socket error:", data)
+            console.error("Socket error details:", data)
+            // If data is {} but might have properties, inspect them
+            if (data && typeof data === 'object' && Object.keys(data).length === 0) {
+                console.group("Mysterious Socket Error ({})")
+                console.log("Keys:", Object.getOwnPropertyNames(data))
+                console.log("Message:", data?.message)
+                console.log("Stack:", data?.stack)
+                console.groupEnd()
+            }
+
             setIsProcessing(false)
+            setAiThinking(false)
             isServerProcessingRef.current = false
 
-            // Only show actionable errors to the user
-            const msg = data.message || ""
-            const isActionable = msg.includes('expired') || msg.includes('refresh') ||
-                msg.includes('microphone') || msg.includes('permission') ||
-                msg.includes('network') || msg.includes('Connection')
-            if (isActionable) {
-                setErrorData({ message: msg, type: 'error' })
-                setTimeout(() => setErrorData(null), 6000)
-            }
+            // Show actionable errors to the user
+            const msg = data?.message || (typeof data === 'string' ? data : "An unexpected connection error occurred.")
+            const type = data?.type || 'error'
+            
+            setErrorData({ message: msg, type: type === 'error' ? 'error' : 'warning' })
+            
+            // Auto-hide after 8 seconds
+            setTimeout(() => setErrorData(null), 8000)
+        })
+
+        // Handle reconnection
+        socket.on('reconnect', () => {
+            console.log("WebSocket reconnected")
+            hasJoinedRef.current = false // Allow re-join on reconnect
         })
 
         return () => {
@@ -548,6 +595,7 @@ export default function InterviewPage() {
             socket.off("processing-end")
             socket.off("tts-audio")
             socket.off("interviewer:thinking")
+            socket.off("reconnect")
             socket.disconnect()
         }
     }, [])
@@ -792,7 +840,7 @@ export default function InterviewPage() {
             if (isRecording) return
             // Block recording while server is still processing previous response
             if (isServerProcessingRef.current) {
-                console.log("⏳ Server still processing, delaying recording start...")
+                console.log("â³ Server still processing, delaying recording start...")
                 setTimeout(startRecording, 500)
                 return
             }
@@ -801,7 +849,7 @@ export default function InterviewPage() {
             mediaRecorderRef.current = mediaRecorder
             chunksRef.current = []
 
-            // Silence Detection Logic — improved for reliable speech capture
+            // Silence Detection Logic â€” improved for reliable speech capture
             const audioContext = new AudioContext()
             audioContextRef.current = audioContext
             const source = audioContext.createMediaStreamSource(stream)
@@ -818,9 +866,10 @@ export default function InterviewPage() {
             let hasDetectedSpeech = false // Only stop after student actually speaks
             let lastSpeechTimestamp = 0   // Track when speech was last detected
             const MIN_RECORDING_MS = 500  // Minimum 0.5s before silence can stop recording
-            const SILENCE_TIMEOUT_MS = 1200 // 1.2 seconds of silence after speech = done
-            const SPEECH_THRESHOLD = 15 // Audio level that counts as "speaking"
-            const SILENCE_THRESHOLD = 10 // Audio level below = silence
+            const SILENCE_TIMEOUT_MS = 2000 // 2.0 seconds of silence â€” more "perfect" for students
+            const SPEECH_THRESHOLD = 12 // Slightly more sensitive to capture soft voices
+            const SILENCE_THRESHOLD = 8 // Lower silence floor
+
 
             const checkSilence = () => {
                 if (!analyserRef.current) return
@@ -855,7 +904,7 @@ export default function InterviewPage() {
                     }
                 }
 
-                // 3. Silence detection — only triggers AFTER:
+                // 3. Silence detection â€” only triggers AFTER:
                 //    a) Minimum recording time (3s) has passed
                 //    b) Student has actually spoken
                 //    c) 1.2s of continuous silence
@@ -922,7 +971,7 @@ export default function InterviewPage() {
                 } else {
                     console.log("No speech detected, not sending audio. Restarting recording...")
                     setIsRecording(false)
-                    // Restart recording — give student another chance
+                    // Restart recording â€” give student another chance
                     setTimeout(startRecording, 500)
                     // Cleanup and return early
                     audioContext.close()
@@ -947,7 +996,7 @@ export default function InterviewPage() {
 
             mediaRecorder.start()
             setIsRecording(true)
-            console.log("🎤 Recording started — speak your answer...")
+            console.log("ðŸŽ¤ Recording started â€” speak your answer...")
             requestAnimationFrame(checkSilence)
         } catch (err) {
             console.error("Error accessing microphone:", err)
@@ -983,7 +1032,7 @@ export default function InterviewPage() {
                     setIsInterviewOver(true)
                     return
                 }
-                // AI finished speaking — wait 1 second then start recording
+                // AI finished speaking â€” wait 1 second then start recording
                 console.log("AI finished speaking, starting recording in 1s...")
                 setTimeout(startRecording, 1000)
             }
@@ -998,7 +1047,7 @@ export default function InterviewPage() {
         })
     }
 
-    // Browser TTS Fallback — guarantees the student ALWAYS hears the AI
+    // Browser TTS Fallback â€” guarantees the student ALWAYS hears the AI
     const speakWithBrowserTTS = (text: string, isLast: boolean) => {
         if (!window.speechSynthesis) {
             console.error("Browser does not support SpeechSynthesis")
@@ -1016,12 +1065,24 @@ export default function InterviewPage() {
         utterance.volume = 1.0
         utterance.lang = 'en-US'
 
-        // Try to pick a good voice
+        // Voice selection based on user preference from localStorage
+        const voicePref = (localStorage.getItem('interview_voice') || 'Female').toLowerCase()
         const voices = window.speechSynthesis.getVoices()
-        const preferredVoice = voices.find(v =>
-            v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Samantha')
-        ) || voices.find(v => v.lang.startsWith('en')) || voices[0]
-        if (preferredVoice) utterance.voice = preferredVoice
+
+        let selectedVoice = null
+        if (voicePref.includes('male') && !voicePref.includes('female')) {
+            // Male voice preference
+            selectedVoice = voices.find(v => v.name.includes('Male') || v.name.includes('David') || v.name.includes('James') || v.name.includes('Mark'))
+                || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
+                || voices.find(v => v.lang.startsWith('en'))
+        } else {
+            // Female voice preference (default)
+            selectedVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.name.includes('Zira') || v.name.includes('Female'))
+                || voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('woman')))
+                || voices.find(v => v.name.includes('Google') || v.name.includes('Microsoft'))
+                || voices.find(v => v.lang.startsWith('en'))
+        }
+        if (selectedVoice) utterance.voice = selectedVoice
 
         isPlayingRef.current = true
         setIsSpeaking(true)
@@ -1030,12 +1091,10 @@ export default function InterviewPage() {
             isPlayingRef.current = false
             setIsSpeaking(false)
             if (isLast) {
-                console.log("Interview concluded (TTS).")
                 setIsInterviewOver(true)
                 return
             }
-            // AI finished speaking via TTS — wait 1 second then start recording
-            console.log("TTS finished, starting recording in 1s...")
+            // AI finished speaking via TTS â€” wait 1 second then start recording
             setTimeout(startRecording, 1000)
         }
 
@@ -1095,8 +1154,8 @@ export default function InterviewPage() {
                                     transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                                     className="absolute inset-0 rounded-[2.5rem] border border-dashed border-primary/20"
                                 />
-                                <div className="absolute inset-4 rounded-[2rem] bg-primary/5 flex items-center justify-center border border-primary/10 backdrop-blur-3xl shadow-[0_0_50px_rgba(var(--primary),0.1)]">
-                                    <Video className="w-12 h-12 text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
+                                <div className="absolute inset-4 rounded-[2rem] bg-primary/5 flex items-center justify-center border border-primary/10 backdrop-blur-3xl shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
+                                    <Video className="w-12 h-12 text-primary drop-shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" />
                                 </div>
                             </div>
 
@@ -1124,7 +1183,7 @@ export default function InterviewPage() {
 
                             <div className="space-y-6 pt-6">
                                 <Button
-                                    className="w-full h-24 text-2xl font-black uppercase tracking-[0.3em] bg-primary hover:bg-white text-black shadow-[0_20px_60px_rgba(var(--primary),0.3)] rounded-[2.5rem] transition-all hover:-translate-y-2 group"
+                                    className="w-full h-24 text-2xl font-black uppercase tracking-[0.3em] bg-primary hover:bg-white text-black shadow-[0_20px_60px_rgba(var(--primary-rgb),0.3)] rounded-[2.5rem] transition-all hover:-translate-y-2 group"
                                     onClick={() => setHasStarted(true)}
                                 >
                                     START UPLINK <ArrowRight className="ml-4 w-8 h-8 group-hover:translate-x-2 transition-transform" />
@@ -1137,48 +1196,66 @@ export default function InterviewPage() {
                     </div>
                 )}
 
-                {/* ── TOP NAVIGATION ─────────────────────────────────── */}
-                <header className="min-h-[56px] border-b border-white/10 bg-black/20 backdrop-blur-md px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                <Brain className="text-black w-5 h-5" />
+                {/* â”€â”€ TOP NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                <header className="min-h-[64px] border-b border-white/5 bg-black/40 backdrop-blur-2xl px-8 flex items-center justify-between shrink-0 relative z-50">
+                    <div className="flex items-center gap-10">
+                        <div className="flex items-center gap-4 group cursor-help">
+                            <div className="relative w-10 h-10 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-primary/20 rounded-xl rotate-45 group-hover:rotate-90 transition-transform duration-700" />
+                                <Brain className="text-primary w-6 h-6 relative z-10" />
                             </div>
-                            <h1 className="text-sm sm:text-xl font-black uppercase tracking-tighter">AI INTERVIEWER <span className="text-primary/50 text-[10px] sm:text-xs ml-1 sm:ml-2 font-mono">v4.0.5</span></h1>
+                            <div className="flex flex-col">
+                                <h1 className="text-lg font-black uppercase tracking-tighter leading-tight italic bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent">
+                                    NEURAL INTERFACE <span className="text-primary text-[10px] ml-2 font-mono not-italic opacity-50">X-4.0</span>
+                                </h1>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-[7px] font-black uppercase tracking-[0.3em] text-zinc-500">UPLINK ESTABLISHED // SECURE</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="h-6 w-[1px] bg-white/10 hidden sm:block" />
-                        <div className="hidden sm:flex items-center gap-4">
+
+                        <div className="h-8 w-px bg-white/5" />
+
+                        <div className="hidden lg:flex items-center gap-8">
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Interview Mode</span>
-                                <span className="text-xs font-bold text-primary">{interviewType} SESSION</span>
+                                <span className="text-[7px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-1">Session Protocol</span>
+                                <span className="text-[10px] font-bold text-primary tracking-widest">{interviewType} // {persona.toUpperCase()}</span>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">Target Sector</span>
-                                <span className="text-xs font-bold text-white">{company || 'GENERAL'}</span>
+                                <span className="text-[7px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-1">Sector Analysis</span>
+                                <span className="text-[10px] font-bold text-white tracking-widest">{company || 'GENERAL'}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className={`hidden sm:flex px-4 py-1.5 rounded-full border items-center gap-2 text-[10px] font-black tracking-widest transition-all duration-500 ${isMentorWatching ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 'bg-white/5 border-white/10 text-zinc-500'}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${isMentorWatching ? 'bg-purple-500 animate-pulse' : 'bg-zinc-600'}`} />
-                            {isMentorWatching ? 'HUMAN MENTOR WATCHING' : 'AI-AUTONOMOUS MODE'}
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-xl">
+                            <Activity className="w-3 h-3 text-primary animate-pulse" />
+                            <span className="text-[9px] font-mono text-zinc-400 tracking-tighter">LAT: 42ms // JITTER: 2.1ms</span>
                         </div>
-                        <Button variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-white/10 hidden sm:flex">
-                            <Settings className="w-4 h-4 text-zinc-400" />
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-3 sm:px-4 h-8 sm:h-9 font-black text-[9px] sm:text-[10px] uppercase tracking-widest"
-                            onClick={handleEndSession}
-                        >
-                            END MISSION
-                        </Button>
+                        
+                        <div className="h-8 w-px bg-white/5" />
+
+                        <div className="flex items-center gap-4">
+                            <div className={`flex px-4 py-2 rounded-full border items-center gap-3 text-[9px] font-black tracking-[0.2em] transition-all duration-700 ${isMentorWatching ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.1)]' : 'bg-white/5 border-white/10 text-zinc-600'}`}>
+                                <div className={`w-1.5 h-1.5 rounded-full ${isMentorWatching ? 'bg-purple-500 animate-pulse shadow-[0_0_10px_#a855f7]' : 'bg-zinc-800'}`} />
+                                {isMentorWatching ? 'MENTOR OVERRIDE ACTIVE' : 'AI-AUTONOMOUS'}
+                            </div>
+                            
+                            <Button 
+                                variant="destructive" 
+                                className="h-10 px-6 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all hover:scale-105"
+                                onClick={handleEndSession}
+                            >
+                                TERMINATE
+                            </Button>
+                        </div>
                     </div>
                 </header>
 
                 <main className="flex-1 flex flex-col lg:flex-row overflow-hidden p-3 sm:p-6 gap-3 sm:gap-6">
-                    {/* ── LEFT PANEL: AVATAR & VISUALS ────────────────────── */}
+                    {/* â”€â”€ LEFT PANEL: AVATAR & VISUALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="hidden lg:flex w-1/3 flex-col gap-6 overflow-hidden">
                         <TiltCard className="flex-1">
                             <Card className="h-full bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden relative group/avatar">
@@ -1288,7 +1365,7 @@ export default function InterviewPage() {
                         </TiltCard>
                     </div>
 
-                    {/* ── CENTRAL PANEL: MAIN INTERACTION ─────────────────── */}
+                    {/* â”€â”€ CENTRAL PANEL: MAIN INTERACTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="flex-1 flex flex-col gap-6 overflow-hidden">
                         {/* Interview Content / Workspace */}
                         <Card className="flex-1 bg-zinc-900/10 backdrop-blur-sm border border-white/5 rounded-[2rem] overflow-hidden relative flex flex-col">
@@ -1297,7 +1374,7 @@ export default function InterviewPage() {
                                 {Array.from({ length: totalSteps }).map((_, i) => (
                                     <div
                                         key={i}
-                                        className={`flex-1 h-full transition-all duration-700 ${i < currentStep ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]' : 'bg-white/5'}`}
+                                        className={`flex-1 h-full transition-all duration-700 ${i < currentStep ? 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]' : 'bg-white/5'}`}
                                         style={{ borderRight: i < totalSteps - 1 ? '1px solid black' : 'none' }}
                                     />
                                 ))}
@@ -1408,7 +1485,7 @@ export default function InterviewPage() {
                                         size="lg"
                                         onClick={isRecording ? stopRecording : startRecording}
                                         disabled={isProcessing}
-                                        className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${isRecording ? 'bg-red-500 hover:bg-red-600 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'bg-primary hover:bg-white text-black shadow-[0_0_30px_rgba(var(--primary),0.4)]'}`}
+                                        className={`h-16 w-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${isRecording ? 'bg-red-500 hover:bg-red-600 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'bg-primary hover:bg-white text-black shadow-[0_0_30px_rgba(var(--primary-rgb),0.4)]'}`}
                                     >
                                         {isRecording ? <StopCircle className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
                                     </Button>
@@ -1481,5 +1558,13 @@ export default function InterviewPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function InterviewPage() {
+    return (
+        <Suspense fallback={<div className="h-screen bg-black flex items-center justify-center"><Loader2 className="animate-spin text-primary w-12 h-12" /></div>}>
+            <InterviewContent />
+        </Suspense>
     )
 }

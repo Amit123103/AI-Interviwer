@@ -1,10 +1,8 @@
 import asyncio
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from app.services.gesture_detector import HandGestureDetector
+from app.services.gesture_detector import gesture_detector as detector
 
-router = APIRouter(prefix="/ws", tags=["Gesture Tracking"])
-
-detector = HandGestureDetector()
+router = APIRouter(prefix="/gesture", tags=["Gesture"])
 
 @router.websocket("/gesture-track")
 async def gesture_websocket(websocket: WebSocket):

@@ -1,20 +1,23 @@
 import { Request, Response } from 'express';
-import User from '../models/User';
-import Profile from '../models/Profile';
+import prisma from '../prisma';
 import bcrypt from 'bcryptjs';
 import archiver from 'archiver';
-import Report from '../models/Report';
 
 // --- Preferences ---
 export const updatePreferences = async (req: any, res: Response) => {
     try {
-        const user = await User.findById(req.user._id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const userId = req.user.id;
+        
+        const preferences = await prisma.preferences.upsert({
+            where: { userId },
+            update: req.body,
+            create: {
+                userId,
+                ...req.body
+            }
+        });
 
-        user.preferences = { ...user.preferences, ...req.body };
-        await user.save();
-
-        res.json({ preferences: user.preferences });
+        res.json({ preferences });
     } catch (error: any) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -24,15 +27,20 @@ export const updatePreferences = async (req: any, res: Response) => {
 export const changePassword = async (req: any, res: Response) => {
     const { currentPassword, newPassword } = req.body;
     try {
-        const user = await User.findById(req.user._id);
+        const userId = req.user.id;
+        const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
         if (!isMatch) return res.status(400).json({ message: 'Invalid current password' });
 
         const salt = await bcrypt.genSalt(10);
-        user.passwordHash = await bcrypt.hash(newPassword, salt);
-        await user.save();
+        const passwordHash = await bcrypt.hash(newPassword, salt);
+        
+        await prisma.user.update({
+            where: { id: userId },
+            data: { passwordHash }
+        });
 
         res.json({ message: 'Password updated successfully' });
     } catch (error: any) {
@@ -43,11 +51,12 @@ export const changePassword = async (req: any, res: Response) => {
 export const updateTwoFactor = async (req: any, res: Response) => {
     const { enabled } = req.body;
     try {
-        const user = await User.findById(req.user._id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        user.twoFactorEnabled = enabled;
-        await user.save();
+        const userId = req.user.id;
+        
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data: { twoFactorEnabled: enabled }
+        });
 
         res.json({ twoFactorEnabled: user.twoFactorEnabled });
     } catch (error: any) {
@@ -58,13 +67,20 @@ export const updateTwoFactor = async (req: any, res: Response) => {
 // --- Notifications ---
 export const updateNotifications = async (req: any, res: Response) => {
     try {
-        const user = await User.findById(req.user._id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const userId = req.user.id;
+        
+        // Map old notifications object structure to flat fields in Preferences model if needed, 
+        // or just update directly if body fields match model fields (emailNotifications, etc.)
+        const preferences = await prisma.preferences.upsert({
+            where: { userId },
+            update: req.body,
+            create: {
+                userId,
+                ...req.body
+            }
+        });
 
-        user.preferences.notifications = { ...user.preferences.notifications, ...req.body };
-        await user.save();
-
-        res.json({ notifications: user.preferences.notifications });
+        res.json({ notifications: preferences });
     } catch (error: any) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -73,21 +89,30 @@ export const updateNotifications = async (req: any, res: Response) => {
 // --- Privacy ---
 export const downloadData = async (req: any, res: Response) => {
     try {
-        const user = await User.findById(req.user._id).select('-passwordHash');
-        const profile = await Profile.findOne({ userId: req.user._id });
-        const reports = await Report.find({ userId: req.user._id });
+        const userId = req.user.id;
+        
+        const user = await prisma.user.findUnique({ 
+            where: { id: userId },
+            include: {
+                profile: true,
+                reports: true,
+                preferences: true
+            }
+        });
 
         if (!user) return res.status(404).json({ message: 'User not found' });
 
+        const { passwordHash, ...userData } = user;
+
         const archive = archiver('zip', { zlib: { level: 9 } });
 
-        res.attachment(`user_data_${user._id}.zip`);
+        res.attachment(`user_data_${user.id}.zip`);
         archive.pipe(res);
 
-        archive.append(JSON.stringify(user, null, 2), { name: 'user_account.json' });
-        if (profile) archive.append(JSON.stringify(profile, null, 2), { name: 'user_profile.json' });
+        archive.append(JSON.stringify(userData, null, 2), { name: 'user_account.json' });
+        if (user.profile) archive.append(JSON.stringify(user.profile, null, 2), { name: 'user_profile.json' });
 
-        const reportsJson = JSON.stringify(reports, null, 2);
+        const reportsJson = JSON.stringify(user.reports, null, 2);
         archive.append(reportsJson, { name: 'interview_history.json' });
 
         await archive.finalize();
@@ -100,16 +125,17 @@ export const downloadData = async (req: any, res: Response) => {
 export const deleteAccount = async (req: any, res: Response) => {
     const { password } = req.body;
     try {
-        const user = await User.findById(req.user._id);
+        const userId = req.user.id;
+        const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) return res.status(400).json({ message: 'Incorrect password' });
 
-        // Delete all related data
-        await Profile.deleteOne({ userId: user._id });
-        await Report.deleteMany({ userId: user._id });
-        await User.deleteOne({ _id: user._id });
+        // Prisma models with Cascade delete will handle related records if defined in schema.
+        // If not, we delete manually. Our schema has relations.
+        
+        await prisma.user.delete({ where: { id: userId } });
 
         res.json({ message: 'Account deleted successfully' });
     } catch (error: any) {

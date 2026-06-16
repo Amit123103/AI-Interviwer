@@ -48,7 +48,7 @@ export default function StudyTimer() {
     const percent = (seconds / initialSeconds) * 100
 
     return (
-        <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl relative overflow-hidden group flex flex-col h-full">
+        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl relative overflow-hidden group flex flex-col h-full">
             {/* Rainbow accent bar */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 via-pink-500 to-rose-500" />
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -z-10 group-hover:bg-indigo-500/20 transition-all duration-700" />
@@ -59,13 +59,13 @@ export default function StudyTimer() {
                         <Timer className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white">Focus Timer</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Focus Timer</h3>
                         <p className="text-xs text-zinc-500">Stay in the zone</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
                     <Zap className="w-3 h-3 text-amber-400" />
-                    <span className="text-[10px] font-medium text-zinc-300">{sessions} sessions</span>
+                    <span className="text-[10px] font-medium text-slate-900 dark:text-zinc-300">{sessions} sessions</span>
                 </div>
             </div>
 
@@ -89,7 +89,7 @@ export default function StudyTimer() {
                         />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <div className="text-4xl font-bold tracking-tight text-white font-mono">
+                        <div className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white font-mono">
                             {formatTime(seconds)}
                         </div>
                         <div className="text-[10px] font-medium text-zinc-500 mt-1">
@@ -102,13 +102,13 @@ export default function StudyTimer() {
                 <div className="flex items-center gap-4 relative z-10">
                     <button
                         onClick={reset}
-                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-900 dark:text-zinc-400 hover:text-slate-900 dark:text-white hover:bg-white/10 transition-all"
                     >
                         <RotateCcw className="w-5 h-5" />
                     </button>
                     <button
                         onClick={toggle}
-                        className={`w-16 h-16 rounded-[2rem] flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 active:scale-95 ${isActive ? 'bg-zinc-800 shadow-zinc-900/40' : 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-indigo-500/40'}`}
+                        className={`w-16 h-16 rounded-[2rem] flex items-center justify-center text-slate-900 dark:text-white shadow-2xl transition-all hover:scale-110 active:scale-95 ${isActive ? 'bg-zinc-800 shadow-zinc-900/40' : 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-indigo-500/40'}`}
                     >
                         {isActive ? <Pause className="w-7 h-7 fill-current" /> : <Play className="w-7 h-7 fill-current ml-1" />}
                     </button>
@@ -118,7 +118,7 @@ export default function StudyTimer() {
                             setSeconds(mode === 'work' ? 5 * 60 : 25 * 60)
                             setIsActive(false)
                         }}
-                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-900 dark:text-zinc-400 hover:text-slate-900 dark:text-white hover:bg-white/10 transition-all"
                     >
                         {mode === 'work' ? <Coffee className="w-5 h-5" /> : <Brain className="w-5 h-5" />}
                     </button>
@@ -130,7 +130,7 @@ export default function StudyTimer() {
                         <button
                             key={m}
                             onClick={() => setDuration(m)}
-                            className="flex-1 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-medium text-zinc-500 hover:text-white hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all"
+                            className="flex-1 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-medium text-zinc-500 hover:text-slate-900 dark:text-white hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all"
                         >
                             {m}m
                         </button>

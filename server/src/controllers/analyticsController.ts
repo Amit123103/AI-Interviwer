@@ -1,13 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/User';
-import Report from '../models/Report';
-import Post from '../models/Post';
-import ProPayment from '../models/ProPayment';
-import Config from '../models/Config';
-import AdminLog from '../models/AdminLog';
-import Announcement from '../models/Announcement';
-import Resource from '../models/Resource';
-import UpgradeRequest from '../models/UpgradeRequest';
+import prisma from '../prisma';
 import bcrypt from 'bcryptjs';
 import { Parser } from 'json2csv';
 
@@ -15,14 +7,16 @@ import { Parser } from 'json2csv';
 const logAdminAction = async (req: Request, action: string, targetId: any, targetName: string, details: any) => {
     try {
         const admin = (req as any).user;
-        await AdminLog.create({
-            adminId: admin._id,
-            adminName: admin.username,
-            action,
-            targetId,
-            targetName,
-            details,
-            ipAddress: req.ip || 'unknown'
+        await prisma.adminLog.create({
+            data: {
+                adminId: admin.id,
+                adminName: admin.username,
+                action,
+                targetId: String(targetId),
+                targetName,
+                details: details as any,
+                ipAddress: (req as any).ip || 'unknown'
+            }
         });
 
         // Also broadcast as a live event
@@ -41,28 +35,22 @@ const logAdminAction = async (req: Request, action: string, targetId: any, targe
 
 export const getAdminStats = async (req: Request, res: Response) => {
     try {
-        const totalUsers = await User.countDocuments();
-        const proUsers = await User.countDocuments({ 'proSubscription.isActive': true });
-        const totalInterviews = await Report.countDocuments();
-        const totalPosts = await Post.countDocuments();
-
-        // Calculate REAL Revenue from approved payments
-        const revenueResult = await ProPayment.aggregate([
-            { $match: { status: 'approved' } },
-            { $group: { _id: null, total: { $sum: "$amount" } } }
+        const [totalUsers, totalInterviews, totalPosts] = await Promise.all([
+            prisma.user.count(),
+            prisma.report.count(),
+            prisma.post.count()
         ]);
-        const totalRevenue = revenueResult[0]?.total || 0;
 
         // Get daily active users (proxied by updated users in last 24h)
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const activeUsers = await User.countDocuments({ updatedAt: { $gte: oneDayAgo } });
+        const activeUsers = await prisma.user.count({ where: { updatedAt: { gte: oneDayAgo } } });
 
         res.json({
             totalUsers,
-            proUsers,
+            proUsers: 0,
             totalInterviews,
             totalPosts,
-            totalRevenue,
+            totalRevenue: 0,
             activeUsers
         });
     } catch (error: any) {
@@ -74,36 +62,45 @@ export const getAdminStats = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const { search, status, role, page = 1, limit = 20 } = req.query;
-        const query: any = {};
+        const where: any = {};
 
         if (search) {
-            query.$or = [
-                { email: { $regex: search, $options: 'i' } },
-                { username: { $regex: search, $options: 'i' } }
+            where.OR = [
+                { email: { contains: search as string, mode: 'insensitive' } },
+                { username: { contains: search as string, mode: 'insensitive' } }
             ];
-            // If search looks like an ObjectId
-            if (/^[0-9a-fA-F]{24}$/.test(search as string)) {
-                query.$or.push({ _id: search });
+            // If search looks like an Id (UUID)
+            if (/^[0-9a-fA-F-]{36}$/.test(search as string)) {
+                where.OR.push({ id: search });
             }
         }
 
         if (status) {
-            if (status === 'pro') query['proSubscription.isActive'] = true;
-            if (status === 'free') query['proSubscription.isActive'] = { $ne: true };
-            if (status === 'suspended') query.accountStatus = 'suspended';
+            if (status === 'suspended') where.accountStatus = 'SUSPENDED';
         }
 
-        if (role) query.role = role;
+        if (role) {
+            where.role = (role as string).toUpperCase().replace('-', '_');
+        }
 
         const skip = (Number(page) - 1) * Number(limit);
         const [users, total] = await Promise.all([
-            User.find(query)
-                .select('-passwordHash')
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(Number(limit))
-                .lean(),
-            User.countDocuments(query)
+            prisma.user.findMany({
+                where,
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    role: true,
+                    accountStatus: true,
+                    createdAt: true,
+                    updatedAt: true
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: Number(limit)
+            }),
+            prisma.user.count({ where })
         ]);
 
         res.json({
@@ -123,74 +120,45 @@ export const updateUserStatus = async (req: Request, res: Response) => {
         if (!['active', 'suspended'].includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });
         }
-        const user = await User.findById(userId);
+        const user = await prisma.user.findUnique({ where: { id: userId as string } });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.accountStatus = status;
-        await user.save();
+        const updatedUser = await prisma.user.update({
+            where: { id: userId as string },
+            data: { accountStatus: status.toUpperCase() as any }
+        });
 
-        await logAdminAction(req, 'UPDATE_STATUS', user._id, user.username, { newStatus: status });
+        await logAdminAction(req, 'UPDATE_STATUS', user.id, user.username, { newStatus: status });
 
-        res.json(user.toObject({ getters: true, virtuals: false, transform: (doc, ret: any) => { delete ret.passwordHash; return ret; } }));
+        const { passwordHash, ...userWithoutPassword } = updatedUser;
+        res.json(userWithoutPassword);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 };
 
+// manualProToggle removed — premium features have been removed
 export const manualProToggle = async (req: Request, res: Response) => {
-    try {
-        const { userId, isActive, plan, durationDays } = req.body;
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const isCurrentlyPro = user.proSubscription?.isActive;
-
-        if (isActive) {
-            const start = new Date();
-            const expiry = new Date();
-            expiry.setDate(expiry.getDate() + (durationDays || 30));
-            user.proSubscription = {
-                isActive: true,
-                startDate: start,
-                expiryDate: expiry,
-                plan: plan || 'monthly',
-                paymentId: null
-            };
-            user.subscriptionStatus = 'pro';
-            user.currentPeriodEnd = expiry;
-        } else {
-            user.proSubscription = {
-                isActive: false,
-                startDate: null,
-                expiryDate: null,
-                plan: null,
-                paymentId: null
-            };
-            user.subscriptionStatus = 'free';
-            user.currentPeriodEnd = undefined;
-        }
-
-        await user.save();
-
-        await logAdminAction(req, 'MANUAL_PRO_TOGGLE', user._id, user.username, { isPro: isActive });
-
-        res.json(user.toObject({ getters: true, virtuals: false, transform: (doc, ret: any) => { delete ret.passwordHash; return ret; } }));
-    } catch (error: any) {
-        res.status(500).json({ message: error.message });
-    }
+    res.status(410).json({ message: 'Premium features have been removed. All features are now free.' });
 };
 
 export const exportData = async (req: Request, res: Response) => {
     try {
-        const { type } = req.params; // 'users' or 'payments'
+        const { type } = req.params;
 
         if (type === 'users') {
-            const users = await User.find({}).select('username email role accountStatus subscriptionStatus createdAt').lean();
-            const fields = ['username', 'email', 'role', 'accountStatus', 'subscriptionStatus', 'createdAt'];
+            const users = await prisma.user.findMany({
+                select: {
+                    username: true,
+                    email: true,
+                    role: true,
+                    accountStatus: true,
+                    createdAt: true
+                }
+            });
+            const fields = ['username', 'email', 'role', 'accountStatus', 'createdAt'];
             const json2csvParser = new Parser({ fields });
             const csv = json2csvParser.parse(users);
             res.header('Content-Type', 'text/csv');
@@ -198,25 +166,7 @@ export const exportData = async (req: Request, res: Response) => {
             return res.send(csv);
         }
 
-        if (type === 'payments') {
-            const payments = await ProPayment.find({}).populate('userId', 'email').lean();
-            const data = payments.map((p: any) => ({
-                email: p.userId?.email,
-                plan: p.selectedPlan,
-                amount: p.amount,
-                txnId: p.transactionId,
-                status: p.status,
-                date: p.createdAt
-            }));
-            const fields = ['email', 'plan', 'amount', 'txnId', 'status', 'date'];
-            const json2csvParser = new Parser({ fields });
-            const csv = json2csvParser.parse(data);
-            res.header('Content-Type', 'text/csv');
-            res.attachment('payments_export.csv');
-            return res.send(csv);
-        }
-
-        res.status(400).json({ message: 'Invalid export type' });
+        res.status(400).json({ message: 'Invalid export type. Supported: users' });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -225,20 +175,23 @@ export const exportData = async (req: Request, res: Response) => {
 export const updateUserRole = async (req: Request, res: Response) => {
     try {
         const { userId, role } = req.body;
-        if (!['student', 'admin', 'sub-admin'].includes(role)) {
+        if (!['student', 'admin', 'sub-admin'].includes(role.toLowerCase())) {
             return res.status(400).json({ message: 'Invalid role' });
         }
-        const user = await User.findById(userId);
+        const user = await prisma.user.findUnique({ where: { id: userId as string } });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.role = role;
-        await user.save();
+        const updatedUser = await prisma.user.update({
+            where: { id: userId as string },
+            data: { role: role.toUpperCase().replace('-', '_') as any }
+        });
 
-        await logAdminAction(req, 'UPDATE_USER_ROLE', user._id, user.username, { newRole: role });
+        await logAdminAction(req, 'UPDATE_USER_ROLE', user.id, user.username, { newRole: role });
 
-        res.json(user.toObject({ getters: true, virtuals: false, transform: (doc, ret: any) => { delete ret.passwordHash; return ret; } }));
+        const { passwordHash, ...userWithoutPassword } = updatedUser;
+        res.json(userWithoutPassword);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -246,54 +199,54 @@ export const updateUserRole = async (req: Request, res: Response) => {
 
 export const updateUserDetailed = async (req: Request, res: Response) => {
     try {
-        const { userId, xp, level, streak, stats, ...rest } = req.body; // Capture other fields if any
+        const { userId, xp, level, streak, stats, ...rest } = req.body;
 
-        const user = await User.findById(userId);
+        const user = await prisma.user.findUnique({ where: { id: userId as string } });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const update: any = {};
-        if (xp !== undefined) update.xp = xp;
-        if (level !== undefined) update.level = level;
-        if (streak !== undefined) update.streak = streak;
-        if (stats) {
-            if (stats.totalInterviews !== undefined) update['stats.totalInterviews'] = stats.totalInterviews;
-            if (stats.totalCodeLines !== undefined) update['stats.totalCodeLines'] = stats.totalCodeLines;
-            if (stats.averageScore !== undefined) update['stats.averageScore'] = stats.averageScore;
-        }
+        const data: any = { ...rest };
+        if (xp !== undefined) data.xp = xp;
+        if (level !== undefined) data.level = level;
+        if (streak !== undefined) data.streak = streak;
+        
+        // Handling nested stats might require separate Profile update or JSON field update
+        // Assuming 'stats' in req.body was for User model in Mongoose, but User Prisma model doesn't have it.
+        // It might be better to update the Profile model if these are profile stats.
+        
+        const updatedUser = await prisma.user.update({
+            where: { id: userId as string },
+            data
+        });
 
-        // Apply updates
-        Object.assign(user, update);
-        // Apply any other fields passed in 'rest'
-        Object.assign(user, rest);
+        await logAdminAction(req, 'UPDATE_USER_DETAILED', user.id, user.username, { ...data });
 
-        await user.save();
-
-        await logAdminAction(req, 'UPDATE_USER_DETAILED', user._id, user.username, { ...update, ...rest });
-
-        res.json(user.toObject({ getters: true, virtuals: false, transform: (doc, ret: any) => { delete ret.passwordHash; return ret; } }));
+        const { passwordHash, ...userWithoutPassword } = updatedUser;
+        res.json(userWithoutPassword);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// User Analytics Functions
 export const getUserTrends = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = (req as any).user.id;
 
-        // Get user's reports over time
-        const reports = await Report.find({ userId })
-            .sort({ createdAt: 1 })
-            .select('createdAt scores sector');
+        const reports = await prisma.report.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'asc' },
+            select: { createdAt: true, scores: true, sector: true }
+        });
 
-        // Format data for trends
-        const trends = reports.map(report => ({
-            date: report.createdAt,
-            technical: report.scores?.technical || 0,
-            communication: report.scores?.communication || 0,
-            confidence: report.scores?.confidence || 0,
-            sector: report.sector
-        }));
+        const trends = reports.map(report => {
+            const scores = report.scores as any || {};
+            return {
+                date: report.createdAt,
+                technical: scores.technical || 0,
+                communication: scores.communication || 0,
+                confidence: scores.confidence || 0,
+                sector: report.sector
+            };
+        });
 
         res.json({ trends });
     } catch (error: any) {
@@ -303,23 +256,24 @@ export const getUserTrends = async (req: Request, res: Response) => {
 
 export const getSkillProficiency = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = (req as any).user.id;
 
-        // Get user's latest reports grouped by sector
-        const reports = await Report.find({ userId })
-            .sort({ createdAt: -1 })
-            .select('scores sector');
+        const reports = await prisma.report.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            select: { scores: true, sector: true }
+        });
 
-        // Calculate average scores by sector
         const skillMap: any = {};
         reports.forEach(report => {
             const sector = report.sector || 'General';
             if (!skillMap[sector]) {
                 skillMap[sector] = { total: 0, count: 0 };
             }
-            const avgScore = ((report.scores?.technical || 0) +
-                (report.scores?.communication || 0) +
-                (report.scores?.confidence || 0)) / 3;
+            const scores = report.scores as any || {};
+            const avgScore = ((scores.technical || 0) +
+                (scores.communication || 0) +
+                (scores.confidence || 0)) / 3;
             skillMap[sector].total += avgScore;
             skillMap[sector].count += 1;
         });
@@ -339,22 +293,36 @@ export const getIndustryBenchmarks = async (req: Request, res: Response) => {
     try {
         const { sector } = req.query;
 
-        // Aggregate reports to calculate averages by sector
-        const matchStage = sector ? { sector } : {};
+        // Group by sector and calculate averages
+        // Note: Prisma groupBy doesn't directly support nested JSON field averages easily.
+        // We'll fetch and aggregate in memory or use a raw query if performance is issue.
+        // For now, let's fetch essential data.
+        
+        const reports = await prisma.report.findMany({
+            where: sector ? { sector: sector as string } : {},
+            select: { sector: true, scores: true }
+        });
 
-        const benchmarks = await Report.aggregate([
-            { $match: matchStage },
-            {
-                $group: {
-                    _id: "$sector",
-                    avgTechnical: { $avg: "$scores.technical" },
-                    avgCommunication: { $avg: "$scores.communication" },
-                    avgConfidence: { $avg: "$scores.confidence" },
-                    count: { $sum: 1 }
-                }
-            },
-            { $sort: { avgTechnical: -1 } }
-        ]);
+        const benchmarksMap: any = {};
+        reports.forEach(r => {
+            const s = r.sector || 'Global';
+            if (!benchmarksMap[s]) {
+                benchmarksMap[s] = { tech: 0, comm: 0, conf: 0, count: 0 };
+            }
+            const scores = r.scores as any || {};
+            benchmarksMap[s].tech += scores.technical || 0;
+            benchmarksMap[s].comm += scores.communication || 0;
+            benchmarksMap[s].conf += scores.confidence || 0;
+            benchmarksMap[s].count++;
+        });
+
+        const benchmarks = Object.entries(benchmarksMap).map(([s, data]: [string, any]) => ({
+            _id: s,
+            avgTechnical: data.tech / data.count,
+            avgCommunication: data.comm / data.count,
+            avgConfidence: data.conf / data.count,
+            count: data.count
+        }));
 
         if (benchmarks.length === 0) {
             return res.json({
@@ -375,7 +343,7 @@ export const getIndustryBenchmarks = async (req: Request, res: Response) => {
 
 export const getComparison = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user._id;
+        const userId = (req as any).user.id;
         const { reportIds } = req.query;
 
         if (!reportIds || typeof reportIds !== 'string') {
@@ -383,13 +351,16 @@ export const getComparison = async (req: Request, res: Response) => {
         }
 
         const ids = reportIds.split(',');
-        const reports = await Report.find({
-            _id: { $in: ids },
-            userId
-        }).select('sector scores createdAt');
+        const reports = await prisma.report.findMany({
+            where: {
+                id: { in: ids },
+                userId
+            },
+            select: { id: true, sector: true, scores: true, createdAt: true }
+        });
 
         const comparison = reports.map(report => ({
-            id: report._id,
+            id: report.id,
             sector: report.sector,
             date: report.createdAt,
             scores: report.scores
@@ -404,49 +375,52 @@ export const getComparison = async (req: Request, res: Response) => {
 export const getUserDetails = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
-        const [user, logins, payments] = await Promise.all([
-            User.findById(userId).select('-passwordHash').lean(),
-            require('../models/LoginLog').default.find({ userId }).sort({ timestamp: -1 }).limit(10).lean(),
-            ProPayment.find({ userId }).sort({ createdAt: -1 }).lean()
+        const [user, logins] = await Promise.all([
+            prisma.user.findUnique({ where: { id: userId as string } }),
+            prisma.loginLog.findMany({ where: { userId: userId as string }, orderBy: { timestamp: 'desc' }, take: 10 })
         ]);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const { passwordHash, ...userWithoutPassword } = user;
+
         res.json({
-            user,
+            user: userWithoutPassword,
             logins,
-            payments
+            payments: []
         });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// --- PHASE 5: ADVANCED STUDENT & PLATFORM MANAGEMENT ---
-
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { username, email, password, role, accountStatus } = req.body;
 
-        const existing = await User.findOne({ $or: [{ email }, { username }] });
+        const existing = await prisma.user.findFirst({
+            where: { OR: [{ email }, { username }] }
+        });
         if (existing) return res.status(400).json({ message: 'User or Email already exists' });
 
         const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(password, salt);
+        const hash = await bcrypt.hash(password, salt);
 
-        const newUser = await User.create({
-            username,
-            email,
-            passwordHash,
-            role: role || 'student',
-            accountStatus: accountStatus || 'active'
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                email,
+                passwordHash: hash,
+                role: (role || 'student').toUpperCase().replace('-', '_') as any,
+                accountStatus: (accountStatus || 'active').toUpperCase() as any
+            }
         });
 
-        await logAdminAction(req, 'CREATE_USER', newUser._id, newUser.username, { role: newUser.role });
+        await logAdminAction(req, 'CREATE_USER', newUser.id, newUser.username, { role: newUser.role });
 
-        res.status(201).json({ message: 'User created successfully', user: { id: newUser._id, email: newUser.email } });
+        res.status(201).json({ message: 'User created successfully', user: { id: newUser.id, email: newUser.email } });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -455,11 +429,11 @@ export const createUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
-        const user = await User.findById(userId);
+        const user = await prisma.user.findUnique({ where: { id: userId as string } });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         const username = user.username;
-        await User.findByIdAndDelete(userId);
+        await prisma.user.delete({ where: { id: userId as string } });
 
         await logAdminAction(req, 'DELETE_USER', userId, username, { permanent: true });
 
@@ -469,22 +443,22 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 };
 
-// Announcement Flow
 export const createAnnouncement = async (req: Request, res: Response) => {
     try {
         const { title, content, priority, audience, expiresAt } = req.body;
-        const announcement = await Announcement.create({
-            title,
-            content,
-            priority,
-            audience,
-            expiresAt,
-            createdBy: (req as any).user._id
+        const announcement = await prisma.announcement.create({
+            data: {
+                title,
+                content,
+                priority,
+                audience,
+                expiresAt: expiresAt ? new Date(expiresAt) : null,
+                createdBy: (req as any).user.id
+            }
         });
 
-        await logAdminAction(req, 'CREATE_ANNOUNCEMENT', announcement._id, title, { priority, audience });
+        await logAdminAction(req, 'CREATE_ANNOUNCEMENT', announcement.id, title, { priority, audience });
 
-        // Broadcast to all
         if ((global as any).broadcastAdminEvent) {
             (global as any).broadcastAdminEvent('platform:announcement', announcement);
         }
@@ -497,10 +471,10 @@ export const createAnnouncement = async (req: Request, res: Response) => {
 
 export const getAnnouncements = async (req: Request, res: Response) => {
     try {
-        const announcements = await Announcement.find()
-            .sort({ createdAt: -1 })
-            .limit(20)
-            .lean();
+        const announcements = await prisma.announcement.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 20
+        });
         res.json(announcements);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -510,30 +484,29 @@ export const getAnnouncements = async (req: Request, res: Response) => {
 export const deleteAnnouncement = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        await Announcement.findByIdAndDelete(id);
+        await prisma.announcement.delete({ where: { id: id as string } });
         res.json({ message: 'Announcement removed' });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Resource Flow
 export const createResource = async (req: Request, res: Response) => {
     try {
-        const { title, description, url, type, category, isProOnly } = req.body;
-        const resource = await Resource.create({
-            title,
-            description,
-            url,
-            type,
-            category,
-            isProOnly,
-            createdBy: (req as any).user._id
+        const { title, description, url, type, category } = req.body;
+        const resource = await prisma.resource.create({
+            data: {
+                title,
+                description,
+                url,
+                type,
+                category,
+                createdBy: (req as any).user.id
+            }
         });
 
-        await logAdminAction(req, 'CREATE_RESOURCE', resource._id, title, { type, isProOnly });
+        await logAdminAction(req, 'CREATE_RESOURCE', resource.id, title, { type });
 
-        // Live update for students
         if ((global as any).broadcastAdminEvent) {
             (global as any).broadcastAdminEvent('platform:resource_new', resource);
         }
@@ -546,69 +519,25 @@ export const createResource = async (req: Request, res: Response) => {
 
 export const getResources = async (req: Request, res: Response) => {
     try {
-        const resources = await Resource.find().sort({ createdAt: -1 }).lean();
+        const resources = await prisma.resource.findMany({ orderBy: { createdAt: 'desc' } });
         res.json(resources);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Upgrade Request Flow
+// Upgrade requests removed — all features are now free
 export const getUpgradeRequests = async (req: Request, res: Response) => {
-    try {
-        const requests = await UpgradeRequest.find({ status: 'pending' })
-            .populate('userId', 'username email')
-            .sort({ createdAt: -1 })
-            .lean();
-        res.json(requests);
-    } catch (error: any) {
-        res.status(500).json({ message: error.message });
-    }
+    res.json([]);
 };
 
 export const respondToUpgradeRequest = async (req: Request, res: Response) => {
-    try {
-        const { requestId, status, adminNote } = req.body;
-        const request = await UpgradeRequest.findById(requestId).populate('userId');
-        if (!request) return res.status(404).json({ message: 'Request not found' });
-
-        request.status = status;
-        request.adminNote = adminNote;
-        await request.save();
-
-        if (status === 'approved') {
-            const user = await User.findById(request.userId._id);
-            if (user) {
-                const expiryValue = request.requestedPlan === 'yearly' ? 365 : (request.requestedPlan === '6month' ? 180 : 30);
-                const expiry = new Date();
-                expiry.setDate(expiry.getDate() + expiryValue);
-
-                user.subscriptionStatus = 'pro';
-                user.proSubscription = {
-                    isActive: true,
-                    plan: request.requestedPlan,
-                    startDate: new Date(),
-                    expiryDate: expiry,
-                    paymentId: null
-                };
-                user.currentPeriodEnd = expiry;
-                await user.save();
-
-                await logAdminAction(req, 'APPROVE_UPGRADE', user._id, user.username, { plan: request.requestedPlan });
-            }
-        } else {
-            await logAdminAction(req, 'REJECT_UPGRADE', request.userId._id, (request.userId as any).username, { reason: adminNote });
-        }
-
-        res.json({ message: `Request ${status} successfully` });
-    } catch (error: any) {
-        res.status(500).json({ message: error.message });
-    }
+    res.status(410).json({ message: 'Premium features have been removed. All features are now free.' });
 };
 
 export const getSystemConfig = async (req: Request, res: Response) => {
     try {
-        const config = await Config.find().lean();
+        const config = await prisma.config.findMany();
         res.json(config);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -618,15 +547,14 @@ export const getSystemConfig = async (req: Request, res: Response) => {
 export const updateSystemConfig = async (req: Request, res: Response) => {
     try {
         const { key, value } = req.body;
-        const config = await Config.findOneAndUpdate(
-            { key },
-            { value, updatedBy: (req as any).user?._id },
-            { upsert: true, new: true }
-        );
+        const config = await prisma.config.upsert({
+            where: { key },
+            update: { value, updatedBy: (req as any).user?.id },
+            create: { key, value, updatedBy: (req as any).user?.id }
+        });
 
         await logAdminAction(req, 'UPDATE_SYSTEM_CONFIG', key, key, { value });
 
-        // Broadcast config change
         if ((global as any).broadcastAdminEvent) {
             (global as any).broadcastAdminEvent('system:config_update', { key, value });
         }
@@ -639,21 +567,14 @@ export const updateSystemConfig = async (req: Request, res: Response) => {
 
 export const getPredictiveStats = async (req: Request, res: Response) => {
     try {
-        const totalUsers = await User.countDocuments();
-        const proUsers = await User.countDocuments({ 'proSubscription.isActive': true });
-
-        // Conversion Logic
-        const conversionRate = totalUsers > 0 ? (proUsers / totalUsers) * 100 : 0;
-
-        // Revenue Forecasting (Simple 30-day projection based on current active pros)
-        // Assuming average plan is 399
-        const monthlyForecast = proUsers * 399;
+        const totalUsers = await prisma.user.count();
 
         res.json({
-            conversionRate: conversionRate.toFixed(2),
-            monthlyForecast,
-            activeProGrowth: "+15%", // Mocked for UI demonstration
-            forecastConfidence: 94
+            totalUsers,
+            conversionRate: '100.00',
+            monthlyForecast: 0,
+            activeProGrowth: 'N/A',
+            forecastConfidence: 100
         });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -663,13 +584,18 @@ export const getPredictiveStats = async (req: Request, res: Response) => {
 export const getSystemHealth = async (req: Request, res: Response) => {
     try {
         const { ServiceStatus } = require('../services/healthMonitor');
-        const mongoose = require('mongoose');
+        // Check PostgreSQL connection instead of Mongoose
+        let dbStatus = 'disconnected';
+        try {
+            await prisma.user.findFirst();
+            dbStatus = 'healthy';
+        } catch { }
 
         res.json({
-            database: mongoose.connection.readyState === 1 ? 'healthy' : 'disconnected',
-            aiService: ServiceStatus.ai ? 'healthy' : 'offline',
-            ollama: ServiceStatus.ollama ? 'healthy' : 'offline',
-            latency: Math.floor(Math.random() * 200) + 50, // Mock latency
+            database: dbStatus,
+            aiService: ServiceStatus?.ai ? 'healthy' : 'offline',
+            nvidia: (process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY !== 'your_nvidia_api_key_here') ? 'healthy' : 'missing_key',
+            latency: Math.floor(Math.random() * 200) + 50,
             uptime: Math.floor(process.uptime())
         });
     } catch (error: any) {
@@ -679,10 +605,10 @@ export const getSystemHealth = async (req: Request, res: Response) => {
 
 export const getAdminLogs = async (req: Request, res: Response) => {
     try {
-        const logs = await AdminLog.find()
-            .sort({ createdAt: -1 })
-            .limit(100)
-            .lean();
+        const logs = await prisma.adminLog.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 100
+        });
         res.json(logs);
     } catch (error: any) {
         res.status(500).json({ message: error.message });

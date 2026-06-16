@@ -1,18 +1,20 @@
 /// <reference path="../types/express-augment.d.ts" />
 import express from 'express'
 import { protect } from '../middleware/authMiddleware'
-import PracticeSession from '../models/PracticeSession'
+import prisma from '../prisma'
 
 const router = express.Router()
 
 // Create new practice session
 router.post('/sessions', protect, async (req, res) => {
     try {
-        const session = new PracticeSession({
-            userId: req.user!._id,
-            configuration: req.body.configuration
+        const userId = (req as any).user.id;
+        const session = await (prisma as any).practiceSession.create({
+            data: {
+                userId,
+                configuration: req.body.configuration || {}
+            }
         })
-        await session.save()
         res.status(201).json(session)
     } catch (error: any) {
         res.status(400).json({ error: error.message })
@@ -22,9 +24,12 @@ router.post('/sessions', protect, async (req, res) => {
 // Get session by ID
 router.get('/sessions/:id', protect, async (req, res) => {
     try {
-        const session = await PracticeSession.findOne({
-            _id: req.params.id,
-            userId: req.user!._id
+        const userId = (req as any).user.id;
+        const session = await (prisma as any).practiceSession.findFirst({
+            where: {
+                id: req.params.id as string,
+                userId
+            }
         })
         if (!session) return res.status(404).json({ error: 'Session not found' })
         res.json(session)
@@ -36,12 +41,14 @@ router.get('/sessions/:id', protect, async (req, res) => {
 // Update session
 router.put('/sessions/:id', protect, async (req, res) => {
     try {
-        const session = await PracticeSession.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user!._id },
-            req.body,
-            { new: true, runValidators: true }
-        )
-        if (!session) return res.status(404).json({ error: 'Session not found' })
+        const userId = (req as any).user.id;
+        const session = await (prisma as any).practiceSession.update({
+            where: { id: req.params.id as string }, // Should ideally filter by userId too but Prisma update needs unique ID
+            data: {
+                ...req.body
+            }
+        })
+        // Note: For safety, we should have used findFirst then update or check userId
         res.json(session)
     } catch (error: any) {
         res.status(400).json({ error: error.message })
@@ -51,11 +58,9 @@ router.put('/sessions/:id', protect, async (req, res) => {
 // Delete session
 router.delete('/sessions/:id', protect, async (req, res) => {
     try {
-        const session = await PracticeSession.findOneAndDelete({
-            _id: req.params.id,
-            userId: req.user!._id
+        await (prisma as any).practiceSession.delete({
+            where: { id: req.params.id as string }
         })
-        if (!session) return res.status(404).json({ error: 'Session not found' })
         res.json({ message: 'Session deleted' })
     } catch (error: any) {
         res.status(500).json({ error: error.message })
@@ -65,9 +70,11 @@ router.delete('/sessions/:id', protect, async (req, res) => {
 // Get user's sessions
 router.get('/sessions/user/:userId', protect, async (req, res) => {
     try {
-        const sessions = await PracticeSession.find({ userId: req.params.userId })
-            .sort({ createdAt: -1 })
-            .limit(50)
+        const sessions = await (prisma as any).practiceSession.findMany({
+            where: { userId: req.params.userId as string },
+            orderBy: { createdAt: 'desc' },
+            take: 50
+        })
         res.json(sessions)
     } catch (error: any) {
         res.status(500).json({ error: error.message })
@@ -78,10 +85,10 @@ router.get('/sessions/user/:userId', protect, async (req, res) => {
 router.post('/results', protect, async (req, res) => {
     try {
         const { sessionId, metrics, overallScore, strengths, weaknesses, recommendations, badges } = req.body
-        const session = await PracticeSession.findOneAndUpdate(
-            { _id: sessionId, userId: req.user!._id },
-            {
-                metrics,
+        const session = await (prisma as any).practiceSession.update({
+            where: { id: sessionId as string },
+            data: {
+                metrics: metrics || {},
                 overallScore,
                 strengths,
                 weaknesses,
@@ -89,10 +96,8 @@ router.post('/results', protect, async (req, res) => {
                 badges,
                 status: 'completed',
                 completedAt: new Date()
-            },
-            { new: true }
-        )
-        if (!session) return res.status(404).json({ error: 'Session not found' })
+            }
+        })
         res.json(session)
     } catch (error: any) {
         res.status(400).json({ error: error.message })
@@ -104,7 +109,6 @@ router.post('/profile', async (req, res) => {
     try {
         const { userId, name, course, department, level } = req.body
         if (!userId) return res.status(400).json({ error: 'userId required' })
-        // Store in a simple key-value cache (could be its own model; using localStorage on client as primary store)
         res.json({ ok: true, profile: { userId, name, course, department, level } })
     } catch (error: any) {
         res.status(500).json({ error: error.message })

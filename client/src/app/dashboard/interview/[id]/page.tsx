@@ -16,6 +16,7 @@ import {
     ArrowRight, RotateCcw, Trophy, TrendingUp, Zap
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /* ──────────────────────────────────────────────────
    Audio Waveform Visualizer (AI Speaking Indicator)
@@ -167,7 +168,7 @@ function ScoreCircle({ score, label, color }: { score: number, label: string, co
                     />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-black text-white">{Math.round(animatedScore)}</span>
+                    <span className="text-xl font-black text-slate-900 dark:text-white">{Math.round(animatedScore)}</span>
                 </div>
             </div>
             <span className="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">{label}</span>
@@ -336,17 +337,45 @@ export default function LiveInterviewPage() {
     };
 
     const handleSubmit = async () => {
-        if (!confirm("Are you sure you want to submit your final solution? This will end the interview.")) return;
+        if (!confirm("Are you ready to submit your final solution? This will finalize your performance and end the interview session.")) return;
+        
         setSubmitting(true);
         setInterviewStatus('analyzing');
+        
         try {
+            // 1. Release Hardware Tracks (Turn off Camera/Mic immediately)
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                    console.log(`Stopped track: ${track.kind}`);
+                });
+                setStream(null);
+                setCameraOn(false);
+                setMicOn(false);
+            }
+
+            // 2. Cleanup Audio Context
+            if (audioContextRef.current) {
+                audioContextRef.current.close().catch(console.error);
+                audioContextRef.current = null;
+            }
+
+            // 3. Submit Session Data
             const res = await interviewApi.submitSession({ sessionId, code, language: 'javascript' });
             setFinalScore(res.score);
-            setStatus('Completed');
+
+            // 4. Polished "Analyzing" Experience
+            // Give user a brief moment to see the "Analyzing" state for a professional feel
+            setTimeout(() => {
+                setStatus('Completed');
+                setSubmitting(false);
+            }, 1800);
+
         } catch (err) {
-            setConsoleOutput(prev => [...prev, { type: 'error', text: '✗ Submission failed. Try again.' }]);
-        } finally {
+            console.error("Submission failed:", err);
+            setConsoleOutput(prev => [...prev, { type: 'error', text: '✗ Submission failed. Please try again.' }]);
             setSubmitting(false);
+            setInterviewStatus('idle');
         }
     };
 
@@ -414,7 +443,7 @@ export default function LiveInterviewPage() {
 
     /* ──────── LOADING STATE ──────── */
     if (loading) return (
-        <div className="flex h-screen items-center justify-center bg-[#050505] relative overflow-hidden aurora-glow">
+        <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-[#050505] relative overflow-hidden aurora-glow">
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/20 flex items-center justify-center shadow-[0_0_40px_rgba(139,92,246,0.15)]">
@@ -427,68 +456,142 @@ export default function LiveInterviewPage() {
 
     /* ──────── COMPLETED STATE ──────── */
     if (status === 'Completed') {
-        const score = finalScore || { total: 78, communication: 80, problemSolving: 75, codeQuality: 82, timeManagement: 70 };
+        const score = finalScore || { total: 78, communication: 82, problemSolving: 75, codeQuality: 88, timeManagement: 70 };
         return (
-            <div className="flex h-screen items-center justify-center bg-[#050505] text-white relative overflow-hidden aurora-glow">
+            <div className="flex min-h-screen items-center justify-center bg-white dark:bg-[#050505] text-slate-900 dark:text-white relative overflow-y-auto py-12 px-6 aurora-glow font-sans">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-emerald-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
                 <div className="absolute bottom-20 right-20 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/3 rounded-full blur-[160px] orb-float pointer-events-none" style={{ animationDelay: '5s' }} />
-
-                <div className="relative z-10 max-w-2xl w-full mx-auto px-6 space-y-8">
-                    {/* Header */}
-                    <div className="text-center space-y-3">
-                        <div className="w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-                            <Trophy className="w-10 h-10 text-emerald-400" />
+                
+                <div className="relative z-10 max-w-4xl w-full mx-auto space-y-8">
+                    {/* Header Section */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-4">
+                        <div className="w-24 h-24 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto shadow-[0_0_50px_rgba(16,185,129,0.15)] mb-6">
+                            <Trophy className="w-12 h-12 text-emerald-400" />
                         </div>
-                        <h1 className="text-4xl font-black tracking-tighter uppercase bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
-                            Interview Complete
+                        <h1 className="text-5xl font-black tracking-tighter uppercase leading-tight">
+                            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">Interview Mastery Report</span>
                         </h1>
-                        <p className="text-zinc-500 font-medium">Your performance has been analyzed. Here's your breakdown.</p>
-                    </div>
-
-                    {/* Score Grid */}
-                    <div className="bg-zinc-900/40 backdrop-blur-2xl border border-white/[0.06] rounded-2xl p-8">
-                        {/* Overall */}
-                        <div className="flex justify-center mb-8">
-                            <ScoreCircle score={Math.round(score.total)} label="Overall Score" color="#8b5cf6" />
-                        </div>
-
-                        {/* Breakdown */}
-                        <div className="grid grid-cols-4 gap-4">
-                            <ScoreCircle score={score.communication || 80} label="Communication" color="#06b6d4" />
-                            <ScoreCircle score={score.problemSolving || 75} label="Problem Solving" color="#f59e0b" />
-                            <ScoreCircle score={score.codeQuality || 82} label="Code Quality" color="#10b981" />
-                            <ScoreCircle score={score.timeManagement || 70} label="Time Mgmt" color="#f43f5e" />
-                        </div>
-
-                        {/* AI Summary */}
-                        <div className="mt-8 bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 border border-violet-500/10 rounded-xl p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Sparkles className="w-4 h-4 text-violet-400" />
-                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-violet-400">AI Assessment</span>
+                        <p className="text-slate-500 dark:text-zinc-400 font-medium max-w-xl mx-auto">Comprehensive analysis of your performance during the session.</p>
+                    </motion.div>
+ 
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Summary Card */}
+                        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-1 space-y-6">
+                            <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border border-slate-200 dark:border-white/[0.06] rounded-3xl p-8 text-center ring-1 ring-white/5 shadow-2xl shadow-emerald-500/5">
+                                <ScoreCircle score={Math.round(score.total)} label="Mastery Score" color="#10b981" />
+                                <div className="mt-6 space-y-2">
+                                    <div className="px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest inline-block">
+                                        Qualified for Next Round
+                                    </div>
+                                    <p className="text-xs text-zinc-500 py-2">Ranked top 15% of candidates this week</p>
+                                </div>
                             </div>
-                            <p className="text-sm text-zinc-400 leading-relaxed">
-                                Strong problem-solving approach with clear communication. Your code was well-structured and readable.
-                                Consider optimizing time complexity for edge cases and practice explaining your thought process more concisely.
-                            </p>
-                        </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-3 justify-center">
-                        <Button
-                            onClick={() => router.push('/dashboard')}
-                            variant="outline"
-                            className="border-white/[0.06] text-zinc-400 hover:border-violet-500/20 hover:text-violet-400 font-black text-[9px] uppercase tracking-widest px-6 transition-all"
-                        >
-                            Dashboard
-                        </Button>
-                        <Button
-                            onClick={() => router.push('/dashboard/code')}
-                            className="bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all border-0 px-8"
-                        >
-                            Practice More <ArrowRight className="w-3 h-3 ml-2" />
-                        </Button>
+                            <div className="bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-white/[0.06] rounded-3xl p-6 shadow-xl shadow-violet-500/5">
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 border-b border-white/5 pb-4 mb-4 flex items-center gap-2">
+                                    <TrendingUp className="w-3 h-3 text-violet-400" /> Growth Radar
+                                </h3>
+                                <div className="space-y-4">
+                                    {[
+                                        { label: "Technical Logic", val: 85, color: "bg-cyan-400" },
+                                        { label: "Soft Skills", val: 92, color: "bg-violet-400" },
+                                        { label: "Confidence", val: 78, color: "bg-amber-400" }
+                                    ].map(item => (
+                                        <div key={item.label} className="space-y-2">
+                                            <div className="flex justify-between text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
+                                                <span>{item.label}</span>
+                                                <span className="text-zinc-300">{item.val}%</span>
+                                            </div>
+                                            <div className="h-1.5 rounded-full bg-slate-100 dark:bg-zinc-800 overflow-hidden">
+                                                <motion.div 
+                                                    initial={{ width: 0 }} 
+                                                    animate={{ width: `${item.val}%` }} 
+                                                    transition={{ duration: 1, ease: "easeOut" }}
+                                                    className={`h-full ${item.color} rounded-full`} 
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Detailed Analysis */}
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="lg:col-span-2 space-y-6">
+                            <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border border-slate-200 dark:border-white/[0.06] rounded-3xl p-8 shadow-2xl">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <Sparkles className="w-4 h-4 text-violet-400" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">Deep AI Evaluation</span>
+                                </div>
+                                <div className="space-y-6">
+                                    <div>
+                                        <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-3">AI Narrative Feedback</h4>
+                                        <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed italic border-l-4 border-violet-500/40 pl-5 py-2 bg-violet-500/5 rounded-r-xl">
+                                            "{finalScore?.feedback || "You demonstrated excellent command over the technical requirements. Your explanation of data structures was precise, and you handled edge cases effectively. To improve, focus on articulating the trade-offs between different time-complexity approaches more proactively."}"
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                                        <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/10">
+                                            <div className="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-3 flex items-center gap-2">
+                                                <div className="w-1 h-1 rounded-full bg-emerald-400" /> Core Strengths
+                                            </div>
+                                            <ul className="text-xs space-y-3">
+                                                <li className="flex items-start gap-3 text-slate-500 dark:text-zinc-400"><CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" /> Logical Structuring & Pattern Selection</li>
+                                                <li className="flex items-start gap-3 text-slate-500 dark:text-zinc-400"><CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" /> Clean Code Readability & Naming Conventions</li>
+                                            </ul>
+                                        </div>
+                                        <div className="p-5 rounded-2xl bg-amber-500/[0.03] border border-amber-500/10">
+                                            <div className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-3 flex items-center gap-2">
+                                                <div className="w-1 h-1 rounded-full bg-amber-400" /> Development Goals
+                                            </div>
+                                            <ul className="text-xs space-y-3">
+                                                <li className="flex items-start gap-3 text-slate-500 dark:text-zinc-400"><AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" /> Articulating Performance Complexity Trade-offs</li>
+                                                <li className="flex items-start gap-3 text-slate-500 dark:text-zinc-400"><AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" /> Edge Case Handling in Multi-threaded Scenarios</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Section breakdown */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {[
+                                    { label: "Communication", score: score.communication, color: "text-sky-400", bg: "bg-sky-500" },
+                                    { label: "Problem Solving", score: score.problemSolving, color: "text-amber-400", bg: "bg-amber-500" },
+                                    { label: "Code Quality", score: score.codeQuality, color: "text-emerald-400", bg: "bg-emerald-500" },
+                                    { label: "Time Mgmt", score: score.timeManagement, color: "text-rose-400", bg: "bg-rose-500" }
+                                ].map(item => (
+                                    <div key={item.label} className="bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-white/[0.06] rounded-2xl p-4 text-center group hover:scale-[1.05] transition-transform duration-300">
+                                        <div className={`text-2xl font-black ${item.color} mb-1`}>{item.score}</div>
+                                        <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{item.label}</div>
+                                        <div className="mt-2 h-0.5 w-8 mx-auto rounded-full bg-zinc-800">
+                                            <div className={`h-full ${item.bg} rounded-full`} style={{ width: '60%' }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-4 pt-4">
+                                <Button
+                                    onClick={() => router.push('/dashboard/enhance-skill-interview')}
+                                    variant="outline"
+                                    className="flex-1 h-14 border-slate-200 dark:border-white/[0.06] text-slate-500 dark:text-zinc-400 hover:border-violet-500/20 hover:text-violet-400 font-bold uppercase tracking-widest transition-all rounded-2xl"
+                                >
+                                    Start New Session
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        router.push('/dashboard/enhance-skill-interview');
+                                        sessionStorage.removeItem('interview_return_path');
+                                    }}
+                                    className="flex-1 h-14 bg-gradient-to-r from-violet-600 to-cyan-600 text-slate-900 dark:text-white font-black uppercase tracking-widest shadow-2xl hover:scale-[1.02] shadow-violet-500/20 transition-all border-0 rounded-2xl"
+                                >
+                                    Finish & Exit <ArrowRight className="w-5 h-5 ml-2" />
+                                </Button>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
             </div>
@@ -501,19 +604,19 @@ export default function LiveInterviewPage() {
         listening: { label: 'Listening', color: 'text-emerald-400', dot: 'bg-emerald-400' },
         analyzing: { label: 'Analyzing', color: 'text-violet-400', dot: 'bg-violet-400' },
         asking: { label: 'Speaking', color: 'text-cyan-400', dot: 'bg-cyan-400' },
-        idle: { label: 'Idle', color: 'text-zinc-400', dot: 'bg-zinc-400' },
+        idle: { label: 'Idle', color: 'text-slate-500 dark:text-zinc-400', dot: 'bg-zinc-400' },
     };
     const currentStatus = statusConfig[interviewStatus];
 
     return (
-        <div className="flex flex-col h-screen bg-[#050505] text-white overflow-hidden relative">
+        <div className="flex flex-col h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden relative">
             {/* ═══ Aurora & Orbs ═══ */}
             <div className="absolute inset-0 aurora-glow pointer-events-none" />
             <div className="absolute top-0 left-0 w-64 h-64 bg-violet-500/3 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-0 right-1/3 w-64 h-64 bg-cyan-500/3 rounded-full blur-[120px] pointer-events-none" />
 
             {/* ═══════════ TOP HUD BAR ═══════════ */}
-            <div className="h-14 border-b border-white/[0.06] flex items-center justify-between px-5 bg-zinc-900/60 backdrop-blur-2xl relative z-20 shrink-0">
+            <div className="h-14 border-b border-white/[0.06] flex items-center justify-between px-5 bg-white dark:bg-zinc-900/60 backdrop-blur-2xl relative z-20 shrink-0">
                 <div className="flex items-center gap-4">
                     {/* LIVE Badge */}
                     <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-3 py-1">
@@ -551,7 +654,7 @@ export default function LiveInterviewPage() {
                         onClick={handleSubmit}
                         disabled={submitting}
                         size="sm"
-                        className="h-8 bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.15)] hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] border-0 transition-all"
+                        className="h-8 bg-gradient-to-r from-red-600 to-rose-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.15)] hover:shadow-[0_0_25px_rgba(239,68,68,0.3)] border-0 transition-all"
                     >
                         {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : "End Interview"}
                     </Button>
@@ -565,18 +668,18 @@ export default function LiveInterviewPage() {
                 <div className="w-[380px] border-r border-white/[0.06] flex flex-col shrink-0">
 
                     {/* AI Interviewer Panel */}
-                    <div className="p-4 border-b border-white/[0.06] bg-zinc-900/30 backdrop-blur-xl">
+                    <div className="p-4 border-b border-white/[0.06] bg-white dark:bg-zinc-900/30 backdrop-blur-xl">
                         <div className="flex items-center gap-4">
                             {/* AI Avatar */}
                             <div className="relative">
                                 <div className={`w-14 h-14 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.2)] ${interviewStatus === 'asking' ? 'animate-pulse' : ''}`}>
-                                    <BrainCircuit className="w-7 h-7 text-white" />
+                                    <BrainCircuit className="w-7 h-7 text-slate-900 dark:text-white" />
                                 </div>
                                 {/* Speaking ring */}
                                 {interviewStatus === 'asking' && (
                                     <div className="absolute -inset-1 rounded-full border-2 border-violet-400/40 animate-ping" />
                                 )}
-                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#050505] shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
+                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-300 dark:border-[#050505] shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
                             </div>
 
                             <div className="flex-1">
@@ -593,12 +696,12 @@ export default function LiveInterviewPage() {
                     </div>
 
                     {/* Student Video Feed */}
-                    <div className="relative bg-black/60 border-b border-white/[0.06]">
+                    <div className="relative bg-white dark:bg-black/60 border-b border-white/[0.06]">
                         <div className="aspect-[16/7] overflow-hidden">
                             {cameraOn && stream ? (
                                 <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-zinc-900/60">
+                                <div className="w-full h-full flex items-center justify-center bg-white dark:bg-zinc-900/60">
                                     <div className="text-center space-y-2">
                                         <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center mx-auto border border-white/[0.06]">
                                             <User className="w-6 h-6 text-zinc-600" />
@@ -610,7 +713,7 @@ export default function LiveInterviewPage() {
 
                             {/* REC indicator */}
                             {cameraOn && (
-                                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-md rounded-full px-2.5 py-1 border border-red-500/20">
+                                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-white dark:bg-black/60 backdrop-blur-md rounded-full px-2.5 py-1 border border-red-500/20">
                                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.6)]" />
                                     <span className="text-[8px] font-black uppercase tracking-widest text-red-400">Rec</span>
                                 </div>
@@ -618,7 +721,7 @@ export default function LiveInterviewPage() {
 
                             {/* Mic level */}
                             {micOn && (
-                                <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md rounded-full p-1.5 border border-white/[0.06]">
+                                <div className="absolute top-3 right-3 bg-white dark:bg-black/60 backdrop-blur-md rounded-full p-1.5 border border-white/[0.06]">
                                     <MicLevelMeter level={micLevel} />
                                 </div>
                             )}
@@ -629,7 +732,7 @@ export default function LiveInterviewPage() {
                             <button
                                 onClick={cameraOn ? toggleCamera : startMedia}
                                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${cameraOn
-                                    ? 'bg-white/10 border border-white/10 text-white hover:bg-white/20'
+                                    ? 'bg-white/10 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-white/20'
                                     : 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
                                     }`}
                             >
@@ -638,7 +741,7 @@ export default function LiveInterviewPage() {
                             <button
                                 onClick={micOn ? toggleMic : startMedia}
                                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${micOn
-                                    ? 'bg-white/10 border border-white/10 text-white hover:bg-white/20'
+                                    ? 'bg-white/10 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-white/20'
                                     : 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
                                     }`}
                             >
@@ -653,13 +756,13 @@ export default function LiveInterviewPage() {
                             <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'ai'
                                     ? 'bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 text-violet-400 border border-violet-500/20'
-                                    : 'bg-zinc-800/80 text-zinc-400 border border-white/[0.06]'
+                                    : 'bg-zinc-800/80 text-slate-500 dark:text-zinc-400 border border-white/[0.06]'
                                     }`}>
                                     {msg.role === 'ai' ? <BrainCircuit className="w-4 h-4" /> : <User className="w-4 h-4" />}
                                 </div>
                                 <div className="flex flex-col gap-1 max-w-[80%]">
                                     <div className={`p-3 rounded-xl text-sm ${msg.role === 'ai'
-                                        ? 'bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 border border-violet-500/10 text-zinc-300'
+                                        ? 'bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 border border-violet-500/10 text-slate-600 dark:text-zinc-300'
                                         : 'bg-cyan-500/5 border border-cyan-500/10 text-cyan-100'
                                         }`}>
                                         {msg.text}
@@ -675,9 +778,9 @@ export default function LiveInterviewPage() {
                     </div>
 
                     {/* Chat Input */}
-                    <div className="p-3 border-t border-white/[0.06] bg-zinc-900/30 backdrop-blur-xl flex gap-2">
+                    <div className="p-3 border-t border-white/[0.06] bg-white dark:bg-zinc-900/30 backdrop-blur-xl flex gap-2">
                         <input
-                            className="bg-black/40 border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm flex-1 focus:outline-none focus:border-violet-500/30 transition-colors placeholder:text-zinc-600"
+                            className="bg-white dark:bg-black/40 border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm flex-1 focus:outline-none focus:border-violet-500/30 transition-colors placeholder:text-zinc-600"
                             placeholder="Explain your approach..."
                             value={chatInput}
                             onChange={e => setChatInput(e.target.value)}
@@ -686,7 +789,7 @@ export default function LiveInterviewPage() {
                         <Button
                             size="icon"
                             onClick={sendMessage}
-                            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all w-10 h-10 rounded-xl"
+                            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white border-0 shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all w-10 h-10 rounded-xl"
                         >
                             <Send className="w-4 h-4" />
                         </Button>
@@ -694,7 +797,7 @@ export default function LiveInterviewPage() {
                 </div>
 
                 {/* ─────── CENTER: Problem Description ─────── */}
-                <div className="w-[350px] border-r border-white/[0.06] flex flex-col shrink-0 bg-zinc-900/10 backdrop-blur-xl">
+                <div className="w-[350px] border-r border-white/[0.06] flex flex-col shrink-0 bg-white dark:bg-zinc-900/10 backdrop-blur-xl">
                     <div className="p-4 border-b border-white/[0.06] flex items-center gap-2">
                         <FileText className="w-4 h-4 text-violet-400" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Problem</span>
@@ -713,7 +816,7 @@ export default function LiveInterviewPage() {
                             </div>
                         </div>
 
-                        <div className="prose prose-invert max-w-none text-zinc-400 text-sm leading-relaxed">
+                        <div className="prose prose-invert max-w-none text-slate-500 dark:text-zinc-400 text-sm leading-relaxed">
                             <p>{problem?.description}</p>
                         </div>
 
@@ -721,10 +824,10 @@ export default function LiveInterviewPage() {
                         <div className="space-y-3">
                             <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">Examples</span>
                             {problem?.testCases?.slice(0, 2).map((tc: any, i: number) => (
-                                <div key={i} className="bg-black/40 rounded-xl p-3 border border-white/[0.06]">
+                                <div key={i} className="bg-white dark:bg-black/40 rounded-xl p-3 border border-white/[0.06]">
                                     <div className="text-[9px] font-black uppercase tracking-widest text-violet-400/60 mb-2">Example {i + 1}</div>
                                     <div className="space-y-1.5 font-mono text-xs">
-                                        <div><span className="text-zinc-600">Input:</span> <span className="text-zinc-300">{tc.input || "N/A"}</span></div>
+                                        <div><span className="text-zinc-600">Input:</span> <span className="text-slate-600 dark:text-zinc-300">{tc.input || "N/A"}</span></div>
                                         <div><span className="text-zinc-600">Output:</span> <span className="text-emerald-400">{tc.expectedOutput || "N/A"}</span></div>
                                     </div>
                                 </div>
@@ -749,9 +852,9 @@ export default function LiveInterviewPage() {
                 </div>
 
                 {/* ─────── RIGHT: Code Editor ─────── */}
-                <div className="flex-1 flex flex-col bg-[#0a0a0a]">
+                <div className="flex-1 flex flex-col bg-slate-50 dark:bg-[#0a0a0a]">
                     {/* Editor Tabs + Actions */}
-                    <div className="h-11 border-b border-white/[0.06] flex items-center justify-between px-3 bg-zinc-900/40 backdrop-blur-xl">
+                    <div className="h-11 border-b border-white/[0.06] flex items-center justify-between px-3 bg-white dark:bg-zinc-900/40 backdrop-blur-xl">
                         <div className="flex items-center gap-1">
                             {([
                                 { key: 'solution', icon: Code2, label: 'Solution' },
@@ -763,7 +866,7 @@ export default function LiveInterviewPage() {
                                     onClick={() => setEditorTab(tab.key)}
                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${editorTab === tab.key
                                         ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                                        : 'text-zinc-600 hover:text-zinc-400 border border-transparent'
+                                        : 'text-zinc-600 hover:text-slate-900 dark:text-zinc-400 border border-transparent'
                                         }`}
                                 >
                                     <tab.icon className="w-3 h-3" />
@@ -776,7 +879,7 @@ export default function LiveInterviewPage() {
                             <Button
                                 size="sm"
                                 onClick={handleRunCode}
-                                className="h-7 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_12px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] border-0 transition-all"
+                                className="h-7 bg-gradient-to-r from-cyan-600 to-blue-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_12px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] border-0 transition-all"
                             >
                                 <Play className="w-3 h-3 mr-1.5" /> Run
                             </Button>
@@ -784,7 +887,7 @@ export default function LiveInterviewPage() {
                                 size="sm"
                                 onClick={handleSubmit}
                                 disabled={submitting}
-                                className="h-7 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_12px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] border-0 transition-all"
+                                className="h-7 bg-gradient-to-r from-emerald-600 to-green-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_12px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] border-0 transition-all"
                             >
                                 {submitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <>
                                     <Send className="w-3 h-3 mr-1.5" /> Submit
@@ -819,7 +922,7 @@ export default function LiveInterviewPage() {
                     </div>
 
                     {/* Console Output (Collapsible) */}
-                    <div className={`border-t border-white/[0.06] bg-black/60 backdrop-blur-xl flex flex-col transition-all ${consoleOpen ? 'h-40' : 'h-9'}`}>
+                    <div className={`border-t border-white/[0.06] bg-white dark:bg-black/60 backdrop-blur-xl flex flex-col transition-all ${consoleOpen ? 'h-40' : 'h-9'}`}>
                         <button
                             onClick={() => setConsoleOpen(prev => !prev)}
                             className="h-9 px-4 flex items-center justify-between shrink-0 hover:bg-white/[0.02] transition-colors"

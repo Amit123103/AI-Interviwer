@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import axios from 'axios';
 import FormData from 'form-data';
+import { logStudentActivity } from '../services/activityService';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
@@ -26,8 +27,22 @@ export const analyzeResume = async (req: any, res: Response) => {
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
 
+        const analysis = aiResponse.data;
+
+        // Log Activity
+        await logStudentActivity(
+            req.user.id,
+            'RESUME_ANALYSIS',
+            'Analyzed Professional Resume',
+            `Extracted level: ${analysis.experience_level || 'General'}`,
+            { 
+                experienceLevel: analysis.experience_level, 
+                skillsFound: (analysis.skills || []).length 
+            }
+        ).catch(e => console.error("Activity Log error:", e));
+
         res.json({
-            analysis: aiResponse.data
+            analysis
         });
 
     } catch (error: any) {

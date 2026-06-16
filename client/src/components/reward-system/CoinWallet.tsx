@@ -11,7 +11,7 @@ import {
     Users,
     Zap
 } from 'lucide-react';
-import AmitAICoin from './AmitAICoin';
+import IntervyxaCoin from './IntervyxaCoin';
 
 interface CoinWalletProps {
     totalCoins: number;
@@ -40,12 +40,12 @@ const CoinWallet: React.FC<CoinWalletProps> = ({ totalCoins, history = [] }) => 
                 </div>
 
                 <div className="relative z-10">
-                    <h3 className="text-zinc-400 font-bold uppercase tracking-widest text-xs mb-1">AmitAI Coin Balance</h3>
+                    <h3 className="text-zinc-400 font-bold uppercase tracking-widest text-xs mb-1">Intervyxa Coin Balance</h3>
                     <div className="flex items-center gap-4">
                         <span className="text-6xl font-black text-white tabular-nums tracking-tighter">
                             {totalCoins.toLocaleString()}
                         </span>
-                        <AmitAICoin size={64} animate={true} />
+                        <IntervyxaCoin size={64} animate={true} />
                     </div>
 
                     <div className="mt-8 grid grid-cols-2 gap-4">
@@ -111,7 +111,7 @@ const CoinWallet: React.FC<CoinWalletProps> = ({ totalCoins, history = [] }) => 
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="font-bold text-white">+{item.coins}</span>
-                                <AmitAICoin size={16} glow={false} animate={false} />
+                                <IntervyxaCoin size={16} glow={false} animate={false} />
                             </div>
                         </motion.div>
                     ))}

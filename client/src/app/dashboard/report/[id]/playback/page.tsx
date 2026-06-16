@@ -81,15 +81,15 @@ export default function PlaybackPage() {
         }
     }
 
-    if (loading) return <div className="flex justify-center items-center h-screen bg-black text-white"><Loader2 className="animate-spin text-primary" /></div>
-    if (!report?.videoUrl) return <div className="text-white text-center py-20">No recording available for this session.</div>
+    if (loading) return <div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white"><Loader2 className="animate-spin text-primary" /></div>
+    if (!report?.videoUrl) return <div className="text-slate-900 dark:text-white text-center py-20">No recording available for this session.</div>
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 md:p-10 font-sans select-none">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 md:p-10 font-sans select-none">
             <div className="max-w-6xl mx-auto space-y-6">
                 <div className="flex justify-between items-center">
                     <Link href={`/dashboard/report/${params.id}`}>
-                        <Button variant="ghost" className="text-zinc-500 hover:text-white gap-2">
+                        <Button variant="ghost" className="text-zinc-500 hover:text-slate-900 dark:text-white gap-2">
                             <ArrowLeft className="w-4 h-4" /> Back to Analysis
                         </Button>
                     </Link>
@@ -103,7 +103,7 @@ export default function PlaybackPage() {
                 <div className="grid lg:grid-cols-3 gap-6">
                     {/* Video Player Column */}
                     <div className="lg:col-span-2 space-y-4">
-                        <div className="relative aspect-video bg-zinc-950 rounded-3xl overflow-hidden border border-white/5 shadow-2xl group">
+                        <div className="relative aspect-video bg-white dark:bg-zinc-950 rounded-3xl overflow-hidden border border-slate-100 dark:border-white/5 shadow-2xl group">
                             <video
                                 ref={videoRef}
                                 src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}${report.videoUrl}`}
@@ -118,11 +118,11 @@ export default function PlaybackPage() {
                             <AnimatePresence>
                                 {activeVision && (
                                     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="absolute top-6 left-6 z-10 flex flex-col gap-2">
-                                        <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                                        <div className="bg-white dark:bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/10 flex items-center gap-2">
                                             <TrendingUp className={`w-3 h-3 ${activeVision.attentionScore > 70 ? 'text-green-400' : 'text-amber-400'}`} />
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Focus: {activeVision.attentionScore}%</span>
                                         </div>
-                                        <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                                        <div className="bg-white dark:bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/10 flex items-center gap-2">
                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Emotion: {activeVision.emotion}</span>
                                         </div>
@@ -138,7 +138,7 @@ export default function PlaybackPage() {
                                                 <Brain className="w-3 h-3 text-primary" />
                                                 <span className="text-[8px] font-black uppercase tracking-[0.2em] text-primary">Live Coaching Feedback</span>
                                             </div>
-                                            <p className="text-xs text-white/90 leading-relaxed italic">"{activeFeedback}"</p>
+                                            <p className="text-xs text-slate-900 dark:text-white/90 leading-relaxed italic">"{activeFeedback}"</p>
                                         </div>
                                     </motion.div>
                                 )}
@@ -158,16 +158,16 @@ export default function PlaybackPage() {
                                     />
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
+                                            <button onClick={togglePlay} className="text-slate-900 dark:text-white hover:text-primary transition-colors">
                                                 {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
                                             </button>
-                                            <span className="text-xs font-mono text-zinc-400">
+                                            <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
                                                 {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')} / {Math.floor(duration / 60)}:{Math.floor(duration % 60).toString().padStart(2, '0')}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <Volume2 className="w-4 h-4 text-zinc-400" />
-                                            <Maximize className="w-4 h-4 text-zinc-400 hover:text-white cursor-pointer" />
+                                            <Volume2 className="w-4 h-4 text-slate-500 dark:text-zinc-400" />
+                                            <Maximize className="w-4 h-4 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white cursor-pointer" />
                                         </div>
                                     </div>
                                 </div>
@@ -175,7 +175,7 @@ export default function PlaybackPage() {
                         </div>
 
                         {/* Event Roadmap */}
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6">
+                        <div className="bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 rounded-3xl p-6">
                             <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-6 px-2">Session Timeline Highlights</h3>
                             <div className="space-y-4">
                                 {report.eventLogs?.filter((l: any) => l.eventType === 'looking_away' || l.eventType === 'ai_response').slice(0, 5).map((log: any, i: number) => (
@@ -200,14 +200,14 @@ export default function PlaybackPage() {
 
                     {/* Performance Stats Column */}
                     <div className="space-y-6">
-                        <Card className="bg-zinc-900 border-zinc-800 rounded-3xl overflow-hidden p-6 space-y-6">
+                        <Card className="bg-white dark:bg-zinc-900 border-zinc-800 rounded-3xl overflow-hidden p-6 space-y-6">
                             <h2 className="text-xl font-bold">Deep Scan Metrics</h2>
 
                             <div className="space-y-6">
                                 <div>
                                     <div className="flex justify-between items-end mb-2">
                                         <span className="text-xs font-bold text-zinc-500 uppercase">Avg Attention</span>
-                                        <span className="text-lg font-black text-white">{report.scores?.focus || 0}%</span>
+                                        <span className="text-lg font-black text-slate-900 dark:text-white">{report.scores?.focus || 0}%</span>
                                     </div>
                                     <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                                         <motion.div initial={{ width: 0 }} animate={{ width: `${report.scores?.focus || 0}%` }} className="h-full bg-zinc-400" />
@@ -224,11 +224,11 @@ export default function PlaybackPage() {
                                     <p className="text-[10px] text-zinc-600 italic">Score: {report.integrityScore}/100. Based on eye tracking and tab activity.</p>
                                 </div>
 
-                                <div className="pt-4 border-t border-white/5 space-y-4">
+                                <div className="pt-4 border-t border-slate-100 dark:border-white/5 space-y-4">
                                     <h4 className="text-xs font-black uppercase tracking-widest text-zinc-500">Sentiment Over Time</h4>
                                     <div className="flex gap-2">
                                         {['Happy', 'Neutral', 'Confident', 'Thoughtful'].map((s) => (
-                                            <div key={s} className="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-[10px] text-zinc-400">
+                                            <div key={s} className="px-3 py-1 bg-white/5 border border-slate-100 dark:border-white/5 rounded-full text-[10px] text-slate-500 dark:text-zinc-400">
                                                 {s}
                                             </div>
                                         ))}
@@ -239,7 +239,7 @@ export default function PlaybackPage() {
 
                         <Card className="bg-primary/5 border border-primary/20 rounded-3xl p-6">
                             <h3 className="text-sm font-bold text-primary mb-3">AI Coach Summary</h3>
-                            <p className="text-xs text-zinc-300 leading-relaxed italic">
+                            <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed italic">
                                 "{report.feedback || "Your overall performance was solid. Pay close attention to the points marked in the video where you looked away or hesitated."}"
                             </p>
                             <Button className="w-full mt-6 bg-primary text-black font-black uppercase text-[10px] tracking-widest rounded-xl">

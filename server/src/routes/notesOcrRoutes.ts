@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { protect } from '../middleware/authMiddleware';
 import Tesseract from 'tesseract.js';
-import { generateResponse } from '../services/ollamaService';
+import { generateResponse } from '../services/aiService';
 
 const router = Router();
 
@@ -50,7 +50,7 @@ router.post('/recognize', protect, async (req: Request, res: Response): Promise<
                 `;
 
                 // Use the configured Ollama model for the AI service
-                const aiResponse = await generateResponse(prompt, [{ role: 'user', content: prompt }]);
+                const aiResponse = await generateResponse(prompt);
 
                 if (aiResponse && aiResponse.response) {
                     finalOutput = aiResponse.response.trim();

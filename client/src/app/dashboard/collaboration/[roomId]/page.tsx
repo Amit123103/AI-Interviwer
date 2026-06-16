@@ -170,12 +170,12 @@ export default function RoomPage() {
     }
 
     return (
-        <div className="h-screen bg-black text-white flex flex-col">
+        <div className="h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white flex flex-col">
             {/* Header */}
-            <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-4 bg-zinc-950">
+            <header className="h-14 border-b border-zinc-800 flex items-center justify-between px-4 bg-white dark:bg-zinc-950">
                 <div className="flex items-center gap-4">
                     <h1 className="font-bold text-lg">Collaboration Room</h1>
-                    <span className="text-xs px-2 py-1 rounded bg-zinc-800 text-zinc-400 font-mono">
+                    <span className="text-xs px-2 py-1 rounded bg-zinc-800 text-slate-500 dark:text-zinc-400 font-mono">
                         {roomId}
                     </span>
                     <Button variant="ghost" size="icon" onClick={copyInviteLink} title="Copy ID">
@@ -196,7 +196,7 @@ export default function RoomPage() {
                 <div className="flex-1 flex flex-col min-w-0 p-4 gap-4">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
                         <div className="flex items-center justify-between mb-2">
-                            <TabsList className="bg-zinc-900">
+                            <TabsList className="bg-white dark:bg-zinc-900">
                                 <TabsTrigger value="code">Code Editor</TabsTrigger>
                                 <TabsTrigger value="whiteboard">Whiteboard</TabsTrigger>
                             </TabsList>
@@ -223,7 +223,7 @@ export default function RoomPage() {
                 </div>
 
                 {/* Right: Sidebar (Video + Chat) */}
-                <div className="w-80 border-l border-zinc-800 bg-zinc-950 flex flex-col">
+                <div className="w-80 border-l border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col">
                     {/* Video Grid Section */}
                     <div className="h-1/3 border-b border-zinc-800 p-2 overflow-y-auto">
                         <VideoGrid

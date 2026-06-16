@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import pool from '../lib/db'
-import AdminLog from '../models/AdminLog'
+import prisma from '../prisma'
+import { logStudentActivity } from '../services/activityService'
 
 export const executeRawSQL = async (req: Request, res: Response) => {
     const { query } = req.body
-    const admin = (req as any).user
+    const user = (req as any).user
 
     if (!query) return res.status(400).json({ message: 'Query required' })
 
@@ -13,14 +14,25 @@ export const executeRawSQL = async (req: Request, res: Response) => {
         const result = await pool.query(query)
         const duration = Date.now() - start
 
-        // Log this high-authority action
-        await AdminLog.create({
-            adminId: admin._id,
-            adminName: admin.username,
-            action: 'DIRECT_SQL_EXECUTION',
-            targetName: 'DATABASE',
-            details: { query, rowCount: result.rowCount, duration },
-            ipAddress: req.ip || 'unknown'
+        // Centralized Student Activity Log
+        await logStudentActivity(
+            user.id,
+            'SQL_PRACTICE',
+            'Executed Raw SQL Query',
+            `Rows: ${result.rowCount}, Duration: ${duration}ms`,
+            { query: query.substring(0, 500), rowCount: result.rowCount }
+        ).catch(() => {});
+
+        // Log this high-authority action via Prisma (Original Admin Log)
+        await prisma.adminLog.create({
+            data: {
+                adminId: user.id,
+                adminName: user.username,
+                action: 'DIRECT_SQL_EXECUTION',
+                targetName: 'DATABASE',
+                details: { query, rowCount: result.rowCount, duration },
+                ipAddress: req.ip || 'unknown'
+            }
         })
 
         res.json({

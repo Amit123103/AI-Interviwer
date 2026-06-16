@@ -57,7 +57,7 @@ export default function ContestLobbyPage() {
     const pastContests = contests.filter(c => c.status === 'Ended');
 
     return (
-        <div className="min-h-screen bg-transparent text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
             {/* Floating ambient orbs */}
@@ -66,8 +66,8 @@ export default function ContestLobbyPage() {
             <div className="max-w-7xl mx-auto space-y-12 relative z-10">
                 <BackToDashboard currentPage="Contests" />
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Compete & Rank Up</h1>
-                    <p className="text-zinc-400">Join global customized contests to test your skills and earn badges.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Compete & Rank Up</h1>
+                    <p className="text-slate-500 dark:text-zinc-400">Join global customized contests to test your skills and earn badges.</p>
                 </div>
 
                 {/* Live Contests */}
@@ -122,11 +122,11 @@ function ContestCard({ contest, user, onRegister }: { contest: Contest, user: an
     const router = useRouter();
 
     return (
-        <Card className="bg-zinc-900/40 border-white/[0.06] overflow-hidden hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 group backdrop-blur-2xl hover-shine">
+        <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] overflow-hidden hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 group backdrop-blur-2xl hover-shine">
             <div className="p-6 space-y-4">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="font-bold text-white group-hover:text-violet-400 transition-colors">{contest.title}</h3>
+                        <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-violet-400 transition-colors">{contest.title}</h3>
                         <div className="text-xs text-zinc-500 mt-1 flex items-center gap-2">
                             <Clock className="w-3 h-3" />
                             {format(new Date(contest.startTime), "MMM d, h:mm a")}
@@ -142,7 +142,7 @@ function ContestCard({ contest, user, onRegister }: { contest: Contest, user: an
                     </Badge>
                 </div>
 
-                <p className="text-sm text-zinc-400 line-clamp-2">{contest.description}</p>
+                <p className="text-sm text-slate-500 dark:text-zinc-400 line-clamp-2">{contest.description}</p>
 
                 <div className="flex items-center gap-4 text-xs text-zinc-500">
                     <div className="flex items-center gap-1">
@@ -160,20 +160,20 @@ function ContestCard({ contest, user, onRegister }: { contest: Contest, user: an
                 <div className="pt-2">
                     {contest.status === 'Upcoming' ? (
                         isRegistered ? (
-                            <Button className="w-full bg-zinc-800 text-zinc-400 cursor-default hover:bg-zinc-800" disabled>
+                            <Button className="w-full bg-zinc-800 text-slate-500 dark:text-zinc-400 cursor-default hover:bg-zinc-800" disabled>
                                 <CheckCircle className="w-4 h-4 mr-2" /> Registered
                             </Button>
                         ) : (
-                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white border-0 shadow-[0_0_20px_rgba(139,92,246,0.3)]" onClick={() => onRegister(contest._id)}>
+                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-slate-900 dark:text-white border-0 shadow-[0_0_20px_rgba(139,92,246,0.3)]" onClick={() => onRegister(contest._id)}>
                                 Register Now
                             </Button>
                         )
                     ) : contest.status === 'Live' ? (
-                        <Button className="w-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 text-white border-0 shadow-[0_0_20px_rgba(244,63,94,0.3)]" onClick={() => router.push(`/dashboard/contests/${contest._id}`)}>
+                        <Button className="w-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 text-slate-900 dark:text-white border-0 shadow-[0_0_20px_rgba(244,63,94,0.3)]" onClick={() => router.push(`/dashboard/contests/${contest._id}`)}>
                             Enter Contest <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                     ) : (
-                        <Button variant="outline" className="w-full border-white/[0.06] text-zinc-400 hover:text-violet-400 hover:border-violet-500/20 hover:bg-violet-500/5 transition-all" onClick={() => router.push(`/dashboard/contests/${contest._id}`)}>
+                        <Button variant="outline" className="w-full border-white/[0.06] text-slate-500 dark:text-zinc-400 hover:text-violet-400 hover:border-violet-500/20 hover:bg-violet-500/5 transition-all" onClick={() => router.push(`/dashboard/contests/${contest._id}`)}>
                             View Leaderboard
                         </Button>
                     )}

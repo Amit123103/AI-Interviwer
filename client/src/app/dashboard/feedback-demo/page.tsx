@@ -75,7 +75,7 @@ export default function FeedbackDemoPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
             {/* Floating ambient orbs */}
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="absolute bottom-32 right-16 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
@@ -90,13 +90,13 @@ export default function FeedbackDemoPage() {
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">
                         Live Interview Coaching
                     </h1>
-                    <p className="text-base sm:text-lg text-zinc-400 max-w-2xl">
+                    <p className="text-base sm:text-lg text-slate-500 dark:text-zinc-400 max-w-2xl">
                         Experience real-time AI feedback during interviews with live metrics and instant coaching
                     </p>
                 </div>
 
                 {/* Controls */}
-                <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
+                <Card className="bg-white dark:bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
                     <CardHeader>
                         <CardTitle>Simulation Controls</CardTitle>
                     </CardHeader>
@@ -107,7 +107,7 @@ export default function FeedbackDemoPage() {
                                 className={`${isRunning
                                     ? "bg-red-500 hover:bg-red-600"
                                     : "bg-primary hover:bg-primary/90"
-                                    } text-white font-bold border-0`}
+                                    } text-slate-900 dark:text-white font-bold border-0`}
                             >
                                 {isRunning ? (
                                     <>
@@ -149,7 +149,7 @@ export default function FeedbackDemoPage() {
                 </Card>
 
                 {/* Features Overview */}
-                <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
+                <Card className="bg-white dark:bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
                     <CardHeader>
                         <CardTitle>What You're Seeing</CardTitle>
                     </CardHeader>
@@ -157,28 +157,28 @@ export default function FeedbackDemoPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <h4 className="font-bold text-violet-400">Confidence Meter</h4>
-                                <p className="text-sm text-zinc-400">
+                                <p className="text-sm text-slate-500 dark:text-zinc-400">
                                     Circular gauge showing speaker confidence based on voice analysis (0-100%)
                                 </p>
                             </div>
 
                             <div className="space-y-2">
                                 <h4 className="font-bold text-fuchsia-400">Filler Word Counter</h4>
-                                <p className="text-sm text-zinc-400">
+                                <p className="text-sm text-slate-500 dark:text-zinc-400">
                                     Tracks "um", "uh", "like" and other fillers with rate per minute
                                 </p>
                             </div>
 
                             <div className="space-y-2">
                                 <h4 className="font-bold text-cyan-400">Speaking Pace</h4>
-                                <p className="text-sm text-zinc-400">
+                                <p className="text-sm text-slate-500 dark:text-zinc-400">
                                     Words per minute with optimal range (130-170 WPM) and trend analysis
                                 </p>
                             </div>
 
                             <div className="space-y-2">
                                 <h4 className="font-bold text-emerald-400">Technical Accuracy</h4>
-                                <p className="text-sm text-zinc-400">
+                                <p className="text-sm text-slate-500 dark:text-zinc-400">
                                     Multi-metric scoring: keywords, technical depth, and structure quality
                                 </p>
                             </div>
@@ -222,21 +222,21 @@ export default function FeedbackDemoPage() {
                 </Card>
 
                 {/* Integration Info */}
-                <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
+                <Card className="bg-white dark:bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl">
                     <CardHeader>
                         <CardTitle>Integration Ready</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                        <p className="text-sm text-zinc-300">
+                        <p className="text-sm text-slate-600 dark:text-zinc-300">
                             This real-time feedback system is ready to integrate into:
                         </p>
-                        <ul className="text-sm text-zinc-400 space-y-2">
+                        <ul className="text-sm text-slate-500 dark:text-zinc-400 space-y-2">
                             <li>✅ Interview pages - Live coaching during interviews</li>
                             <li>✅ Practice sessions - Instant feedback on answers</li>
                             <li>✅ Mock interviews - Company-specific coaching</li>
                             <li>✅ Question practice - Voice-based learning</li>
                         </ul>
-                        <div className="pt-3 border-t border-white/5">
+                        <div className="pt-3 border-t border-slate-100 dark:border-white/5">
                             <p className="text-xs text-zinc-500">
                                 <strong>Backend:</strong> Connects to adaptive intelligence API at localhost:8000
                             </p>

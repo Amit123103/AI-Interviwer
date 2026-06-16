@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
-import AmitAICoin from '../reward-system/AmitAICoin';
+import IntervyxaCoin from '../reward-system/IntervyxaCoin';
 
 interface XPLevelCardProps {
     user: any;
@@ -10,7 +10,7 @@ interface XPLevelCardProps {
 
 const XPLevelCard: React.FC<XPLevelCardProps> = ({ user }) => {
     const level = user.level || 1;
-    const currentCoins = user.amitaiCoins || 0;
+    const currentCoins = user.intervyxaCoins || 0;
     const nextLevelCoins = level * 1000 * 2;
     const progress = Math.min(100, (currentCoins / nextLevelCoins) * 100);
 
@@ -24,7 +24,7 @@ const XPLevelCard: React.FC<XPLevelCardProps> = ({ user }) => {
                         <h3 className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Rank & level</h3>
                         <div className="flex items-end gap-2">
                             <span className="text-4xl font-black text-white">{level}</span>
-                            <span className="text-yellow-500 font-bold mb-1 tracking-tight italic">AMITAI CHAMPION</span>
+                            <span className="text-yellow-500 font-bold mb-1 tracking-tight italic">INTERVYXA CHAMPION</span>
                         </div>
                     </div>
                     <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center border border-yellow-500/30">
@@ -37,7 +37,7 @@ const XPLevelCard: React.FC<XPLevelCardProps> = ({ user }) => {
                     <div className="flex justify-between items-center text-xs font-semibold mb-2">
                         <div className="flex items-center gap-1.5">
                             <span className="text-yellow-400 font-black">{currentCoins.toLocaleString()}</span>
-                            <AmitAICoin size={14} animate={false} glow={false} />
+                            <IntervyxaCoin size={14} animate={false} glow={false} />
                         </div>
                         <span className="text-zinc-500 font-bold">{Math.round(nextLevelCoins).toLocaleString()} Target</span>
                     </div>

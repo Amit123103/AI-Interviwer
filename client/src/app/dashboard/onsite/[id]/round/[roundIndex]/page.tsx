@@ -144,26 +144,26 @@ export default function OnsiteRoundPage() {
         return `${mins}:${secs.toString().padStart(2, '0')}`
     }
 
-    if (loading) return <div className="h-screen bg-black flex items-center justify-center text-white">Loading Simulation...</div>
-    if (!loop || !currentRound) return <div className="h-screen bg-black text-white p-10">Round not found</div>
+    if (loading) return <div className="h-screen bg-slate-50 dark:bg-black flex items-center justify-center text-slate-900 dark:text-white">Loading Simulation...</div>
+    if (!loop || !currentRound) return <div className="h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-10">Round not found</div>
 
     return (
-        <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden">
+        <div className="h-screen bg-white dark:bg-zinc-950 text-slate-900 dark:text-white flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-zinc-900/50 backdrop-blur-md">
+            <header className="h-16 border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-6 bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md">
                 <div className="flex items-center gap-4">
                     <Badge variant="outline" className="border-primary/50 text-primary bg-primary/10 px-3 py-1">
                         {loop.company} Onsite
                     </Badge>
                     <div className="h-6 w-px bg-white/10" />
-                    <span className="font-bold text-zinc-100">{currentRound.roundName}</span>
-                    <Badge variant="secondary" className="bg-zinc-800 text-zinc-400">
+                    <span className="font-bold text-slate-900 dark:text-zinc-100">{currentRound.roundName}</span>
+                    <Badge variant="secondary" className="bg-zinc-800 text-slate-500 dark:text-zinc-400">
                         {currentRound.type === 'coding' ? 'Technical Assessment' : 'Interview'}
                     </Badge>
                 </div>
 
                 <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 text-zinc-400 font-mono text-lg bg-black/40 px-3 py-1 rounded-md">
+                    <div className="flex items-center gap-2 text-slate-500 dark:text-zinc-400 font-mono text-lg bg-white dark:bg-black/40 px-3 py-1 rounded-md">
                         <Timer className="w-4 h-4 text-emerald-500" />
                         {formatTime(elapsed)}
                     </div>
@@ -181,9 +181,9 @@ export default function OnsiteRoundPage() {
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden">
                 {/* Left Panel: Interaction */}
-                <div className="w-[400px] border-r border-white/10 flex flex-col bg-zinc-900/30">
+                <div className="w-[400px] border-r border-slate-200 dark:border-white/10 flex flex-col bg-white dark:bg-zinc-900/30">
                     {/* AI Avatar / Video Feed */}
-                    <div className="aspect-video bg-zinc-900 relative border-b border-white/10">
+                    <div className="aspect-video bg-white dark:bg-zinc-900 relative border-b border-slate-200 dark:border-white/10">
                         <div className="absolute inset-0 flex items-center justify-center">
                             {/* Placeholder for AI Avatar */}
                             <div className="text-center">
@@ -195,7 +195,7 @@ export default function OnsiteRoundPage() {
                         </div>
 
                         {/* User Camera Overlay */}
-                        <div className="absolute bottom-4 right-4 w-28 aspect-video bg-black rounded-lg border border-white/20 overflow-hidden shadow-2xl">
+                        <div className="absolute bottom-4 right-4 w-28 aspect-video bg-slate-50 dark:bg-black rounded-lg border border-slate-300 dark:border-white/20 overflow-hidden shadow-2xl">
                             {cameraOn ? (
                                 <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
                                     <Video className="w-4 h-4 text-zinc-500" />
@@ -210,8 +210,8 @@ export default function OnsiteRoundPage() {
 
                     {/* Conversation History */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        <div className="bg-zinc-800/50 p-3 rounded-lg rounded-tl-none border border-white/5 mr-8">
-                            <p className="text-sm text-zinc-300">
+                        <div className="bg-zinc-800/50 p-3 rounded-lg rounded-tl-none border border-slate-100 dark:border-white/5 mr-8">
+                            <p className="text-sm text-slate-600 dark:text-zinc-300">
                                 Hello! Welcome to the {currentRound.roundName}. I'm your interviewer today.
                                 {currentRound.type === 'coding' && " We'll be focusing on data structures and algorithms."}
                                 Ready to begin?
@@ -221,7 +221,7 @@ export default function OnsiteRoundPage() {
                             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] p-3 rounded-lg text-sm ${m.role === 'user'
                                     ? 'bg-primary/20 text-primary-foreground rounded-tr-none border border-primary/20'
-                                    : 'bg-zinc-800/50 text-zinc-300 rounded-tl-none border border-white/5'
+                                    : 'bg-zinc-800/50 text-slate-600 dark:text-zinc-300 rounded-tl-none border border-slate-100 dark:border-white/5'
                                     }`}>
                                     {m.text}
                                 </div>
@@ -230,7 +230,7 @@ export default function OnsiteRoundPage() {
                     </div>
 
                     {/* Controls */}
-                    <div className="p-4 border-t border-white/10 bg-zinc-900/50 backdrop-blur">
+                    <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-white/60 dark:bg-zinc-900/50 backdrop-blur">
                         <div className="flex items-center justify-center gap-4">
                             <Button
                                 variant={micOn ? "secondary" : "destructive"}
@@ -260,11 +260,11 @@ export default function OnsiteRoundPage() {
                 </div>
 
                 {/* Right Panel: Workspace */}
-                <div className="flex-1 bg-[#1e1e1e] flex flex-col">
+                <div className="flex-1 bg-white dark:bg-[#1e1e1e] flex flex-col">
                     {currentRound.type === 'coding' ? (
                         <div className="flex-1 relative">
-                            <div className="absolute top-0 left-0 right-0 h-10 bg-[#252526] flex items-center px-4 border-b border-[#333] justify-between">
-                                <span className="text-xs text-zinc-400 flex items-center gap-2">
+                            <div className="absolute top-0 left-0 right-0 h-10 bg-white dark:bg-[#252526] flex items-center px-4 border-b border-[#333] justify-between">
+                                <span className="text-xs text-slate-500 dark:text-zinc-400 flex items-center gap-2">
                                     <Code2 className="w-3 h-3" /> solution.js
                                 </span>
                                 <Button size="sm" className="h-6 text-xs bg-emerald-600 hover:bg-emerald-700">Run Code</Button>
@@ -287,7 +287,7 @@ export default function OnsiteRoundPage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex-1 flex items-center justify-center text-zinc-500 bg-zinc-900/20">
+                        <div className="flex-1 flex items-center justify-center text-zinc-500 bg-white dark:bg-zinc-900/20">
                             <div className="text-center">
                                 <Layout className="w-16 h-16 mx-auto mb-4 opacity-50" />
                                 <h3 className="text-xl font-bold mb-2">Discussion Round</h3>

@@ -1,15 +1,34 @@
 "use client"
 
-import React, { useMemo } from "react"
-import { motion } from "framer-motion"
-import { Sparkles, Sun, Zap, Target, Trophy } from "lucide-react"
+import React, { useMemo, useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Sparkles, Sun, Zap, Target, Trophy, Mic, Code2 } from "lucide-react"
 
 interface SarahBriefingProps {
     user: any
     stats: any
+    mood?: 'professional' | 'technical' | 'creative'
 }
 
-export default function SarahBriefing({ user, stats }: SarahBriefingProps) {
+export default function SarahBriefing({ user, stats, mood = 'professional' }: SarahBriefingProps) {
+    const accents = {
+        professional: { text: "text-indigo-600 dark:text-indigo-400", bg: "bg-indigo-50 dark:bg-indigo-500/10", border: "border-indigo-100 dark:border-indigo-500/20", progress: "bg-indigo-500", icon: "text-indigo-600" },
+        technical: { text: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-500/10", border: "border-emerald-100 dark:border-emerald-500/20", progress: "bg-emerald-500", icon: "text-emerald-600" },
+        creative: { text: "text-rose-600 dark:text-rose-400", bg: "bg-rose-50 dark:bg-rose-500/10", border: "border-rose-100 dark:border-rose-500/20", progress: "bg-rose-500", icon: "text-rose-600" }
+    }
+    const a = accents[mood] || accents.professional;
+    const [currentEmoji, setCurrentEmoji] = useState("👋")
+
+    useEffect(() => {
+        const emojis = ["👋", "🤝", "🚀", "💡", "🌟", "🔥", "🧑‍💻"]
+        let i = 0
+        const timer = setInterval(() => {
+            i = (i + 1) % emojis.length
+            setCurrentEmoji(emojis[i])
+        }, 3000)
+        return () => clearInterval(timer)
+    }, [])
+
     const greetingBase = useMemo(() => {
         const hour = new Date().getHours()
         if (hour < 12) return "Good morning"
@@ -32,152 +51,194 @@ export default function SarahBriefing({ user, stats }: SarahBriefingProps) {
     }, [])
 
     const nextAction = useMemo(() => {
-        if (!stats) return { label: "System Design", area: "Scalability" }
-        const latestTech = stats.progressData?.[stats.progressData.length - 1]?.technical || 0
-        if (latestTech > 80) return { label: "Leadership", area: "Conflict Resolution" }
-        if (latestTech < 60) return { label: "Tech Basics", area: "Data Structures" }
+        if (!stats?.metrics) return { label: "System Design", area: "Scalability" }
+        const tech = stats.metrics.interviewReadiness || 0
+        if (tech > 80) return { label: "Leadership", area: "Conflict Resolution" }
+        if (tech < 60) return { label: "Tech Basics", area: "Data Structures" }
         return { label: "Mock Interview", area: "Behavioral" }
     }, [stats])
 
     const overallProgress = useMemo(() => {
-        if (!stats?.progressData?.length) return 78
-        const last = stats.progressData[stats.progressData.length - 1]
-        return Math.round((last.technical + (last.communication || 70)) / 2)
+        if (!stats?.metrics) return 0
+        return stats.metrics.skillAlignment || 0
     }, [stats])
 
     const confidenceScore = useMemo(() => {
-        if (!stats?.progressData?.length) return 92
-        const last = stats.progressData[stats.progressData.length - 1]
-        return Math.min(99, Math.round(last.technical * 1.05))
+        if (!stats?.metrics) return 0
+        return stats.metrics.overallReadiness || 0
+    }, [stats])
+
+    const engagementScore = useMemo(() => {
+        if (!stats?.metrics) return 0
+        return stats.metrics.peerRanking || stats.metrics.engagementScore || 0
+    }, [stats])
+
+    const levelProgression = useMemo(() => {
+        if (!user) return 0
+        const currentLevel = user.level || 1
+        const currentCoins = user.intervyxaCoins || 0
+        const COINS_PER_LEVEL_BASE = 500
+        const nextLevelThreshold = currentLevel * COINS_PER_LEVEL_BASE * 2
+        const prevLevelThreshold = (currentLevel - 1) * COINS_PER_LEVEL_BASE * 2
+        
+        const progress = ((currentCoins - prevLevelThreshold) / (nextLevelThreshold - prevLevelThreshold)) * 100
+        return Math.min(100, Math.max(0, Math.round(progress)))
+    }, [user])
+
+    const strategicInsight = useMemo(() => {
+        if (!stats?.metrics) return { priority: "Complete Initial Assessment", icon: <Target className="w-5 h-5" />, label: "Diagnostic Phase" }
+        const { interviewReadiness, codingProficiency, quizMastery } = stats.metrics
+        
+        if (interviewReadiness < codingProficiency && interviewReadiness < 70) {
+            return { priority: "Refine Interview Performance", icon: <Mic className="w-5 h-5 text-rose-500" />, label: "Mock Simulation" }
+        }
+        if (codingProficiency < 70) {
+            return { priority: "Strengthen Technical Core", icon: <Code2 className="w-5 h-5 text-emerald-500" />, label: "Algo Practice" }
+        }
+        if (quizMastery < 80) {
+            return { priority: "Reinforce Concepts", icon: <Zap className="w-5 h-5 text-amber-500" />, label: "Quiz Sprint" }
+        }
+        return { priority: "Optimize Technical Proficiency", icon: <Zap className="w-5 h-5 text-indigo-500" />, label: "Placement Ready Path" }
     }, [stats])
 
     return (
         <div className="relative w-full h-full">
-            <div className="neural-card p-10 md:p-12 lg:p-14 h-full bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-2xl group overflow-visible">
+            <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 p-8 md:p-12 h-full rounded-3xl shadow-sm flex flex-col justify-center transition-colors">
 
-                {/* Responsive Grid Flow - No Overlap */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+                {/* Responsive Grid Flow */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
                     {/* Visual Anchor (Col 1-2) */}
                     <div className="lg:col-span-2 flex justify-center lg:justify-start">
-                        <div className="relative">
-                            <motion.div
-                                className="w-28 h-28 md:w-32 md:h-32 rounded-[1.5rem] bg-slate-900/50 border border-white/10 flex items-center justify-center shadow-xl relative z-10 overflow-hidden"
-                                whileHover={{ rotate: 5, scale: 1.05 }}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent" />
+                        <motion.div
+                            className="w-24 h-24 md:w-28 md:h-28 rounded-[1.5rem] bg-indigo-50 dark:bg-zinc-900 border border-indigo-100 dark:border-white/10 flex items-center justify-center relative overflow-hidden shadow-sm"
+                            whileHover={{ rotate: 5, scale: 1.05 }}
+                        >
+                            <AnimatePresence mode="wait">
                                 <motion.div
-                                    className="text-6xl md:text-7xl select-none"
-                                    animate={{ rotate: [0, 10, -10, 0] }}
-                                    transition={{ duration: 2.5, repeat: Infinity }}
+                                    key={currentEmoji}
+                                    className="text-5xl md:text-6xl select-none absolute"
+                                    initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                                    animate={{ opacity: 1, scale: 1, rotate: [0, 10, -10, 0] }}
+                                    exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                                    transition={{ duration: 0.4 }}
                                 >
-                                    👋
+                                    {currentEmoji}
                                 </motion.div>
-                            </motion.div>
-                            <div className="absolute -inset-2 bg-blue-500/10 blur-2xl rounded-full opacity-30" />
-                        </div>
+                            </AnimatePresence>
+                        </motion.div>
                     </div>
 
                     {/* Main Content (Col 3-8) */}
-                    <div className="lg:col-span-6 space-y-8">
+                    <div className="lg:col-span-6 space-y-6">
                         <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 rounded-full border border-blue-500/20">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Learning System Synced</span>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 rounded-full border border-indigo-100 dark:border-indigo-500/20">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-300">Learning System Synced</span>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="space-y-1">
-                                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-                                    {greetingBase}, <span className="text-blue-500">{user?.username || "Amit"}</span>
-                                </h2>
-                                <p className="text-sm md:text-base font-bold text-blue-500/60 tracking-[0.2em] uppercase">
-                                    {slogan}
-                                </p>
-                            </div>
-                            <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed max-w-xl">
-                                Your progress is on track. <br />
-                                <span className="text-white/70 italic">Stay consistent. Your future self will thank you.</span>
+                        <div className="space-y-2">
+                            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 pb-1">
+                                {greetingBase}, <span className={`${a.text} break-all`}>{user?.username || "Candidate"}</span>
+                            </h2>
+                            <p className="text-sm font-bold tracking-[0.15em] uppercase text-zinc-500 dark:text-zinc-400">
+                                {slogan}
                             </p>
                         </div>
+                        <p className="text-base font-medium leading-relaxed max-w-xl text-zinc-600 dark:text-zinc-400">
+                            Your career momentum is building. <br />
+                            <span className="text-zinc-500 dark:text-zinc-500 italic">"Sarah: Let's focus on targeted technical excellence today."</span>
+                        </p>
 
                         {/* Integrated Milestone Hud */}
-                        <div className="p-7 rounded-[1.5rem] bg-white/[0.02] border border-white/5 hover:border-blue-500/30 transition-all group/ms relative overflow-hidden">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover/ms:bg-blue-500/20 transition-colors">
-                                    <Zap className="w-6 h-6 text-blue-500" />
+                        <div className="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 hover:border-zinc-300 dark:hover:border-white/20 hover:shadow-md transition-all group/ms relative overflow-hidden">
+                            <div className="flex items-center gap-4 mb-5">
+                                <div className={`w-10 h-10 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 flex items-center justify-center ${a.icon} shadow-sm`}>
+                                    {strategicInsight.icon}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[9px] uppercase tracking-widest text-slate-500 font-bold">Current Milestone</span>
-                                    <span className="text-white text-lg font-bold tracking-tight">Master Tech Fundamentals</span>
+                                    <span className="text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 font-bold mb-0.5">Strategic Priority</span>
+                                    <span className="text-zinc-900 dark:text-zinc-100 text-base font-bold tracking-tight">{strategicInsight.priority}</span>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/5 shadow-inner">
+                            <div className="space-y-3">
+                                <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                                     <motion.div
-                                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                                        className={`h-full ${a.progress}`}
                                         initial={{ width: 0 }}
-                                        animate={{ width: "65%" }}
+                                        animate={{ width: `${levelProgression}%` }}
                                         transition={{ duration: 2 }}
                                     />
                                 </div>
-                                <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                                    <div className="flex flex-col">
-                                        <span className="text-blue-500">65% Completed</span>
-                                    </div>
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-slate-500">Est. 2h 15m remaining</span>
-                                    </div>
+                                <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                                    <span className="text-zinc-600 dark:text-zinc-400">Level Progression: {levelProgression}%</span>
+                                    <span className={a.text}>{strategicInsight.label}</span>
                                 </div>
-                                <button className="w-full py-3.5 rounded-2xl bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-blue-500 transition-all shadow-lg active:scale-[0.98]">
-                                    Continue Learning →
+                                <button className={`w-full py-3 rounded-xl bg-white dark:bg-zinc-900 dark:bg-zinc-100 text-slate-900 dark:text-white dark:text-zinc-900 hover:opacity-90 text-xs font-semibold uppercase tracking-wider transition-all shadow-sm mt-2`}>
+                                    Activate High-Focus Mode →
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Stats HUD (Col 9-12) - Integrated & Visible */}
-                    <div className="lg:col-span-4 space-y-6 lg:pl-10 lg:border-l lg:border-white/5 self-center">
-                        <div className="space-y-6 p-6 rounded-[2rem] bg-white/[0.01] border border-white/5">
-                            <div className="space-y-4">
+                    {/* Stats HUD (Col 9-12) */}
+                    <div className="lg:col-span-4 lg:pl-10 lg:border-l border-zinc-200 dark:border-white/10">
+                        <div className="space-y-8">
+                            <div className="space-y-3">
                                 <div className="flex justify-between items-end">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Skill Alignment</span>
-                                        <span className="text-2xl font-bold text-white">{overallProgress}%</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">Architecture Skills</span>
+                                        <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{overallProgress}%</span>
                                     </div>
-                                    <Trophy className="w-5 h-5 text-blue-500/50" />
+                                    <div className={`w-8 h-8 rounded-lg ${a.bg} flex items-center justify-center ${a.icon} mb-1 border ${a.border}`}>
+                                        <Trophy className="w-4 h-4" />
+                                    </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.4)]"
-                                        style={{ width: `${overallProgress}%` }}
-                                    />
+                                <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    <div className={`h-full ${a.progress} rounded-full`} style={{ width: `${overallProgress}%` }} />
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 <div className="flex justify-between items-end">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Role Readiness</span>
-                                        <span className="text-2xl font-bold text-white">{confidenceScore}%</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">Interview IQ</span>
+                                        <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{confidenceScore}%</span>
                                     </div>
-                                    <Target className="w-5 h-5 text-blue-500/50" />
+                                    <div className={`w-8 h-8 rounded-lg ${a.bg} flex items-center justify-center ${a.icon} mb-1 border ${a.border}`}>
+                                        <Target className="w-4 h-4" />
+                                    </div>
                                 </div>
-                                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.4)]"
-                                        style={{ width: `${confidenceScore}%` }}
-                                    />
+                                <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    <div className={`h-full ${a.progress} rounded-full`} style={{ width: `${confidenceScore}%` }} />
                                 </div>
                             </div>
 
-                            <div className="pt-4 border-t border-white/5 text-[10px] font-bold uppercase tracking-[0.2em] text-center text-emerald-500">
-                                Placement Ready
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-end">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">Peer Ranking</span>
+                                        <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">{engagementScore}%</span>
+                                    </div>
+                                    <div className={`w-8 h-8 rounded-lg ${a.bg} flex items-center justify-center ${a.icon} mb-1 border ${a.border}`}>
+                                        <Sparkles className="w-4 h-4" />
+                                    </div>
+                                </div>
+                                <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    <div className={`h-full ${a.progress} rounded-full`} style={{ width: `${engagementScore}%` }} />
+                                </div>
+                            </div>
+
+                            <div className="pt-6 border-t border-zinc-200 dark:border-white/10">
+                                <div className={`w-full py-2.5 rounded-xl ${a.bg} border ${a.border} text-xs font-bold uppercase tracking-widest text-center ${a.text}`}>
+                                    Elite Strategy Active
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

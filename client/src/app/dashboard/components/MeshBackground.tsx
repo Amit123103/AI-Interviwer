@@ -3,9 +3,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 
-interface MeshBackgroundProps {
-    variant?: 'dashboard' | 'auth' | 'general'
-}
 
 /* ──────────────────────────────────
    Detect low-end devices
@@ -87,12 +84,29 @@ function Starfield({ reducedQuality }: { reducedQuality: boolean }) {
 }
 
 const palettes = {
-    dashboard: {
-        orb1: "bg-violet-500/12",
-        orb2: "bg-purple-600/10",
-        orb3: "bg-blue-500/8",
-        aurora1: "from-violet-600/15 via-purple-500/10 to-transparent",
+    professional: {
+        orb1: "bg-indigo-500/15",
+        orb2: "bg-violet-600/12",
+        orb3: "bg-blue-500/10",
+        aurora1: "from-indigo-600/15 via-violet-500/10 to-transparent",
         aurora2: "from-blue-500/10 via-indigo-500/8 to-transparent",
+        bg: "bg-slate-50 dark:bg-zinc-950",
+    },
+    technical: {
+        orb1: "bg-emerald-500/15",
+        orb2: "bg-teal-600/12",
+        orb3: "bg-cyan-500/10",
+        aurora1: "from-emerald-600/15 via-teal-500/10 to-transparent",
+        aurora2: "from-cyan-500/10 via-emerald-500/8 to-transparent",
+        bg: "bg-white dark:bg-[#020617] dark:bg-[#020617]",
+    },
+    creative: {
+        orb1: "bg-rose-500/15",
+        orb2: "bg-amber-600/12",
+        orb3: "bg-fuchsia-500/10",
+        aurora1: "from-rose-600/15 via-amber-500/10 to-transparent",
+        aurora2: "from-fuchsia-500/10 via-rose-500/8 to-transparent",
+        bg: "bg-white dark:bg-[#0c0a09]",
     },
     auth: {
         orb1: "bg-primary/15",
@@ -100,18 +114,16 @@ const palettes = {
         orb3: "bg-amber-500/8",
         aurora1: "from-primary/18 via-purple-500/12 to-transparent",
         aurora2: "from-rose-500/10 via-pink-500/8 to-transparent",
-    },
-    general: {
-        orb1: "bg-primary/10",
-        orb2: "bg-blue-500/10",
-        orb3: "bg-teal-500/8",
-        aurora1: "from-primary/12 via-blue-500/8 to-transparent",
-        aurora2: "from-teal-500/8 via-cyan-500/6 to-transparent",
-    },
+        bg: "bg-slate-50 dark:bg-zinc-950",
+    }
 }
 
-export default function MeshBackground({ variant = 'dashboard' }: MeshBackgroundProps) {
-    const p = palettes[variant]
+interface MeshBackgroundProps {
+    variant?: 'professional' | 'technical' | 'creative' | 'auth'
+}
+
+export default function MeshBackground({ variant = 'professional' }: MeshBackgroundProps) {
+    const p = palettes[variant] || palettes.professional
     const isSlow = useIsSlowDevice()
 
     // On slow devices, reduce animation complexity
@@ -119,7 +131,7 @@ export default function MeshBackground({ variant = 'dashboard' }: MeshBackground
 
     return (
         <div
-            className="fixed inset-0 -z-50 overflow-hidden bg-zinc-950 pointer-events-none"
+            className={`fixed inset-0 -z-50 overflow-hidden ${p.bg} pointer-events-none transition-colors duration-500`}
             style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
         >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(120,80,200,0.12),transparent)]" />
@@ -205,7 +217,7 @@ export default function MeshBackground({ variant = 'dashboard' }: MeshBackground
             />
 
             {/* Vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_0%,rgba(9,9,11,0.7)_100%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_0%,rgba(255,255,255,0.7)_100%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_0%,rgba(9,9,11,0.7)_100%)] neural:bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,transparent_0%,rgba(2,44,34,0.7)_100%)] transition-colors duration-500" />
         </div>
     )
 }

@@ -42,7 +42,7 @@ export default function ActivityHeatmap({ data }: ActivityHeatmapProps) {
     }
 
     return (
-        <div className="bg-zinc-950/40 backdrop-blur-3xl border border-white/10 rounded-2xl p-8 space-y-6 relative overflow-hidden group">
+        <div className="bg-white dark:bg-zinc-950/40 backdrop-blur-3xl border border-white/10 rounded-2xl p-8 space-y-6 relative overflow-hidden group">
             {/* Rainbow accent bar */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500 via-blue-500 via-violet-500 to-pink-500" />
             {/* Scanning Beam */}
@@ -58,7 +58,7 @@ export default function ActivityHeatmap({ data }: ActivityHeatmapProps) {
                         <Calendar className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex flex-col">
-                        <h3 className="text-sm font-semibold text-white">Activity Consistency</h3>
+                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Activity Consistency</h3>
                         <span className="text-xs text-zinc-500">Your practice history</span>
                     </div>
                 </div>
@@ -86,10 +86,10 @@ export default function ActivityHeatmap({ data }: ActivityHeatmapProps) {
                                     className={`w-4 h-4 rounded-[4px] cursor-pointer transition-all duration-300 ${getColor(day.intensity)} hover:shadow-[0_0_15px_rgba(var(--primary),0.5)] border border-white/5`}
                                 />
                             </TooltipTrigger>
-                            <TooltipContent className="bg-zinc-950 border-white/10 backdrop-blur-2xl p-3 rounded-xl shadow-2xl">
+                            <TooltipContent className="bg-white dark:bg-zinc-950 border-white/10 backdrop-blur-2xl p-3 rounded-xl shadow-2xl">
                                 <div className="space-y-1">
                                     <div className="text-[10px] font-semibold text-primary">{day.date}</div>
-                                    <div className="text-xs font-medium text-white">
+                                    <div className="text-xs font-medium text-slate-900 dark:text-white">
                                         {day.intensity > 0 ? `${day.intensity * 2} activities` : 'No activity'}
                                     </div>
                                     <div className="w-full h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
@@ -104,9 +104,9 @@ export default function ActivityHeatmap({ data }: ActivityHeatmapProps) {
 
             <div className="pt-4 flex items-center justify-between text-xs font-medium text-zinc-600 border-t border-white/5 relative z-20">
                 <div className="flex gap-10">
-                    <span className="text-zinc-400">Jan</span>
-                    <span className="text-zinc-400">Feb</span>
-                    <span className="text-zinc-400">Mar</span>
+                    <span className="text-slate-900 dark:text-zinc-400">Jan</span>
+                    <span className="text-slate-900 dark:text-zinc-400">Feb</span>
+                    <span className="text-slate-900 dark:text-zinc-400">Mar</span>
                 </div>
                 <div className="flex gap-2 items-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-pulse" />

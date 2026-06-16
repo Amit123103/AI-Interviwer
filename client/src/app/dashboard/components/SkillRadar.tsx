@@ -16,7 +16,7 @@ const data = [
 
 export default function SkillRadar() {
     return (
-        <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col">
+        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col">
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500" />
             <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10" />
 
@@ -26,14 +26,14 @@ export default function SkillRadar() {
                         <BrainCircuit className="w-5 h-5 text-purple-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white">Skill Radar</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Skill Radar</h3>
                         <p className="text-xs text-zinc-500">Your strengths at a glance</p>
                     </div>
                 </div>
             </div>
 
             <div className="flex-1 min-h-[320px] w-full relative">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <RadarChart cx="50%" cy="50%" outerRadius="65%" data={data} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
                         <defs>
                             <linearGradient id="radarGradient" x1="0" y1="0" x2="1" y2="1">
@@ -80,11 +80,11 @@ export default function SkillRadar() {
             <div className="grid grid-cols-2 gap-3 mt-4">
                 <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                     <div className="text-[11px] text-zinc-500 mb-1 font-medium">Strongest skill</div>
-                    <div className="text-sm font-bold text-white">Problem Solving</div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">Problem Solving</div>
                 </div>
                 <div className="p-3 bg-white/5 rounded-xl border border-white/5">
                     <div className="text-[11px] text-zinc-500 mb-1 font-medium">Needs attention</div>
-                    <div className="text-sm font-bold text-white">Confidence</div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">Confidence</div>
                 </div>
             </div>
         </div>

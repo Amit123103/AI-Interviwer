@@ -1,5 +1,5 @@
 
-import ollama
+from app.services.llm_service import llm_service
 import json
 
 class ThinkingService:

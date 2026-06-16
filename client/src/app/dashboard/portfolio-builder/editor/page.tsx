@@ -290,7 +290,7 @@ export default function PortfolioEditorPage() {
                                     <h4 className="text-lg font-bold">{exp.title}</h4>
                                     <span className="text-sm text-zinc-500 font-mono">{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <div className="text-indigo-600 font-medium mb-2">{exp.company} <span className="text-zinc-400 font-normal">| {exp.location}</span></div>
+                                <div className="text-indigo-600 font-medium mb-2">{exp.company} <span className="text-slate-500 dark:text-zinc-400 font-normal">| {exp.location}</span></div>
                                 <p className="text-zinc-700">{exp.description}</p>
                             </div>
                         ))}
@@ -335,10 +335,10 @@ export default function PortfolioEditorPage() {
     )
 
     const CyberTemplate = () => (
-        <div className="bg-zinc-950 text-indigo-400 min-h-full p-8 font-mono border-l-4 border-indigo-500 transition-all duration-500 shadow-[inset_0_0_100px_rgba(99,102,241,0.1)]">
+        <div className="bg-white dark:bg-zinc-950 text-indigo-400 min-h-full p-8 font-mono border-l-4 border-indigo-500 transition-all duration-500 shadow-[inset_0_0_100px_rgba(99,102,241,0.1)]">
             <header className="mb-12">
                 <div className="text-xs text-indigo-500/50 mb-2">{'>'} IDENT_INIT</div>
-                <h1 className="text-4xl font-black mb-2 text-white glow-text">{personalDetails.fullName || "GUEST_USER"}</h1>
+                <h1 className="text-4xl font-black mb-2 text-slate-900 dark:text-white glow-text">{personalDetails.fullName || "GUEST_USER"}</h1>
                 <h2 className="text-xl text-indigo-400 mb-6">{personalDetails.headline || "UNKNOWN_ROLE"}</h2>
                 <div className="flex flex-col gap-2 text-sm text-indigo-200/60">
                     {personalDetails.email && <div>[EMAIL]: {personalDetails.email}</div>}
@@ -349,7 +349,7 @@ export default function PortfolioEditorPage() {
             {personalDetails.about && (
                 <section className="mb-12 relative overflow-hidden p-6 bg-indigo-500/[0.02] border border-indigo-500/20">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
-                    <h3 className="text-xl font-bold mb-4 text-white">_ABOUT</h3>
+                    <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">_ABOUT</h3>
                     <p className="text-indigo-200/80 leading-relaxed max-w-3xl">{personalDetails.about}</p>
                     <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-indigo-500/50"></div>
                 </section>
@@ -357,7 +357,7 @@ export default function PortfolioEditorPage() {
 
             {experience.length > 0 && (
                 <section className="mb-12">
-                    <h3 className="text-xl font-bold mb-4 text-white">_EXPERIENCE</h3>
+                    <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">_EXPERIENCE</h3>
                     <div className="space-y-8 pl-4 border-l border-indigo-500/30">
                         {experience.map(exp => (
                             <div key={exp.id} className="relative">
@@ -373,7 +373,7 @@ export default function PortfolioEditorPage() {
 
             {skills.length > 0 && (
                 <section>
-                    <h3 className="text-xl font-bold mb-4 text-white">_SYS.SKILLS</h3>
+                    <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">_SYS.SKILLS</h3>
                     <div className="flex flex-wrap gap-3">
                         {skills.map((skill, i) => (
                             <span key={i} className="px-3 py-1 bg-indigo-950 border border-indigo-500/30 text-indigo-300 text-sm align-middle">
@@ -386,7 +386,7 @@ export default function PortfolioEditorPage() {
 
             {projects.length > 0 && (
                 <section className="mt-12">
-                    <h3 className="text-xl font-bold mb-4 text-white">_PROJECTS</h3>
+                    <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">_PROJECTS</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {projects.map(proj => (
                             <div key={proj.id} className="bg-indigo-950/30 border border-indigo-500/20 p-4 relative">
@@ -409,7 +409,7 @@ export default function PortfolioEditorPage() {
     const CreativeTemplate = () => (
         <div className="bg-gradient-to-br from-rose-50 to-orange-50 text-zinc-800 min-h-full p-8 md:p-12 font-sans transition-all duration-500">
             <header className="mb-16 text-center">
-                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-rose-400 to-orange-400 rounded-full mb-6 shadow-xl shadow-orange-500/20 border-4 border-white flex items-center justify-center text-white text-2xl font-black">
+                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-rose-400 to-orange-400 rounded-full mb-6 shadow-xl shadow-orange-500/20 border-4 border-white flex items-center justify-center text-slate-900 dark:text-white text-2xl font-black">
                     {personalDetails.fullName ? personalDetails.fullName.charAt(0).toUpperCase() : "P"}
                 </div>
                 <h1 className="text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">{personalDetails.fullName || "Your Name"}</h1>
@@ -432,7 +432,7 @@ export default function PortfolioEditorPage() {
                                 <div key={exp.id} className="relative pl-8 border-l-2 border-orange-200">
                                     <div className="absolute -left-1.5 top-2 w-3 h-3 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full border-2 border-white"></div>
                                     <h4 className="text-xl font-bold text-zinc-800">{exp.title}</h4>
-                                    <div className="text-orange-500 font-medium mb-2">{exp.company} <span className="text-zinc-400 text-sm font-normal ml-2">{exp.startDate} — {exp.endDate}</span></div>
+                                    <div className="text-orange-500 font-medium mb-2">{exp.company} <span className="text-slate-500 dark:text-zinc-400 text-sm font-normal ml-2">{exp.startDate} — {exp.endDate}</span></div>
                                     <p className="text-zinc-600 leading-relaxed">{exp.description}</p>
                                 </div>
                             ))}
@@ -483,11 +483,11 @@ export default function PortfolioEditorPage() {
     )
 
     return (
-        <div className="h-screen bg-zinc-950 text-white flex flex-col overflow-hidden">
+        <div className="h-screen bg-white dark:bg-zinc-950 text-slate-900 dark:text-white flex flex-col overflow-hidden">
             {/* Topbar */}
-            <div className="h-16 border-b border-white/10 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-10">
+            <div className="h-16 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-10">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" onClick={() => router.back()} className="w-8 h-8 p-0 text-zinc-400 hover:text-white">
+                    <Button variant="ghost" onClick={() => router.back()} className="w-8 h-8 p-0 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <h1 className="font-semibold hidden sm:block">Portfolio Editor</h1>
@@ -497,7 +497,7 @@ export default function PortfolioEditorPage() {
                 <div className="lg:hidden">
                     <Button
                         variant="outline"
-                        className="bg-zinc-900 border-white/10"
+                        className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                         onClick={() => setShowPreview(!showPreview)}
                     >
                         {showPreview ? <><MonitorSmartphone className="w-4 h-4 mr-2" /> Edit</> : <><Eye className="w-4 h-4 mr-2" /> Preview</>}
@@ -509,7 +509,7 @@ export default function PortfolioEditorPage() {
                         variant="outline"
                         onClick={() => handleSave(true)}
                         disabled={isSaving}
-                        className="bg-black/40 border-white/10 hover:bg-white/5 text-zinc-300 hidden sm:flex"
+                        className="bg-white dark:bg-black/40 border-slate-200 dark:border-white/10 hover:bg-white/5 text-slate-600 dark:text-zinc-300 hidden sm:flex"
                     >
                         <Save className="w-4 h-4 mr-2" />
                         {isSaving ? "Saving..." : "Save Draft"}
@@ -517,7 +517,7 @@ export default function PortfolioEditorPage() {
                     <Button
                         onClick={handlePublish}
                         disabled={isPublishing}
-                        className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white shadow-lg shadow-purple-500/20"
+                        className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-slate-900 dark:text-white shadow-lg shadow-purple-500/20"
                     >
                         <UploadCloud className="w-4 h-4 mr-2" />
                         {isPublishing ? "Publishing..." : (isPublished ? "Update Portfolio" : "Publish")}
@@ -549,10 +549,10 @@ export default function PortfolioEditorPage() {
             <div className="flex-1 flex overflow-hidden relative">
 
                 {/* LEFT: Editor Panel */}
-                <div className={`w-full lg:w-[450px] xl:w-[500px] h-full bg-zinc-950 border-r border-white/5 overflow-y-auto custom-scrollbar flex-shrink-0 relative z-20 transition-transform duration-300 ${showPreview ? '-translate-x-full absolute lg:relative lg:translate-x-0' : 'translate-x-0'}`}>
+                <div className={`w-full lg:w-[450px] xl:w-[500px] h-full bg-white dark:bg-zinc-950 border-r border-slate-100 dark:border-white/5 overflow-y-auto custom-scrollbar flex-shrink-0 relative z-20 transition-transform duration-300 ${showPreview ? '-translate-x-full absolute lg:relative lg:translate-x-0' : 'translate-x-0'}`}>
                     <div className="p-6">
                         <Tabs defaultValue="basics" className="w-full">
-                            <TabsList className="w-full bg-zinc-900 border border-white/[0.06] mb-6 p-1 rounded-xl">
+                            <TabsList className="w-full bg-white dark:bg-zinc-900 border border-white/[0.06] mb-6 p-1 rounded-xl">
                                 <TabsTrigger value="basics" className="flex-1 rounded-lg data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-400 text-xs">Basics</TabsTrigger>
                                 <TabsTrigger value="experience" className="flex-1 rounded-lg data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-400 text-xs">Experience</TabsTrigger>
                                 <TabsTrigger value="projects" className="flex-1 rounded-lg data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-400 text-xs">Projects</TabsTrigger>
@@ -563,80 +563,80 @@ export default function PortfolioEditorPage() {
                             <TabsContent value="basics" className="space-y-6 animate-in fade-in-50">
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">Full Name</label>
+                                        <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">Full Name</label>
                                         <Input
                                             value={personalDetails.fullName}
                                             onChange={(e) => setPersonalDetails({ ...personalDetails, fullName: e.target.value })}
-                                            className="bg-zinc-900 border-white/10"
+                                            className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                             placeholder="John Doe"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">Headline</label>
+                                        <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">Headline</label>
                                         <Input
                                             value={personalDetails.headline}
                                             onChange={(e) => setPersonalDetails({ ...personalDetails, headline: e.target.value })}
-                                            className="bg-zinc-900 border-white/10"
+                                            className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                             placeholder="Senior Frontend Developer"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">About Me</label>
+                                        <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">About Me</label>
                                         <Textarea
                                             value={personalDetails.about}
                                             onChange={(e) => setPersonalDetails({ ...personalDetails, about: e.target.value })}
-                                            className="bg-zinc-900 border-white/10 min-h-[120px]"
+                                            className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 min-h-[120px]"
                                             placeholder="Passionate about building scalable web applications..."
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">Location</label>
+                                            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">Location</label>
                                             <Input
                                                 value={personalDetails.location}
                                                 onChange={(e) => setPersonalDetails({ ...personalDetails, location: e.target.value })}
-                                                className="bg-zinc-900 border-white/10"
+                                                className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                                 placeholder="San Francisco, CA"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">Email</label>
+                                            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">Email</label>
                                             <Input
                                                 type="email"
                                                 value={personalDetails.email}
                                                 onChange={(e) => setPersonalDetails({ ...personalDetails, email: e.target.value })}
-                                                className="bg-zinc-900 border-white/10"
+                                                className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                             />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">LinkedIn URL</label>
+                                            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">LinkedIn URL</label>
                                             <Input
                                                 value={personalDetails.linkedin}
                                                 onChange={(e) => setPersonalDetails({ ...personalDetails, linkedin: e.target.value })}
-                                                className="bg-zinc-900 border-white/10"
+                                                className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                                 placeholder="https://linkedin.com/in/johndoe"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-xs font-semibold text-zinc-400 mb-1.5 block flex items-center gap-1"><Github className="w-3 h-3" /> GitHub</label>
+                                            <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block flex items-center gap-1"><Github className="w-3 h-3" /> GitHub</label>
                                             <Input
                                                 value={personalDetails.github}
                                                 onChange={(e) => setPersonalDetails({ ...personalDetails, github: e.target.value })}
-                                                className="bg-zinc-900 border-white/10"
+                                                className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                                 placeholder="Username or URL"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="text-xs font-semibold text-zinc-400 mb-1.5 block">Skills (comma separated)</label>
+                                        <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 block">Skills (comma separated)</label>
                                         <Textarea
                                             value={skills.join(", ")}
                                             onChange={(e) => setSkills(e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                                            className="bg-zinc-900 border-white/10"
+                                            className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                             placeholder="React, Node.js, TypeScript"
                                         />
                                     </div>
@@ -646,10 +646,10 @@ export default function PortfolioEditorPage() {
                             {/* EXPERIENCE TAB */}
                             <TabsContent value="experience" className="space-y-6 animate-in fade-in-50">
                                 {experience.map((exp, idx) => (
-                                    <Card key={exp.id || idx} className="p-4 bg-zinc-900 border-white/10 mb-4 relative overflow-visible">
+                                    <Card key={exp.id || idx} className="p-4 bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 mb-4 relative overflow-visible">
                                         <Button
                                             variant="ghost"
-                                            className="absolute -top-3 -right-3 w-6 h-6 p-0 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg"
+                                            className="absolute -top-3 -right-3 w-6 h-6 p-0 rounded-full bg-red-500 hover:bg-red-600 text-slate-900 dark:text-white shadow-lg"
                                             onClick={() => setExperience(experience.filter((_, i) => i !== idx))}
                                         >
                                             ×
@@ -663,7 +663,7 @@ export default function PortfolioEditorPage() {
                                                     setExperience(newExp);
                                                 }}
                                                 placeholder="Job Title"
-                                                className="bg-black/50 border-white/5 font-semibold"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 font-semibold"
                                             />
                                             <Input
                                                 value={exp.company}
@@ -673,7 +673,7 @@ export default function PortfolioEditorPage() {
                                                     setExperience(newExp);
                                                 }}
                                                 placeholder="Company Name"
-                                                className="bg-black/50 border-white/5"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5"
                                             />
                                             <div className="grid grid-cols-2 gap-3">
                                                 <Input
@@ -684,7 +684,7 @@ export default function PortfolioEditorPage() {
                                                         setExperience(newExp);
                                                     }}
                                                     placeholder="Start (e.g. 2020)"
-                                                    className="bg-black/50 border-white/5 text-sm"
+                                                    className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 text-sm"
                                                 />
                                                 <Input
                                                     value={exp.endDate}
@@ -694,7 +694,7 @@ export default function PortfolioEditorPage() {
                                                         setExperience(newExp);
                                                     }}
                                                     placeholder="End (e.g. Present)"
-                                                    className="bg-black/50 border-white/5 text-sm"
+                                                    className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 text-sm"
                                                 />
                                             </div>
                                             <Textarea
@@ -705,7 +705,7 @@ export default function PortfolioEditorPage() {
                                                     setExperience(newExp);
                                                 }}
                                                 placeholder="Description of responsibilities..."
-                                                className="bg-black/50 border-white/5 min-h-[80px] text-sm"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 min-h-[80px] text-sm"
                                             />
                                         </div>
                                     </Card>
@@ -713,7 +713,7 @@ export default function PortfolioEditorPage() {
 
                                 <Button
                                     variant="outline"
-                                    className="w-full border-dashed border-white/20 bg-transparent hover:bg-white/5"
+                                    className="w-full border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-white/5"
                                     onClick={() => setExperience([...experience, { id: Date.now().toString(), title: "", company: "", location: "", startDate: "", endDate: "", description: "" }])}
                                 >
                                     + Add Experience
@@ -732,7 +732,7 @@ export default function PortfolioEditorPage() {
                                         <Button
                                             onClick={fetchGithubRepos}
                                             disabled={isFetchingGithub}
-                                            className="bg-indigo-600 hover:bg-indigo-700 text-white mt-1 w-full"
+                                            className="bg-indigo-600 hover:bg-indigo-700 text-slate-900 dark:text-white mt-1 w-full"
                                         >
                                             {isFetchingGithub ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Github className="w-4 h-4 mr-2" />}
                                             {isFetchingGithub ? "Fetching..." : "Fetch Top Repositories"}
@@ -742,15 +742,15 @@ export default function PortfolioEditorPage() {
                                 </Card>
 
                                 <div className="relative">
-                                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10"></span></div>
-                                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-zinc-950 px-2 text-zinc-500">Or add manually</span></div>
+                                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200 dark:border-white/10"></span></div>
+                                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-zinc-950 px-2 text-zinc-500">Or add manually</span></div>
                                 </div>
 
                                 {projects.map((proj, idx) => (
-                                    <Card key={proj.id || idx} className="p-4 bg-zinc-900 border-white/10 mb-4 relative overflow-visible">
+                                    <Card key={proj.id || idx} className="p-4 bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 mb-4 relative overflow-visible">
                                         <Button
                                             variant="ghost"
-                                            className="absolute -top-3 -right-3 w-6 h-6 p-0 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg"
+                                            className="absolute -top-3 -right-3 w-6 h-6 p-0 rounded-full bg-red-500 hover:bg-red-600 text-slate-900 dark:text-white shadow-lg"
                                             onClick={() => setProjects(projects.filter((_, i) => i !== idx))}
                                         >
                                             ×
@@ -764,7 +764,7 @@ export default function PortfolioEditorPage() {
                                                     setProjects(newProj);
                                                 }}
                                                 placeholder="Project Title"
-                                                className="bg-black/50 border-white/5 font-semibold"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 font-semibold"
                                             />
                                             <Input
                                                 value={proj.link}
@@ -774,7 +774,7 @@ export default function PortfolioEditorPage() {
                                                     setProjects(newProj);
                                                 }}
                                                 placeholder="Project URL (e.g. https://github.com/..)"
-                                                className="bg-black/50 border-white/5"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5"
                                             />
                                             <Input
                                                 value={proj.technologies.join(", ")}
@@ -784,7 +784,7 @@ export default function PortfolioEditorPage() {
                                                     setProjects(newProj);
                                                 }}
                                                 placeholder="Technologies (comma separated)"
-                                                className="bg-black/50 border-white/5 text-sm"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 text-sm"
                                             />
                                             <Textarea
                                                 value={proj.description}
@@ -794,7 +794,7 @@ export default function PortfolioEditorPage() {
                                                     setProjects(newProj);
                                                 }}
                                                 placeholder="Short description of the project..."
-                                                className="bg-black/50 border-white/5 min-h-[80px] text-sm"
+                                                className="bg-white dark:bg-black/50 border-slate-100 dark:border-white/5 min-h-[80px] text-sm"
                                             />
                                         </div>
                                     </Card>
@@ -802,7 +802,7 @@ export default function PortfolioEditorPage() {
 
                                 <Button
                                     variant="outline"
-                                    className="w-full border-dashed border-white/20 bg-transparent hover:bg-white/5"
+                                    className="w-full border-dashed border-slate-300 dark:border-white/20 bg-transparent hover:bg-white/5"
                                     onClick={() => setProjects([...projects, { id: Date.now().toString(), title: "", link: "", technologies: [], description: "" }])}
                                 >
                                     + Add Custom Project
@@ -812,22 +812,22 @@ export default function PortfolioEditorPage() {
                             {/* DESIGN TAB */}
                             <TabsContent value="design" className="space-y-6 animate-in fade-in-50">
                                 <div>
-                                    <label className="text-xs font-semibold text-zinc-400 mb-1.5 flex items-center gap-2"><Globe className="w-3 h-3" /> Custom URL Slug</label>
+                                    <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-1.5 flex items-center gap-2"><Globe className="w-3 h-3" /> Custom URL Slug</label>
                                     <div className="flex shadow-sm rounded-md">
-                                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-white/10 bg-black/50 text-zinc-500 sm:text-sm">
+                                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-200 dark:border-white/10 bg-white dark:bg-black/50 text-zinc-500 sm:text-sm">
                                             /portfolio/
                                         </span>
                                         <Input
                                             type="text"
                                             value={customSlug}
                                             onChange={(e) => setCustomSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                            className="flex-1 min-w-0 block w-full rounded-none bg-zinc-900 border-white/10"
+                                            className="flex-1 min-w-0 block w-full rounded-none bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                             placeholder="amit-kumar-sd"
                                         />
                                         <Button
                                             variant="ghost"
                                             onClick={checkSlugAvailability}
-                                            className="rounded-l-none rounded-r-md border border-l-0 border-white/10 bg-zinc-900 hover:bg-zinc-800 text-indigo-400 text-xs"
+                                            className="rounded-l-none rounded-r-md border border-l-0 border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-900 hover:bg-zinc-800 text-indigo-400 text-xs"
                                         >
                                             Check
                                         </Button>
@@ -836,7 +836,7 @@ export default function PortfolioEditorPage() {
                                 </div>
 
                                 <div className="mt-8">
-                                    <label className="text-xs font-semibold text-zinc-400 mb-3 block">Global Template</label>
+                                    <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 mb-3 block">Global Template</label>
                                     <div className="grid grid-cols-1 gap-3">
                                         {[
                                             { id: "modern", name: "Modern Minimal" },
@@ -846,7 +846,7 @@ export default function PortfolioEditorPage() {
                                             <div
                                                 key={t.id}
                                                 onClick={() => setTemplateId(t.id)}
-                                                className={`p-4 rounded-xl cursor-pointer border-2 transition-all ${templateId === t.id ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10 bg-zinc-900 hover:border-white/20'}`}
+                                                className={`p-4 rounded-xl cursor-pointer border-2 transition-all ${templateId === t.id ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-900 hover:border-white/20'}`}
                                             >
                                                 <div className="font-semibold">{t.name}</div>
                                             </div>
@@ -860,7 +860,7 @@ export default function PortfolioEditorPage() {
                 </div>
 
                 {/* RIGHT: Live Preview */}
-                <div className={`flex-1 h-full bg-zinc-900 overflow-y-auto relative transition-transform duration-300 ${!showPreview ? 'translate-x-full absolute w-full lg:relative lg:translate-x-0' : 'translate-x-0 w-full absolute lg:relative'}`}>
+                <div className={`flex-1 h-full bg-white dark:bg-zinc-900 overflow-y-auto relative transition-transform duration-300 ${!showPreview ? 'translate-x-full absolute w-full lg:relative lg:translate-x-0' : 'translate-x-0 w-full absolute lg:relative'}`}>
                     {/* Shadow overlay for depth */}
                     <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)] z-10" />
 

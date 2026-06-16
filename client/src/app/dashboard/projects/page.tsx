@@ -103,12 +103,12 @@ export default function ProjectCollaborationPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 pb-20 pt-16 md:pt-20">
+        <div className="min-h-screen bg-white dark:bg-slate-950 pb-20 pt-16 md:pt-20">
             {/* Header / Nav */}
-            <div className="border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
+            <div className="border-b border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">
+                        <Link href="/dashboard" className="text-zinc-500 hover:text-slate-900 dark:text-white transition-colors">
                             Dashboard
                         </Link>
                         <span className="text-zinc-700">/</span>
@@ -116,7 +116,7 @@ export default function ProjectCollaborationPage() {
                             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                                 <Rocket className="w-4 h-4 text-emerald-400" />
                             </div>
-                            <span className="font-semibold text-white">Project Collaboration</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">Project Collaboration</span>
                         </div>
                     </div>
                 </div>
@@ -126,10 +126,10 @@ export default function ProjectCollaborationPage() {
                 {/* Intro Section */}
                 <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                        <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
                             Build Real <span className="text-emerald-400">Products</span>
                         </h1>
-                        <p className="text-zinc-400 text-lg max-w-2xl">
+                        <p className="text-slate-500 dark:text-zinc-400 text-lg max-w-2xl">
                             Join open source projects or team up with peers to build portfolio-ready applications. Watch pitch videos, match your skills, and start coding.
                         </p>
                     </div>
@@ -139,13 +139,13 @@ export default function ProjectCollaborationPage() {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 mb-8 sticky top-36 z-20">
+                <div className="bg-white/60 dark:bg-zinc-900/50 backdrop-blur-xl border border-slate-100 dark:border-white/5 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-4 mb-8 sticky top-36 z-20">
                     <div className="flex-1 overflow-x-auto pb-2 md:pb-0 custom-scrollbar flex gap-2 w-full">
                         {CATEGORIES.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${selectedCategory === cat ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'}`}
+                                className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${selectedCategory === cat ? 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20' : 'bg-white/5 text-slate-500 dark:text-zinc-400 hover:bg-white/10 hover:text-slate-900 dark:text-white'}`}
                             >
                                 {cat === "Frontend" && <Globe className="w-4 h-4" />}
                                 {cat === "Backend" && <Terminal className="w-4 h-4" />}
@@ -162,10 +162,10 @@ export default function ProjectCollaborationPage() {
                             <input
                                 type="text"
                                 placeholder="Search skills, tags..."
-                                className="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-10 pr-4 py-2 outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-colors"
+                                className="w-full bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl pl-10 pr-4 py-2 outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-colors"
                             />
                         </div>
-                        <Button variant="outline" className="border-white/10 px-3 bg-white/5">
+                        <Button variant="outline" className="border-slate-200 dark:border-white/10 px-3 bg-white/5">
                             <Filter className="w-4 h-4" />
                         </Button>
                     </div>
@@ -180,7 +180,7 @@ export default function ProjectCollaborationPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
                         >
-                            <Card className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 p-6 md:p-8 hover:bg-zinc-900/80 hover:border-emerald-500/30 transition-all duration-300 group flex flex-col h-full relative overflow-hidden">
+                            <Card className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 p-6 md:p-8 hover:bg-white dark:bg-zinc-900/80 hover:border-emerald-500/30 transition-all duration-300 group flex flex-col h-full relative overflow-hidden">
                                 {/* Match Score Badge */}
                                 <div className={`absolute top-6 right-6 px-3 py-1 rounded-full border text-xs font-bold ${getMatchColor(project.matchScore)}`}>
                                     {project.matchScore}% Skill Match
@@ -189,29 +189,29 @@ export default function ProjectCollaborationPage() {
                                 <div className="flex flex-col md:flex-row gap-6 mb-6">
                                     {/* Video Thumbnail */}
                                     <div
-                                        className="w-full md:w-48 h-32 rounded-2xl relative overflow-hidden group/video cursor-pointer shrink-0 border border-white/10"
+                                        className="w-full md:w-48 h-32 rounded-2xl relative overflow-hidden group/video cursor-pointer shrink-0 border border-slate-200 dark:border-white/10"
                                         onClick={() => openVideoModal(project)}
                                     >
                                         <img src={project.videoPlaceholder} alt={project.title} className="w-full h-full object-cover group-hover/video:scale-105 transition-transform duration-700" />
-                                        <div className="absolute inset-0 bg-black/40 group-hover/video:bg-black/20 transition-colors" />
+                                        <div className="absolute inset-0 bg-white dark:bg-black/40 group-hover/video:bg-white dark:bg-black/20 transition-colors" />
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover/video:scale-110 group-hover/video:bg-emerald-500/80 transition-all">
-                                                <Play className="w-4 h-4 text-white fill-current ml-0.5" />
+                                                <Play className="w-4 h-4 text-slate-900 dark:text-white fill-current ml-0.5" />
                                             </div>
                                         </div>
-                                        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[10px] font-bold text-white">
+                                        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-white dark:bg-black/60 backdrop-blur-md rounded text-[10px] font-bold text-slate-900 dark:text-white">
                                             Watch Pitch
                                         </div>
                                     </div>
 
                                     {/* Project Info */}
                                     <div className="flex-1">
-                                        <h3 className="font-bold text-white text-xl group-hover:text-emerald-400 transition-colors mb-2 pr-24 leading-tight">{project.title}</h3>
-                                        <p className="text-sm text-zinc-400 line-clamp-2 mb-4 leading-relaxed">{project.description}</p>
+                                        <h3 className="font-bold text-slate-900 dark:text-white text-xl group-hover:text-emerald-400 transition-colors mb-2 pr-24 leading-tight">{project.title}</h3>
+                                        <p className="text-sm text-slate-500 dark:text-zinc-400 line-clamp-2 mb-4 leading-relaxed">{project.description}</p>
 
                                         <div className="flex flex-wrap gap-2">
                                             {project.tags.map(tag => (
-                                                <Badge key={tag} variant="secondary" className="bg-white/5 text-xs text-zinc-300 pointer-events-none">
+                                                <Badge key={tag} variant="secondary" className="bg-white/5 text-xs text-slate-600 dark:text-zinc-300 pointer-events-none">
                                                     {tag}
                                                 </Badge>
                                             ))}
@@ -219,14 +219,14 @@ export default function ProjectCollaborationPage() {
                                     </div>
                                 </div>
 
-                                <div className="mt-auto pt-6 border-t border-white/5">
+                                <div className="mt-auto pt-6 border-t border-slate-100 dark:border-white/5">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                         <div className="flex items-center gap-6 text-sm">
-                                            <div className="flex items-center gap-2 text-zinc-400">
+                                            <div className="flex items-center gap-2 text-slate-500 dark:text-zinc-400">
                                                 <Users className="w-4 h-4 text-zinc-500" />
                                                 <span className="font-medium">{project.members}/{project.maxMembers} Members</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-zinc-400">
+                                            <div className="flex items-center gap-2 text-slate-500 dark:text-zinc-400">
                                                 <GitBranch className="w-4 h-4 text-zinc-500" />
                                                 <span className="font-medium">{project.difficulty}</span>
                                             </div>
@@ -271,23 +271,23 @@ export default function ProjectCollaborationPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                                className="fixed inset-0 bg-white dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                                 onClick={() => setIsJoinModalOpen(false)}
                             />
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
                             >
                                 {joinStep === 1 ? (
                                     <>
-                                        <div className="p-6 border-b border-white/5 flex justify-between items-start bg-zinc-900/30">
+                                        <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-start bg-white dark:bg-zinc-900/30">
                                             <div>
-                                                <h2 className="text-xl font-bold text-white leading-tight mb-1">Join {selectedProject.title}</h2>
-                                                <p className="text-sm text-zinc-400">Created by {selectedProject.creator}</p>
+                                                <h2 className="text-xl font-bold text-slate-900 dark:text-white leading-tight mb-1">Join {selectedProject.title}</h2>
+                                                <p className="text-sm text-slate-500 dark:text-zinc-400">Created by {selectedProject.creator}</p>
                                             </div>
-                                            <button onClick={() => setIsJoinModalOpen(false)} className="text-zinc-500 hover:text-white p-2 bg-white/5 rounded-full transition-colors shrink-0">
+                                            <button onClick={() => setIsJoinModalOpen(false)} className="text-zinc-500 hover:text-slate-900 dark:text-white p-2 bg-white/5 rounded-full transition-colors shrink-0">
                                                 <X className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -305,9 +305,9 @@ export default function ProjectCollaborationPage() {
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-semibold text-white mb-2">Why do you want to join this project?</label>
+                                                <label className="block text-sm font-semibold text-slate-900 dark:text-white mb-2">Why do you want to join this project?</label>
                                                 <textarea
-                                                    className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder:text-zinc-600 focus:border-emerald-500/50 outline-none resize-none transition-colors"
+                                                    className="w-full h-32 bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 text-slate-900 dark:text-white placeholder:text-zinc-600 focus:border-emerald-500/50 outline-none resize-none transition-colors"
                                                     placeholder="Hey! I have experience building fast React frontends and I'd love to help tackle the UI for this..."
                                                     value={applicationNote}
                                                     onChange={(e) => setApplicationNote(e.target.value)}
@@ -315,8 +315,8 @@ export default function ProjectCollaborationPage() {
                                             </div>
                                         </div>
 
-                                        <div className="p-6 border-t border-white/5 bg-zinc-900/30 flex justify-end gap-3">
-                                            <Button variant="ghost" className="text-zinc-400 hover:text-white hover:bg-white/5" onClick={() => setIsJoinModalOpen(false)}>
+                                        <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-900/30 flex justify-end gap-3">
+                                            <Button variant="ghost" className="text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white hover:bg-white/5" onClick={() => setIsJoinModalOpen(false)}>
                                                 Cancel
                                             </Button>
                                             <Button
@@ -332,13 +332,13 @@ export default function ProjectCollaborationPage() {
                                         <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
                                             <Rocket className="w-10 h-10 text-emerald-400" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white mb-2">Request Sent!</h2>
-                                        <p className="text-zinc-400 mb-8 max-w-[280px]">
+                                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Request Sent!</h2>
+                                        <p className="text-slate-500 dark:text-zinc-400 mb-8 max-w-[280px]">
                                             {selectedProject.creator} will review your profile and message you if they think it&apos;s a good fit.
                                         </p>
                                         <Button
                                             variant="outline"
-                                            className="w-full text-white border-white/10 hover:bg-white/5"
+                                            className="w-full text-slate-900 dark:text-white border-slate-200 dark:border-white/10 hover:bg-white/5"
                                             onClick={() => setIsJoinModalOpen(false)}
                                         >
                                             Back to Projects
@@ -358,23 +358,23 @@ export default function ProjectCollaborationPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4 md:p-10"
+                                className="fixed inset-0 bg-white dark:bg-black/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4 md:p-10"
                                 onClick={() => setIsVideoModalOpen(false)}
                             />
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-black rounded-3xl shadow-[0_0_100px_rgba(16,185,129,0.15)] z-[60] overflow-hidden border border-white/10"
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-slate-50 dark:bg-black rounded-3xl shadow-[0_0_100px_rgba(16,185,129,0.15)] z-[60] overflow-hidden border border-slate-200 dark:border-white/10"
                             >
                                 <div className="absolute top-4 right-4 z-10 flex gap-2">
-                                    <button onClick={() => setIsVideoModalOpen(false)} className="w-10 h-10 bg-black/50 hover:bg-black/80 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/20 transition-all">
+                                    <button onClick={() => setIsVideoModalOpen(false)} className="w-10 h-10 bg-white dark:bg-black/50 hover:bg-white dark:bg-black/80 backdrop-blur-md rounded-xl flex items-center justify-center text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 transition-all">
                                         <X className="w-5 h-5" />
                                     </button>
                                 </div>
 
                                 {/* Placeholder YouTube Video representing the project pitch */}
-                                <div className="aspect-video w-full bg-zinc-900 border-b border-white/10 relative">
+                                <div className="aspect-video w-full bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-white/10 relative">
                                     <iframe
                                         src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=0&controls=1"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -382,10 +382,10 @@ export default function ProjectCollaborationPage() {
                                         className="absolute inset-0 w-full h-full border-0"
                                     />
                                 </div>
-                                <div className="p-6 md:p-8 bg-zinc-950 flex flex-col md:flex-row gap-6 items-start justify-between">
+                                <div className="p-6 md:p-8 bg-white dark:bg-zinc-950 flex flex-col md:flex-row gap-6 items-start justify-between">
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white tracking-tight mb-2">Project Pitch: {selectedProject.title}</h2>
-                                        <p className="text-zinc-400 font-medium max-w-xl leading-relaxed">{selectedProject.description}</p>
+                                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Project Pitch: {selectedProject.title}</h2>
+                                        <p className="text-slate-500 dark:text-zinc-400 font-medium max-w-xl leading-relaxed">{selectedProject.description}</p>
                                     </div>
                                     <div className="shrink-0 flex flex-col gap-3">
                                         <Button

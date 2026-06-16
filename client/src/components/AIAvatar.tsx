@@ -97,41 +97,42 @@ export default function AIAvatar({
                 <AnimatePresence>
                     {(isSpeaking || isThinking || isListening || isEvaluating) && (
                         <>
+                            {/* Orbital Data Rings */}
                             <motion.div
                                 key="ring_outer"
                                 className="absolute rounded-full border border-dashed"
-                                style={{ borderColor: activeColor + '10' }}
+                                style={{ borderColor: activeColor + '15' }}
                                 initial={{ width: "60%", height: "60%", opacity: 0, rotate: 0 }}
-                                animate={{ width: "100%", height: "100%", opacity: [0, 0.4, 0], rotate: 360 }}
+                                animate={{ width: "115%", height: "115%", opacity: [0, 0.4, 0], rotate: 360 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                             />
-                            {/* Secondary Advanced Data Ring */}
+                            
                             <motion.div
                                 key="ring_data"
-                                className="absolute rounded-full border border-primary/10 border-t-primary/30 border-b-primary/30"
-                                style={{ width: "110%", height: "110%" }}
+                                className="absolute rounded-full border border-primary/5 border-t-primary/30 border-b-primary/30"
+                                style={{ width: "130%", height: "130%" }}
                                 animate={{
                                     rotate: -360,
-                                    scale: isSpeaking ? [1, 1.05, 1] : 1,
-                                    borderColor: isSpeaking ? `rgba(var(--primary), ${0.1 + (volume / 100)})` : 'rgba(var(--primary), 0.1)'
+                                    scale: isSpeaking ? [1, 1.02, 1] : 1,
                                 }}
                                 transition={{
-                                    rotate: { duration: 10, repeat: Infinity, ease: "linear" },
-                                    scale: { duration: 0.2, repeat: Infinity }
+                                    rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+                                    scale: { duration: 0.1, repeat: Infinity }
                                 }}
                             />
+                            
                             <motion.div
                                 key="ring_inner"
                                 className="absolute rounded-full border-2"
-                                style={{ borderColor: activeColor + '20', filter: 'url(#displacementFilter)' }}
+                                style={{ borderColor: activeColor + '25', filter: 'url(#displacementFilter)' }}
                                 initial={{ width: "50%", height: "50%", opacity: 0 }}
                                 animate={{
-                                    width: isSpeaking ? ["80%", "85%", "80%"] : "80%",
-                                    opacity: [0.1, 0.3, 0.1],
+                                    width: isSpeaking ? ["85%", "90%", "85%"] : "85%",
+                                    opacity: [0.1, 0.4, 0.1],
                                     rotate: isThinking ? [0, 360] : 0
                                 }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                             />
                         </>
                     )}
@@ -157,11 +158,12 @@ export default function AIAvatar({
                         style={{ maskImage: 'radial-gradient(circle, black, transparent)' }}
                     />
 
-                    {/* Chromatic Aberration Layers */}
+                    {/* Chromatic Aberration & Internal Depth */}
                     <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none">
-                        <div className="absolute inset-0 bg-red-500/10 blur-[2px] translate-x-1" />
-                        <div className="absolute inset-0 bg-blue-500/10 blur-[2px] -translate-x-1" />
+                        <div className="absolute inset-0 bg-indigo-500/10 blur-[3px] translate-x-1" />
+                        <div className="absolute inset-0 bg-cyan-500/10 blur-[3px] -translate-x-1" />
                     </div>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
 
                     <Brain className="w-14 h-14 md:w-16 md:h-16 relative z-10" style={{ color: activeColor, filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.2))' }} />
 

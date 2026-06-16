@@ -89,9 +89,30 @@ export default function AdminDashboard() {
 
     const socketRef = useRef<any>(null)
 
+    // ── Admin Auth Guard ──
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const session = localStorage.getItem('admin_session')
+        if (!session) { router.push('/admin/login'); return }
+        try {
+            const parsed = JSON.parse(session)
+            if (!parsed.token || parsed.expiresAt < Date.now()) {
+                localStorage.removeItem('admin_session')
+                router.push('/admin/login')
+            }
+        } catch { localStorage.removeItem('admin_session'); router.push('/admin/login') }
+    }, [router])
+
+    const getAdminToken = () => {
+        try {
+            const session = JSON.parse(localStorage.getItem('admin_session') || '{}')
+            return session.token || localStorage.getItem('token') || ''
+        } catch { return '' }
+    }
+
     const fetchAllData = async () => {
         try {
-            const token = localStorage.getItem("token")
+            const token = getAdminToken()
             const headers = { 'Authorization': `Bearer ${token}` }
             const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
 

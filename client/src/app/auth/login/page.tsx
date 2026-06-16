@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Mail, Lock, Sparkles, Brain, ArrowRight, ArrowLeft, Shield, Fingerprint, Eye, EyeOff, Zap, Wifi, CheckCircle2 } from "lucide-react"
+import { Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react"
 import Logo from "@/components/ui/Logo"
 import axios from "axios"
-
 
 export default function LoginPage() {
     const router = useRouter()
@@ -20,7 +19,6 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [loginSuccess, setLoginSuccess] = useState(false)
-    const [focusedField, setFocusedField] = useState<string | null>(null)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -47,292 +45,144 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 bg-zinc-950">
+        <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-zinc-50 relative overflow-hidden">
+            {/* Subtle light background decoration */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-50/50 rounded-full blur-3xl pointer-events-none" />
 
-            {/* ── Premium AI Greeting ── */}
-            <motion.div
-                initial={{ opacity: 0, y: -30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="absolute top-8 left-1/2 -translate-x-1/2 w-full max-w-lg hidden lg:block"
-            >
-                <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] rounded-2xl p-4 flex items-center gap-4 shadow-[0_8px_40px_rgba(0,0,0,0.3)]">
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center">
-                        <Logo size={44} showStatus />
-                    </div>
-                    <div className="flex-1">
-                        <p className="text-[10px] text-zinc-500 font-semibold tracking-wide">AMITAI Interview</p>
-                        <p className="text-zinc-300 font-medium italic text-sm">"Welcome back! Ready to sharpen your skills today?"</p>
-                    </div>
-                    <motion.div
-                        animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_15px_rgba(139,92,246,0.6)]"
-                    />
-                </div>
-            </motion.div>
-
-            <motion.div
-                initial={{ opacity: 0, scale: 0.92, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-md relative z-10"
-            >
-                {/* ── Back arrow ── */}
-                <motion.button
-                    onClick={() => router.back()}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                    className="group flex items-center gap-2 mb-5 px-1 cursor-pointer"
+            <div className="w-full max-w-md relative z-10">
+                {/* Back Link */}
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 mb-6 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
                 >
-                    <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center group-hover:bg-white/[0.1] group-hover:border-purple-500/30 transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]">
-                        <ArrowLeft className="w-4 h-4 text-zinc-500 group-hover:text-purple-400 transition-colors duration-300 group-hover:-translate-x-0.5 transform" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600 group-hover:text-zinc-400 transition-colors duration-300">Back</span>
-                </motion.button>
-                {/* ── Main card ── */}
-                <Card className="bg-zinc-900/40 backdrop-blur-3xl border border-white/[0.08] shadow-[0_0_80px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] rounded-[2.5rem] overflow-hidden relative">
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to home
+                </Link>
 
-                    {/* Inner gradient sheen */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.04] via-transparent to-cyan-500/[0.03] pointer-events-none" />
-                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-                    <CardHeader className="space-y-5 px-8 pt-10 pb-4 relative">
-                        {/* Animated icon */}
-                        <motion.div
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 16, delay: 0.25 }}
-                            className="relative w-18 h-18 mx-auto"
-                        >
-                            <div className="w-16 h-16 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-[0_0_50px_rgba(139,92,246,0.4)] relative">
-                                <AnimatePresence mode="wait">
-                                    {loginSuccess ? (
-                                        <motion.div key="success" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}>
-                                            <CheckCircle2 className="text-white w-8 h-8 drop-shadow-lg" />
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div key="trophy" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0, rotate: 90 }}>
-                                            <Trophy className="text-white w-8 h-8 drop-shadow-lg" />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                                {/* Pulsing corner dot */}
-                                <motion.div
-                                    animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.5, 1, 0.5] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                    className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.8)]"
-                                    style={{ background: "linear-gradient(135deg, #ec4899, #8b5cf6)" }}
-                                />
-                                {/* Orbiting ring */}
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="absolute -inset-2 rounded-2xl border border-dashed border-purple-500/20"
-                                />
-                            </div>
-                        </motion.div>
-
-                        <div className="space-y-2 text-center">
-                            <CardTitle className="text-3xl font-black text-white tracking-tighter italic">
-                                <AnimatePresence mode="wait">
-                                    {loginSuccess ? (
-                                        <motion.span key="success" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                                            ACCESS GRANTED
-                                        </motion.span>
-                                    ) : (
-                                        <motion.span key="title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent">
-                                            WELCOME BACK
-                                        </motion.span>
-                                    )}
-                                </AnimatePresence>
+                <Card className="bg-white border-zinc-200 shadow-xl shadow-zinc-200/50 rounded-2xl overflow-hidden">
+                    <CardHeader className="space-y-4 px-8 pt-10 pb-6 text-center">
+                        <div className="mx-auto flex justify-center mb-2">
+                            <Logo size={40} />
+                        </div>
+                        <div className="space-y-1">
+                            <CardTitle className="text-2xl font-bold text-zinc-900 tracking-tight">
+                                Welcome back
                             </CardTitle>
-                            <CardDescription className="text-zinc-500 font-medium tracking-wide text-sm">
-                                {loginSuccess ? "Initializing your dashboard..." : "Resume your journey to mastery"}
+                            <CardDescription className="text-zinc-500">
+                                Sign in to your account to continue
                             </CardDescription>
                         </div>
                     </CardHeader>
 
                     <form onSubmit={handleSubmit}>
-                        <CardContent className="space-y-5 px-8">
+                        <CardContent className="space-y-4 px-8">
                             <AnimatePresence>
                                 {error && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0, y: -10 }}
                                         animate={{ opacity: 1, height: "auto", y: 0 }}
                                         exit={{ opacity: 0, height: 0, y: -10 }}
-                                        className="text-red-400 text-xs font-black uppercase tracking-widest text-center bg-red-500/[0.08] backdrop-blur-lg p-3.5 rounded-xl border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
+                                        className="text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100 flex items-center gap-2"
                                     >
-                                        <span className="flex items-center justify-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                                            {error}
-                                        </span>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                                        {error}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
 
-                            {/* Identity field */}
                             <div className="space-y-2">
-                                <Label htmlFor="identifier" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 flex items-center gap-1.5">
-                                    <Fingerprint className="w-3 h-3 text-purple-400/60" />
-                                    Identity Key
+                                <Label htmlFor="identifier" className="text-sm font-medium text-zinc-700">
+                                    Email or Username
                                 </Label>
-                                <div className="relative group">
-                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedField === 'identifier' ? 'text-purple-400' : 'text-zinc-600'}`}>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
                                         <Mail className="w-4 h-4" />
                                     </div>
                                     <Input
                                         id="identifier"
                                         name="identifier"
-                                        placeholder="Username or Email"
+                                        type="text"
+                                        placeholder="m@example.com"
                                         required
                                         value={formData.identifier}
                                         onChange={handleChange}
-                                        onFocus={() => setFocusedField('identifier')}
-                                        onBlur={() => setFocusedField(null)}
-                                        className="h-14 pl-12 bg-white/[0.03] border-white/[0.06] text-white placeholder:text-zinc-700 focus:bg-white/[0.06] focus:border-purple-500/40 focus:shadow-[0_0_25px_rgba(139,92,246,0.1)] transition-all duration-300 rounded-2xl"
-                                    />
-                                    <motion.div
-                                        animate={{ scaleX: focusedField === 'identifier' ? 1 : 0 }}
-                                        className="absolute bottom-0 left-4 right-4 h-px origin-left"
-                                        style={{ background: "linear-gradient(90deg, #7c3aed, #ec4899, #06b6d4)" }}
+                                        className="h-12 pl-10 bg-white border-zinc-200 text-zinc-900 focus-visible:ring-indigo-500 rounded-xl"
                                     />
                                 </div>
                             </div>
 
-                            {/* Password field */}
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between ml-1">
-                                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 flex items-center gap-1.5">
-                                        <Shield className="w-3 h-3 text-cyan-400/60" />
-                                        Access Token
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-sm font-medium text-zinc-700">
+                                        Password
                                     </Label>
-                                    <Link href="/auth/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-pink-400/70 hover:text-pink-300 transition-colors relative group/forgot">
-                                        Forgot?
-                                        <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-gradient-to-r from-pink-500 to-purple-500 scale-x-0 group-hover/forgot:scale-x-100 transition-transform origin-left" />
+                                    <Link
+                                        href="/auth/forgot-password"
+                                        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                    >
+                                        Forgot password?
                                     </Link>
                                 </div>
-                                <div className="relative group">
-                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${focusedField === 'password' ? 'text-cyan-400' : 'text-zinc-600'}`}>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
                                         <Lock className="w-4 h-4" />
                                     </div>
                                     <Input
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
                                         required
                                         value={formData.password}
                                         onChange={handleChange}
-                                        onFocus={() => setFocusedField('password')}
-                                        onBlur={() => setFocusedField(null)}
-                                        className="h-14 pl-12 pr-12 bg-white/[0.03] border-white/[0.06] text-white placeholder:text-zinc-700 focus:bg-white/[0.06] focus:border-cyan-500/40 focus:shadow-[0_0_25px_rgba(6,182,212,0.1)] transition-all duration-300 rounded-2xl"
+                                        className="h-12 pl-10 pr-10 bg-white border-zinc-200 text-zinc-900 focus-visible:ring-indigo-500 rounded-xl"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-cyan-400 transition-all duration-300 hover:scale-110"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 focus:outline-none"
                                         tabIndex={-1}
                                     >
-                                        <AnimatePresence mode="wait">
-                                            {showPassword ? (
-                                                <motion.div key="off" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0, rotate: 90 }} transition={{ duration: 0.2 }}>
-                                                    <EyeOff className="w-4 h-4" />
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div key="on" initial={{ scale: 0, rotate: 90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0, rotate: -90 }} transition={{ duration: 0.2 }}>
-                                                    <Eye className="w-4 h-4" />
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
-                                    <motion.div
-                                        animate={{ scaleX: focusedField === 'password' ? 1 : 0 }}
-                                        className="absolute bottom-0 left-4 right-4 h-px origin-left"
-                                        style={{ background: "linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899)" }}
-                                    />
                                 </div>
                             </div>
                         </CardContent>
 
                         <CardFooter className="flex flex-col space-y-6 px-8 pb-10 pt-4">
                             <Button
-                                className="w-full h-14 font-black rounded-2xl text-[10px] uppercase tracking-[0.3em] group relative overflow-hidden transition-all duration-500 hover:-translate-y-0.5 border-0"
+                                className="w-full h-12 font-medium rounded-xl text-base text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all flex items-center justify-center gap-2"
                                 type="submit"
                                 disabled={loading || loginSuccess}
-                                style={{
-                                    background: loginSuccess
-                                        ? "linear-gradient(135deg, #10b981, #06b6d4)"
-                                        : "linear-gradient(135deg, #7c3aed, #ec4899, #06b6d4)",
-                                    boxShadow: loginSuccess
-                                        ? "0 10px 40px rgba(16,185,129,0.3)"
-                                        : "0 10px 40px rgba(139,92,246,0.3), 0 0 60px rgba(236,72,153,0.1)",
-                                }}
                             >
-                                {/* Animated shimmer */}
-                                <motion.div
-                                    animate={{ x: ["-100%", "200%"] }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent w-1/2"
-                                />
-
-                                <span className="relative z-10 flex items-center justify-center gap-2 text-white">
-                                    {loginSuccess ? (
-                                        <>
-                                            <CheckCircle2 className="w-4 h-4" />
-                                            Access Granted
-                                        </>
-                                    ) : loading ? (
-                                        <>
-                                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-                                                <Zap className="w-4 h-4" />
-                                            </motion.div>
-                                            Authenticating...
-                                        </>
-                                    ) : (
-                                        <>
-                                            Login to Command Center
-                                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                                        </>
-                                    )}
-                                </span>
+                                {loginSuccess ? (
+                                    "Redirecting..."
+                                ) : loading ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    <>
+                                        Sign in
+                                        <ArrowRight className="w-4 h-4" />
+                                    </>
+                                )}
                             </Button>
 
-                            <div className="text-[11px] font-bold text-center text-zinc-500 tracking-wider">
-                                New operative?{" "}
-                                <Link href="/auth/signup" className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent hover:from-purple-300 hover:to-pink-300 transition-all uppercase tracking-[0.1em] font-black">
-                                    Initialize Account
+                            <div className="text-sm text-center text-zinc-500">
+                                Don&apos;t have an account?{" "}
+                                <Link
+                                    href="/auth/signup"
+                                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                                >
+                                    Sign up
                                 </Link>
                             </div>
                         </CardFooter>
                     </form>
                 </Card>
-
-                {/* ── Bottom feature badges ── */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1 }}
-                    className="mt-8 flex justify-center gap-6"
-                >
-                    {[
-                        { icon: Sparkles, label: "AI Secured", color: "text-purple-400/50" },
-                        { icon: Shield, label: "256-bit", color: "text-cyan-400/50" },
-                        { icon: Wifi, label: "Live Sync", color: "text-pink-400/50" },
-                    ].map(({ icon: Icon, label, color }, i) => (
-                        <motion.div
-                            key={label}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.2 + i * 0.15 }}
-                            className="flex items-center gap-1.5 text-zinc-600"
-                        >
-                            <Icon className={`w-3 h-3 ${color}`} />
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em]">{label}</span>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </motion.div>
+            </div>
         </div>
     )
 }

@@ -31,9 +31,30 @@ export default function AdminSettings() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState<string | null>(null)
 
+    // ── Admin Auth Guard ──
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const session = localStorage.getItem('admin_session')
+        if (!session) { router.push('/admin/login'); return }
+        try {
+            const parsed = JSON.parse(session)
+            if (!parsed.token || parsed.expiresAt < Date.now()) {
+                localStorage.removeItem('admin_session')
+                router.push('/admin/login')
+            }
+        } catch { localStorage.removeItem('admin_session'); router.push('/admin/login') }
+    }, [router])
+
+    const getAdminToken = () => {
+        try {
+            const session = JSON.parse(localStorage.getItem('admin_session') || '{}')
+            return session.token || localStorage.getItem('token') || ''
+        } catch { return '' }
+    }
+
     const fetchConfig = async () => {
         try {
-            const token = localStorage.getItem("token")
+            const token = getAdminToken()
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/config`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
@@ -73,7 +94,7 @@ export default function AdminSettings() {
     }
 
     const defaultConfigs = [
-        { key: 'coin_multiplier', label: 'Coin Multiplier', description: 'Base multiplier for student AmitAI Coin gains', icon: Zap, type: 'number', defaultValue: 1 },
+        { key: 'coin_multiplier', label: 'Coin Multiplier', description: 'Base multiplier for student Intervyxa Coin gains', icon: Zap, type: 'number', defaultValue: 1 },
         { key: 'default_difficulty', label: 'Default Difficulty', description: 'Starting difficulty for new interviews', icon: Trophy, type: 'select', options: ['Beginner', 'Intermediate', 'Advanced'], defaultValue: 'Intermediate' },
         { key: 'maintenance_mode', label: 'Maintenance Mode', description: 'Global lock for non-admin users', icon: Lock, type: 'boolean', defaultValue: false },
         { key: 'max_daily_interviews', label: 'Max Daily Interviews', description: 'Limit for free tier users', icon: Shield, type: 'number', defaultValue: 3 }

@@ -251,7 +251,7 @@ export default function PracticeSessionPage() {
     if (!config) return null
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
             {/* Floating ambient orbs */}
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="absolute bottom-32 right-16 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
@@ -285,7 +285,7 @@ export default function PracticeSessionPage() {
                 </div>
 
                 {/* Progress */}
-                <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
+                <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
                     <CardContent className="p-4">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">Question {questionNumber} of {totalQuestions}</span>
@@ -297,7 +297,7 @@ export default function PracticeSessionPage() {
 
                 {/* Live Performance Metrics */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <Zap className="w-4 h-4 text-blue-400 drop-shadow-[0_0_4px_rgba(59,130,246,0.5)]" />
@@ -309,7 +309,7 @@ export default function PracticeSessionPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <Volume2 className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_4px_rgba(16,185,129,0.5)]" />
@@ -321,7 +321,7 @@ export default function PracticeSessionPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <Target className="w-4 h-4 text-violet-400 drop-shadow-[0_0_4px_rgba(139,92,246,0.5)]" />
@@ -333,7 +333,7 @@ export default function PracticeSessionPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <AlertCircle className="w-4 h-4 text-amber-400 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]" />
@@ -378,12 +378,12 @@ export default function PracticeSessionPage() {
                                                 }`}
                                         >
                                             {isRecording ? (
-                                                <MicOff className="w-10 h-10 text-white" />
+                                                <MicOff className="w-10 h-10 text-slate-900 dark:text-white" />
                                             ) : (
-                                                <Mic className="w-10 h-10 text-white" />
+                                                <Mic className="w-10 h-10 text-slate-900 dark:text-white" />
                                             )}
                                         </button>
-                                        <p className="text-sm text-zinc-400">
+                                        <p className="text-sm text-slate-500 dark:text-zinc-400">
                                             {isRecording ? "Click to stop recording" : "Click to start answering"}
                                         </p>
                                     </div>
@@ -391,9 +391,9 @@ export default function PracticeSessionPage() {
 
                                 {/* Transcript */}
                                 {transcript && (
-                                    <div className="bg-black/40 rounded-xl p-4 border border-white/[0.06]">
+                                    <div className="bg-white dark:bg-black/40 rounded-xl p-4 border border-white/[0.06]">
                                         <div className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-2">Your Answer:</div>
-                                        <p className="text-sm text-zinc-300">{transcript}</p>
+                                        <p className="text-sm text-slate-600 dark:text-zinc-300">{transcript}</p>
                                     </div>
                                 )}
 
@@ -404,7 +404,7 @@ export default function PracticeSessionPage() {
                                             <CheckCircle2 className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0 drop-shadow-[0_0_4px_rgba(139,92,246,0.5)]" />
                                             <div>
                                                 <div className="font-black text-sm uppercase tracking-widest bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent mb-1">Feedback</div>
-                                                <p className="text-sm text-zinc-300">{currentFeedback}</p>
+                                                <p className="text-sm text-slate-600 dark:text-zinc-300">{currentFeedback}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -439,7 +439,7 @@ export default function PracticeSessionPage() {
                             </Button>
                             <Button
                                 onClick={nextQuestion}
-                                className="h-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all border-0"
+                                className="h-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all border-0"
                             >
                                 Next Question
                                 <SkipForward className="w-4 h-4 ml-2" />
@@ -451,7 +451,7 @@ export default function PracticeSessionPage() {
                         <Button
                             onClick={skipQuestion}
                             variant="outline"
-                            className="h-12 border-white/[0.06] text-zinc-400 hover:bg-white/5 font-black text-[9px] uppercase tracking-widest hover:border-violet-500/20 hover:text-violet-400 transition-all"
+                            className="h-12 border-white/[0.06] text-slate-500 dark:text-zinc-400 hover:bg-white/5 font-black text-[9px] uppercase tracking-widest hover:border-violet-500/20 hover:text-violet-400 transition-all"
                         >
                             <SkipForward className="w-4 h-4 mr-2" />
                             Skip

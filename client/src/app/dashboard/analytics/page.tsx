@@ -76,7 +76,7 @@ export default function AnalyticsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white">
+            <div className="min-h-screen bg-slate-50 dark:bg-black flex flex-col items-center justify-center text-slate-900 dark:text-white">
                 <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
                 <h2 className="text-xl font-bold uppercase tracking-tighter">Analyzing Performance Data...</h2>
             </div>
@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white p-6 md:p-10 font-sans relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-6 md:p-10 font-sans relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -98,7 +98,7 @@ export default function AnalyticsPage() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex items-center gap-4">
                         <Link href="/dashboard">
-                            <Button variant="outline" size="icon" className="bg-zinc-900 border-zinc-800 rounded-xl hover:bg-zinc-800 transition-all">
+                            <Button variant="outline" size="icon" className="bg-white dark:bg-zinc-900 border-zinc-800 rounded-xl hover:bg-zinc-800 transition-all">
                                 <ArrowLeft className="w-4 h-4" />
                             </Button>
                         </Link>
@@ -111,7 +111,7 @@ export default function AnalyticsPage() {
                         </div>
                     </div>
                     <Link href="/dashboard/compare">
-                        <Button className="bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border-violet-500/30 hover:from-violet-500/30 hover:to-cyan-500/30 text-zinc-200 font-bold px-6 rounded-xl border flex items-center gap-2 transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                        <Button className="bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border-violet-500/30 hover:from-violet-500/30 hover:to-cyan-500/30 text-slate-900 dark:text-zinc-200 font-bold px-6 rounded-xl border flex items-center gap-2 transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.15)]">
                             <TrendingUp className="w-4 h-4 text-violet-400" />
                             Compare Sessions
                         </Button>
@@ -122,7 +122,7 @@ export default function AnalyticsPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Performance Evolution (Line Chart) */}
                     <TiltCard className="lg:col-span-2">
-                        <Card className="h-full bg-zinc-900/50 backdrop-blur-2xl border border-white/10 overflow-hidden relative group hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
+                        <Card className="h-full bg-white/60 dark:bg-zinc-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 overflow-hidden relative group hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
                             <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                                 <TrendingUp size={100} />
                             </div>
@@ -192,7 +192,7 @@ export default function AnalyticsPage() {
 
                     {/* Skill Matrix (Radar Chart) */}
                     <TiltCard>
-                        <Card className="h-full bg-zinc-900/50 backdrop-blur-2xl border border-white/10 relative overflow-hidden group hover:border-fuchsia-500/20 hover:shadow-[0_0_40px_rgba(232,121,249,0.06)] transition-all duration-500">
+                        <Card className="h-full bg-white/60 dark:bg-zinc-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 relative overflow-hidden group hover:border-fuchsia-500/20 hover:shadow-[0_0_40px_rgba(232,121,249,0.06)] transition-all duration-500">
                             <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                                 <Target size={80} />
                             </div>
@@ -230,7 +230,7 @@ export default function AnalyticsPage() {
 
                 {/* Industry Benchmarks */}
                 <TiltCard>
-                    <Card className="bg-zinc-900/50 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden group hover:border-blue-500/20 hover:shadow-[0_0_40px_rgba(59,130,246,0.06)] transition-all duration-500">
+                    <Card className="bg-white/60 dark:bg-zinc-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden group hover:border-blue-500/20 hover:shadow-[0_0_40px_rgba(59,130,246,0.06)] transition-all duration-500">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-xl font-black italic uppercase tracking-tighter group-hover:text-blue-400 transition-colors">
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {benchmarks.map((bench, i) => (
-                                    <div key={i} className="p-6 bg-black/40 border border-white/5 rounded-3xl space-y-4 hover:border-blue-500/30 hover:shadow-[0_0_25px_rgba(59,130,246,0.08)] transition-all duration-300 group/item relative overflow-hidden hover-shine">
+                                    <div key={i} className="p-6 bg-white dark:bg-black/40 border border-slate-100 dark:border-white/5 rounded-3xl space-y-4 hover:border-blue-500/30 hover:shadow-[0_0_25px_rgba(59,130,246,0.08)] transition-all duration-300 group/item relative overflow-hidden hover-shine">
                                         {/* Scan line for items */}
                                         <div className="absolute top-0 left-0 w-full h-[1px] bg-primary/20 opacity-0 group-hover/item:opacity-100 animate-pulse" />
                                         <div className="flex justify-between items-center relative z-10">
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
                                             <div className="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-[9px] font-black rounded-md border border-cyan-500/20 uppercase tracking-widest">LIVE DATA</div>
                                         </div>
                                         <div className="flex items-baseline gap-2 relative z-10">
-                                            <span className="text-3xl font-black text-white italic">{Math.round(bench.avgTechnical)}%</span>
+                                            <span className="text-3xl font-black text-slate-900 dark:text-white italic">{Math.round(bench.avgTechnical)}%</span>
                                             <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Avg Tech</span>
                                         </div>
                                         <div className="space-y-2 relative z-10">
@@ -276,12 +276,12 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="flex-1 space-y-1">
                         <h3 className="text-lg font-bold"><span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">AI Analytics</span> Verdict</h3>
-                        <p className="text-zinc-400 text-sm italic">
+                        <p className="text-slate-500 dark:text-zinc-400 text-sm italic">
                             "Your technical execution is in the top 15% of the {trends[trends.length - 1]?.sector || 'software'} sector. Focus on Theoretical Mastery to unlock Senior-level roles."
                         </p>
                     </div>
                     <Link href="/dashboard/roadmap">
-                        <Button className="bg-gradient-to-r from-violet-500 to-cyan-500 text-white hover:from-violet-400 hover:to-cyan-400 font-bold rounded-xl px-10 border-none shadow-[0_0_25px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.3)] transition-all duration-500 hover:-translate-y-0.5">
+                        <Button className="bg-gradient-to-r from-violet-500 to-cyan-500 text-slate-900 dark:text-white hover:from-violet-400 hover:to-cyan-400 font-bold rounded-xl px-10 border-none shadow-[0_0_25px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.3)] transition-all duration-500 hover:-translate-y-0.5">
                             View Roadmap
                             <ChevronRight className="ml-2 w-4 h-4" />
                         </Button>

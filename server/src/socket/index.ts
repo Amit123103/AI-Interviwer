@@ -2,15 +2,14 @@ import { Server as SocketIOServer } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import axios from 'axios';
 import FormData from 'form-data';
-import Profile from '../models/Profile';
+import prisma from '../prisma';
 import { executionService } from '../services/executionService';
-import Report from '../models/Report';
-import OnsiteLoop from '../models/OnsiteLoop';
 import { handlePeerEvents } from './peerHandler';
-import User from '../models/User';
 import { updateUserProgress } from '../services/gamificationService';
 import { handleCollaborationEvents } from './collaborationHandler';
 import { isAIOnline } from '../services/healthMonitor';
+import { initializeStudentTracking } from './studentTrackingHandler';
+import { generateCVBasedQuestions } from '../services/aiService';
 
 // AI Service URL (Python FastAPI)
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
@@ -112,6 +111,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         probeCount: number;            // Total probes in session
         isProbing: boolean;            // Flag for current turn
         sttRetryCount: number;         // Track STT failures per turn
+        apiKey: string | null;         // Global dynamic API key for session
     }
 
     const sessions = new Map<string, SessionData>();
@@ -135,7 +135,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                     });
                     return;
                 }
-                const { userId, role, candidateId, candidateName, difficulty, totalQuestions, voice, sector, persona, onsiteId, round, targetCompany, jobDescription, prebuiltQuestions, questions_rich, interviewType, language } = data;
+                const { userId, role, candidateId, candidateName, difficulty, totalQuestions, voice, sector, persona, onsiteId, round, targetCompany, jobDescription, prebuiltQuestions, questions_rich, interviewType, language, apiKey } = data;
 
                 // GUARD: Prevent duplicate join-interview processing on same socket
                 if (role !== 'mentor' && hasJoined) {
@@ -185,43 +185,90 @@ export const initializeSocket = (httpServer: HttpServer) => {
                 let onsiteCtx: { onsiteId: string, round: number } | null = null;
                 if (onsiteId) onsiteCtx = { onsiteId, round };
 
+                // Tracking to prevent multiple greetings in a single session
+                if ((socket as any).greetingSent) {
+                    console.log(`[V3] Greeting already sent for socket ${socket.id}, skipping join-interview re-emission.`);
+                    return;
+                }
+
                 try {
-                    studentProfile = await Profile.findOne({ userId });
+                    // Use findFirst if userId is not the primary key to avoid TS errors
+                    studentProfile = await prisma.profile.findFirst({ where: { userId } });
 
                     // ─── GENERATE QUESTIONS ───────────────────────────────────────
                     let questions: string[] = [];
                     let richMeta: QuestionMeta[] = [];
 
                     if (Array.isArray(prebuiltQuestions) && prebuiltQuestions.length > 0) {
-                        questions = prebuiltQuestions.slice(0, totalQuestions || 10);
+                        // Extract text if questions are objects {text, category, ...}
+                        questions = prebuiltQuestions.slice(0, totalQuestions || 10).map(q => 
+                            typeof q === 'object' ? q.text : q
+                        );
+                        
                         richMeta = Array.isArray(questions_rich) && questions_rich.length > 0
                             ? questions_rich.slice(0, questions.length)
-                            : questions.map(q => ({
-                                text: q, category: 'general', difficulty: difficulty || 'Medium',
-                                expected_depth: 'Moderate', followup_seeds: [], evaluation_criteria: 'Clear communication.'
+                            : prebuiltQuestions.slice(0, questions.length).map((q, idx) => ({
+                                text: questions[idx], 
+                                category: typeof q === 'object' ? q.category || 'general' : 'general',
+                                difficulty: typeof q === 'object' ? q.difficulty || difficulty || 'Medium' : difficulty || 'Medium',
+                                expected_depth: typeof q === 'object' ? q.expected_depth || 'Moderate' : 'Moderate',
+                                followup_seeds: typeof q === 'object' ? q.followup_seeds || [] : [],
+                                evaluation_criteria: typeof q === 'object' ? q.evaluation_criteria || 'Clear communication.' : 'Clear communication.'
                             }));
                     } else {
-                        console.log(`[V3] No prebuilt questions, calling AI service to generate...`);
+                        console.log(`[V3] No prebuilt questions, generating CV-based questions...`);
+                        
+                        // Priority 1: Generate personalized questions from CV via NVIDIA/OpenAI
                         try {
-                            const genRes = await axios.post(`${AI_SERVICE_URL}/resume/generate-questions`, {
-                                resume_text: studentProfile?.resumeText || "",
-                                count: totalQuestions || 7,
-                                difficulty: difficulty || "Intermediate",
-                                topic: sector || "General"
-                            }, { timeout: 120000 });
-
-                            if (genRes.data?.questions) {
-                                questions = genRes.data.questions;
+                            const cvQuestions = await generateCVBasedQuestions(
+                                studentProfile,
+                                studentProfile?.resumeText || "",
+                                {
+                                    difficulty: difficulty || 'Intermediate',
+                                    count: totalQuestions || 7,
+                                    sector: sector || 'General',
+                                    targetCompany: targetCompany || '',
+                                    interviewType: interviewType || 'Mixed',
+                                    persona: persona || 'Friendly Mentor',
+                                    apiKey: apiKey
+                                }
+                            );
+                            if (cvQuestions.length > 0) {
+                                questions = cvQuestions;
+                                console.log(`[V3] Generated ${questions.length} CV-based personalized questions`);
                                 richMeta = questions.map(q => ({
                                     text: q, category: sector || 'general', difficulty: difficulty || 'Medium',
-                                    expected_depth: 'Moderate', followup_seeds: [], evaluation_criteria: 'Technical accuracy.'
+                                    expected_depth: 'Moderate', followup_seeds: [], evaluation_criteria: 'Technical accuracy and depth.'
                                 }));
                             }
-                        } catch (genErr: any) {
-                            console.error(`[V3] AI Question generation failed:`, genErr.message);
+                        } catch (cvErr: any) {
+                            console.error(`[V3] CV-based question generation failed:`, cvErr.message);
                         }
 
-                        // Final fallback to local generation
+                        // Priority 2: FastAPI resume endpoint fallback
+                        if (questions.length === 0) {
+                            try {
+                                const genRes = await axios.post(`${AI_SERVICE_URL}/resume/generate-questions`, {
+                                    resume_text: studentProfile?.resumeText || "",
+                                    count: totalQuestions || 7,
+                                    difficulty: difficulty || "Intermediate",
+                                    topic: sector || "General",
+                                    api_key: apiKey
+                                }, { timeout: 120000 });
+
+                                if (genRes.data?.questions) {
+                                    questions = genRes.data.questions;
+                                    richMeta = questions.map(q => ({
+                                        text: q, category: sector || 'general', difficulty: difficulty || 'Medium',
+                                        expected_depth: 'Moderate', followup_seeds: [], evaluation_criteria: 'Technical accuracy.'
+                                    }));
+                                }
+                            } catch (genErr: any) {
+                                console.error(`[V3] FastAPI question generation failed:`, genErr.message);
+                            }
+                        }
+
+                        // Priority 3: Local fallback generation
                         if (questions.length === 0) {
                             questions = generateFallbackQuestions(studentProfile, sector, difficulty, totalQuestions || 10);
                             richMeta = questions.map(q => ({
@@ -258,7 +305,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         followupCount: 0,
                         probeCount: 0,
                         isProbing: false,
-                        sttRetryCount: 0
+                        sttRetryCount: 0,
+                        apiKey: apiKey || null
                     };
 
                     sessions.set(userId, newSession);
@@ -282,33 +330,42 @@ export const initializeSocket = (httpServer: HttpServer) => {
                     const introText = greetingTexts[persona] ||
                         `Hello ${name}! Welcome to your interview${roleMention}. I'll ask you ${questions.length} questions. Here's your first question: ${firstQ}`;
 
-                    // Get TTS audio via /speak (edge-tts, increase timeout for cold start)
-                    let audio_base64 = "";
+                    // Synchronous Greeting TTS to prevent "double voice" (Browser TTS + Server TTS)
+                    // Extract simple voice preference ("Male" / "Female") from voice setting
+                    const voicePref = (voice || '').toLowerCase().includes('male') && !(voice || '').toLowerCase().includes('female') ? 'Male' : 'Female';
+
+                    let introAudio = "";
                     try {
                         const ttsRes = await axios.post(`${AI_SERVICE_URL}/speak`, {
                             text: introText,
-                            persona: persona || 'Friendly Mentor'
-                        }, { timeout: 30000 });
-                        audio_base64 = ttsRes.data?.audio_base64 || "";
+                            persona: persona || 'Friendly Mentor',
+                            voice: voicePref,
+                            api_key: apiKey
+                        }, { timeout: 15000 });
+                        introAudio = ttsRes.data?.audio_base64 || ttsRes.data?.audio_base_64 || "";
                     } catch (ttsErr: any) {
-                        console.error(`[V3] TTS failed for greeting:`, ttsErr.message);
+                        console.warn(`[V3] Greeting TTS failed, client will fallback:`, ttsErr.message);
                     }
 
-                    console.log(`[V3] Greeting+Q1: "${introText.substring(0, 80)}..." (audio: ${audio_base64.length > 0 ? 'YES' : 'NO'})`);
-
+                    // Combined response: emit text and audio together
                     socket.emit('ai-response', {
                         text: introText,
-                        audio: audio_base64,
+                        audio: introAudio,
                         isLast: false,
                         currentQuestion: firstQ,
                         totalQuestions: questions.length
                     });
 
+                    (socket as any).greetingSent = true;
+                    console.log(`[V3] Synchronized greeting emitted for "${name}" with ${introAudio ? 'server' : 'fallback'} audio.`);
                     console.log(`[V3] Interview initialized — ${questions.length} questions queued for user ${userId}`);
 
-                } catch (err) {
+                } catch (err: any) {
                     console.error("Error joining interview:", err);
-                    socket.emit('error', { message: 'Failed to start interview.' });
+                    socket.emit('error', { 
+                        message: `Failed to initialize session: ${err.message}`,
+                        type: 'INITIALIZATION_ERROR'
+                    });
                     sessions.delete(userId);
                 }
             });
@@ -351,7 +408,10 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
                 if (!currentUserId || !sessions.has(currentUserId)) {
                     console.error("Session not found for audio response");
-                    socket.emit('error', { message: 'Session expired. Please refresh.' });
+                    socket.emit('error', { 
+                        message: 'Session or user context lost. Reconnecting...', 
+                        code: 'SESSION_MISSING' 
+                    });
                     return;
                 }
 
@@ -386,10 +446,13 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         if (session.sttRetryCount < 2) {
                             const retryText = "I didn't quite catch that. Could you please repeat your answer?";
                             let retryAudio = "";
+                            const sessionVoice = (session.interviewSettings.voice || '').toLowerCase().includes('male') && !(session.interviewSettings.voice || '').toLowerCase().includes('female') ? 'Male' : 'Female';
                             try {
                                 const ttsRes = await axios.post(`${AI_SERVICE_URL}/speak`, {
                                     text: retryText,
-                                    persona: session.interviewSettings.persona
+                                    persona: session.interviewSettings.persona,
+                                    voice: sessionVoice,
+                                    api_key: session.apiKey
                                 }, { timeout: 10000 });
                                 retryAudio = ttsRes.data?.audio_base64 || "";
                             } catch { /* browser TTS fallback */ }
@@ -398,7 +461,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
                             socket.emit('ai-response', {
                                 text: retryText,
                                 audio: retryAudio,
-                                isLast: false
+                                isLast: false,
+                                isRetry: true
                             });
                             return;
                         } else {
@@ -428,10 +492,13 @@ export const initializeSocket = (httpServer: HttpServer) => {
                             : "That's a good start, but could you please elaborate on that or give a specific example?";
 
                         let probeAudio = "";
+                        const probeVoice = (session.interviewSettings.voice || '').toLowerCase().includes('male') && !(session.interviewSettings.voice || '').toLowerCase().includes('female') ? 'Male' : 'Female';
                         try {
                             const ttsRes = await axios.post(`${AI_SERVICE_URL}/speak`, {
                                 text: probeText,
-                                persona: session.interviewSettings.persona
+                                persona: session.interviewSettings.persona,
+                                voice: probeVoice,
+                                api_key: session.apiKey
                             }, { timeout: 10000 });
                             probeAudio = ttsRes.data?.audio_base64 || "";
                         } catch { /* browser fallback */ }
@@ -440,7 +507,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         socket.emit('ai-response', {
                             text: probeText,
                             audio: probeAudio,
-                            isLast: false
+                            isLast: false,
+                            isFollowup: true
                         });
                         return; // EXIT early, don't advance to next question yet
                     }
@@ -477,7 +545,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                     };
 
                     // Background: don't await this — it updates session.evaluations[evalIdx] later
-                    axios.post(`${AI_SERVICE_URL}/evaluate-answer`, bgEvalData, { timeout: 30000 })
+                    axios.post(`${AI_SERVICE_URL}/evaluate-answer`, { ...bgEvalData, api_key: session.apiKey }, { timeout: 30000 })
                         .then((evalRes) => {
                             if (evalRes.data?.evaluation && sessions.has(currentUserId!)) {
                                 const s = sessions.get(currentUserId!)!;
@@ -512,6 +580,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                                                 count: 1,
                                                 difficulty: isExcelling ? "Hard" : "Easy",
                                                 sector: s.interviewSettings.sector,
+                                                api_key: s.apiKey,
                                                 context: `PREVIOUS_SCORE: ${score}, REASON: ${isStruggling ? 'Simplify for fundamentals' : 'Challenge with deeper depth'}`
                                             }).then(res => {
                                                 if (res.data?.questions?.[0]) {
@@ -534,27 +603,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         // ═══ INTERVIEW COMPLETE ═══
                         console.log(`[INSTANT] All ${session.interviewPlan.length} questions answered. Finishing up...`);
 
-                        const closingText = "Thank you for your responses. The interview is now complete. Your performance report is being generated.";
-                        let closingAudio = "";
-                        try {
-                            const ttsRes = await axios.post(`${AI_SERVICE_URL}/speak`, {
-                                text: closingText,
-                                persona: session.interviewSettings.persona
-                            }, { timeout: 10000 });
-                            closingAudio = ttsRes.data?.audio_base64 || "";
-                        } catch { /* browser TTS fallback */ }
-
-                        // ── Human-like closing pause (1–2s) ────
-                        await new Promise(r => setTimeout(r, 1500));
-
-                        socket.emit('processing-end');
-                        socket.emit('ai-response', {
-                            text: closingText,
-                            audio: closingAudio,
-                            isLast: true
-                        });
-
-                        // ─── Generate report in background ─────────────────
+                                 // ─── Generate report in background ─────────────────
                         // Wait a moment for any pending background evaluations to finish
                         setTimeout(async () => {
                             try {
@@ -568,7 +617,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
                                     const speechRes = await axios.post(`${AI_SERVICE_URL}/interview/analyze-speech`, {
                                         transcript_text: allAnswers,
                                         duration_seconds: currentSession.evaluations.length * 60, // rough estimate
-                                        audio_features: {}
+                                        audio_features: {},
+                                        api_key: currentSession.apiKey
                                     }, { timeout: 15000 });
                                     speechAnalysis = speechRes.data || {};
                                 } catch (speechErr: any) {
@@ -587,73 +637,85 @@ export const initializeSocket = (httpServer: HttpServer) => {
                                     job_description: currentSession.interviewSettings.jobDescription,
                                     interview_type: currentSession.interviewSettings.interviewType,
                                     language: currentSession.interviewSettings.language,
-                                    speech_analysis: speechAnalysis
+                                    speech_analysis: speechAnalysis,
+                                    api_key: currentSession.apiKey
                                 }, { timeout: 120000 });
 
                                 const reportData = reportRes.data;
 
-                                const newReport = new Report({
-                                    user: currentSession.studentProfile?.userId || currentSession.userId,
-                                    overallScore: reportData.overallScore || 0,
-                                    readinessLevel: reportData.readinessLevel || 'Developing',
-                                    interviewType: currentSession.interviewSettings.interviewType,
-                                    ollamaEvaluation: reportData.ollamaEvaluation,
-                                    questionFeedback: reportData.questionFeedback || [],
-                                    scores: {
-                                        technical: reportData.scores?.technical || 5,
-                                        communication: reportData.scores?.communication || 5,
-                                        confidence: reportData.scores?.confidence || 5
-                                    },
-                                    feedback: reportData.interview_summary || reportData.ai_summary || 'Interview completed.',
-                                    improvement_tips: reportData.areas_for_improvement || reportData.improvement_areas || [],
-                                    sector: currentSession.interviewSettings.sector,
-                                    persona: currentSession.interviewSettings.persona,
-                                    targetCompany: currentSession.interviewSettings.targetCompany,
-                                    jobDescription: currentSession.interviewSettings.jobDescription,
-                                    skillMatrix: {
-                                        technical: (reportData.scores?.technical || 5) * 10,
-                                        delivery: (reportData.scores?.communication || 5) * 10,
-                                        problem_solving: (reportData.scores?.problem_solving || 5) * 10,
-                                        situational: (reportData.scores?.situational || 8) * 10,
-                                        theoretical: (reportData.scores?.theoretical || 8) * 10,
-                                        confidence: (reportData.scores?.confidence || 5) * 10
-                                    },
-                                    integrityScore: reportData.scores?.integrity || 100,
-                                    professionalismScore: reportData.scores?.professionalism || 10,
-                                    advancedMetrics: reportData.advanced_metrics || {
-                                        emotion: reportData.dominant_emotion || 'Neutral',
-                                        stress: reportData.dominant_stress || 'Low',
-                                        trust_level: 'High'
-                                    },
-                                    voiceAnalysis: currentSession.evaluations.map(e => ({
-                                        question: e.question,
-                                        emotion: e.voice_analysis?.emotion || 'Neutral',
-                                        stress_level: 'Low',
-                                        speaking_pace: 'Normal',
-                                        fluency: 'Fluent'
-                                    })),
-                                    transcriptAnalysis: currentSession.evaluations.map(e => ({
-                                        role: 'user',
-                                        text: e.answer,
-                                        confidenceScore: 70,
-                                        sentiment: 'Neutral',
-                                        feedback: ''
-                                    })),
-                                    behavioralDNA: currentSession.evaluations.map((e, idx) => ({
-                                        timestamp: idx,
-                                        emotion: e.voice_analysis?.emotion || 'Neutral',
-                                        intensity: 5
-                                    })),
-                                    eventLogs: currentSession.monitoringLogs
+                                const newReport = await prisma.report.create({
+                                    data: {
+                                        userId: currentSession.studentProfile?.userId || currentSession.userId,
+                                        overallScore: reportData.overall_score || 0,
+                                        readinessLevel: reportData.readiness_level || 'Developing',
+                                        interviewType: currentSession.interviewSettings.interviewType,
+                                        aiEvaluation: {
+                                            relevance: reportData.metrics?.relevance || 0,
+                                            technicalCorrectness: reportData.metrics?.technical_correctness || 0,
+                                            clarityStructure: reportData.metrics?.clarity_structure || 0,
+                                            confidence: reportData.metrics?.confidence || 0,
+                                            communication: reportData.metrics?.communication || 0,
+                                            conceptCoverage: reportData.metrics?.concept_coverage || 0,
+                                            strengths: reportData.strengths || [],
+                                            improvementAreas: reportData.improvement_areas || [],
+                                            aiSummary: reportData.executive_summary || ""
+                                        } as any,
+                                        questionFeedback: reportData.question_feedback || [] as any,
+                                        scores: {
+                                            technical: reportData.scores?.technical || 5,
+                                            communication: reportData.scores?.communication || 5,
+                                            confidence: reportData.scores?.confidence || 5
+                                        } as any,
+                                        feedback: reportData.interview_summary || reportData.ai_summary || 'Interview completed.',
+                                        improvement_tips: reportData.areas_for_improvement || reportData.improvement_areas || [],
+                                        sector: currentSession.interviewSettings.sector,
+                                        persona: currentSession.interviewSettings.persona,
+                                        targetCompany: currentSession.interviewSettings.targetCompany,
+                                        jobDescription: currentSession.interviewSettings.jobDescription,
+                                        skillMatrix: {
+                                            technical: (reportData.scores?.technical || 5) * 10,
+                                            delivery: (reportData.scores?.communication || 5) * 10,
+                                            problem_solving: (reportData.scores?.problem_solving || 5) * 10,
+                                            situational: (reportData.scores?.situational || 8) * 10,
+                                            theoretical: (reportData.scores?.theoretical || 8) * 10,
+                                            confidence: (reportData.scores?.confidence || 5) * 10
+                                        } as any,
+                                        integrityScore: reportData.scores?.integrity || 100,
+                                        professionalismScore: reportData.scores?.professionalism || 10,
+                                        advancedMetrics: reportData.advanced_metrics as any || {
+                                            emotion: reportData.dominant_emotion || 'Neutral',
+                                            stress: reportData.dominant_stress || 'Low',
+                                            trust_level: 'High'
+                                        } as any,
+                                        voiceAnalysis: currentSession.evaluations.map(e => ({
+                                            question: e.question,
+                                            emotion: e.voice_analysis?.emotion || 'Neutral',
+                                            stress_level: 'Low',
+                                            speaking_pace: 'Normal',
+                                            fluency: 'Fluent'
+                                        })) as any,
+                                        transcriptAnalysis: currentSession.evaluations.map(e => ({
+                                            role: 'user',
+                                            text: e.answer,
+                                            confidenceScore: 70,
+                                            sentiment: 'Neutral',
+                                            feedback: ''
+                                        })) as any,
+                                        behavioralDNA: currentSession.evaluations.map((e, idx) => ({
+                                            timestamp: idx,
+                                            emotion: e.voice_analysis?.emotion || 'Neutral',
+                                            intensity: 5
+                                        })) as any,
+                                        eventLogs: currentSession.monitoringLogs as any
+                                    }
                                 });
 
-                                await newReport.save();
-                                console.log(`[INSTANT] Report saved: ${newReport._id}`);
+                                console.log(`[INSTANT] Report saved: ${newReport.id}`);
 
                                 // --- PHASE 4: Gamification & XP ---
                                 try {
-                                    const xpBase = (newReport.overallScore || 0) * 10; // e.g. 7.5 -> 75 XP
-                                    const xpBonus = 50; // Performance/Completion bonus
+                                    const xpBase = (newReport.overallScore || 0) * 10;
+                                    const xpBonus = 50;
                                     const totalXP = Math.round(xpBase + xpBonus);
 
                                     const progress = await updateUserProgress(currentSession.studentProfile?.userId || currentSession.userId, totalXP, {
@@ -663,7 +725,6 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
                                     console.log(`[GAMIFICATION] User ${currentSession.userId} earned ${totalXP} XP. Level: ${progress.level}`);
 
-                                    // Emit completion stats to client
                                     socket.emit('gamification-update', {
                                         xpGained: totalXP,
                                         level: progress.level,
@@ -674,14 +735,19 @@ export const initializeSocket = (httpServer: HttpServer) => {
                                     console.warn(`[GAMIFICATION] Failed to update progress:`, gamifyErr.message);
                                 }
 
-                                // Update Onsite Loop if applicable
                                 if (currentSession.onsiteContext) {
                                     try {
-                                        const loop = await OnsiteLoop.findById(currentSession.onsiteContext.onsiteId);
-                                        if (loop && loop.rounds[currentSession.onsiteContext.round]) {
-                                            loop.rounds[currentSession.onsiteContext.round].reportId = newReport._id;
-                                            loop.rounds[currentSession.onsiteContext.round].status = 'Completed';
-                                            await loop.save();
+                                        const loop = await (prisma as any).onsiteLoop.findUnique({ where: { id: currentSession.onsiteContext.onsiteId } });
+                                        if (loop) {
+                                            const rounds = (loop.rounds as any[]) || [];
+                                            if (rounds[currentSession.onsiteContext.round]) {
+                                                rounds[currentSession.onsiteContext.round].reportId = newReport.id;
+                                                rounds[currentSession.onsiteContext.round].status = 'Completed';
+                                                await (prisma as any).onsiteLoop.update({
+                                                    where: { id: loop.id },
+                                                    data: { rounds: rounds as any }
+                                                });
+                                            }
                                         }
                                     } catch (onsiteErr) {
                                         console.error("Error linking to onsite loop:", onsiteErr);
@@ -693,21 +759,26 @@ export const initializeSocket = (httpServer: HttpServer) => {
                                     text: 'Your report is ready!',
                                     audio: '',
                                     isLast: true,
-                                    reportId: newReport._id
+                                    reportId: newReport.id,
+                                    _id: newReport.id
                                 });
 
                                 // Clean up session
                                 sessions.delete(currentUserId!);
 
-                            } catch (reportErr) {
+                            } catch (reportErr: any) {
                                 console.error("[INSTANT] Report generation failed:", reportErr);
+                                socket.emit('error', { 
+                                    message: 'Interview complete, but report generation encountered an error. Please check your dashboard later.',
+                                    type: 'REPORT_GENERATION_ERROR'
+                                });
                                 socket.emit('ai-response', {
                                     text: 'Interview complete! Report generation is taking a moment.',
                                     audio: '',
                                     isLast: true
                                 });
                             }
-                        }, 3000); // Wait 3s for background evaluations to settle
+                        }, 3000);
 
                     } else {
                         // ═══ NEXT QUESTION: INSTANT from pre-built queue ═══
@@ -732,9 +803,12 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         await new Promise(r => setTimeout(r, thinkDelay));
 
                         // Start TTS request (but don't block question text delivery)
+                        const transVoice = (session.interviewSettings.voice || '').toLowerCase().includes('male') && !(session.interviewSettings.voice || '').toLowerCase().includes('female') ? 'Male' : 'Female';
                         const ttsPromise = axios.post(`${AI_SERVICE_URL}/speak`, {
                             text: transitionText,
-                            persona
+                            persona,
+                            voice: transVoice,
+                            api_key: session.apiKey
                         }, { timeout: 15000 }).catch(() => ({ data: { audio_base64: '' } }));
 
                         // Emit text immediately so client can show it while TTS loads
@@ -987,6 +1061,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
             timestamp: Date.now()
         });
     };
+
+    // Initialize real-time student tracking namespace
+    initializeStudentTracking(io);
 
     return io;
 };

@@ -1,4 +1,3 @@
-import { IProblem } from '../models/Problem';
 import vm from 'vm';
 import { executeCode as pistonExecute, PistonResult, isLanguageSupported, ErrorType } from './execution';
 
@@ -30,13 +29,20 @@ export interface ScriptResult {
     exitCode: number;
 }
 
+export interface MinimalProblem {
+    id?: string;
+    _id?: any;
+    examples: any[];
+    testCases: any[];
+}
+
 // ─── Execution Service ────────────────────────────────────────────────────────
 
 export class ExecutionService {
     private logBuffer: string[] = [];
 
     // ─── Execute with Test Cases (for Coding Challenges) ──────────────────────
-    async execute(code: string, language: string, problem: IProblem): Promise<ExecutionResult> {
+    async execute(code: string, language: string, problem: MinimalProblem): Promise<ExecutionResult> {
         try {
             if (language === 'javascript') {
                 return await this.executeJavaScriptVM(code, problem);
@@ -58,12 +64,10 @@ export class ExecutionService {
     // ─── Run Script (Playground — no test cases, just output) ─────────────────
     async runScript(code: string, language: string, stdin: string = ''): Promise<ScriptResult> {
         try {
-            // JavaScript: use local VM for speed
             if (language === 'javascript' && !stdin) {
                 return this.runJavaScriptVM(code);
             }
 
-            // All languages: use Piston API
             if (!isLanguageSupported(language)) {
                 return {
                     stdout: '',
@@ -75,7 +79,7 @@ export class ExecutionService {
                 };
             }
 
-            const timeout = language === 'java' ? 15000 : 10000; // Java needs more compile time
+            const timeout = language === 'java' ? 15000 : 10000;
             const result = await pistonExecute(language, code, stdin, timeout);
 
             return {
@@ -99,12 +103,11 @@ export class ExecutionService {
     }
 
     // ─── Piston-based Test Case Execution ─────────────────────────────────────
-    private async executePiston(code: string, language: string, problem: IProblem): Promise<ExecutionResult> {
+    private async executePiston(code: string, language: string, problem: MinimalProblem): Promise<ExecutionResult> {
         const startTime = Date.now();
-        const allTestCases = [...problem.examples, ...problem.testCases];
+        const allTestCases = [...(problem.examples || []), ...(problem.testCases || [])];
 
         if (allTestCases.length === 0) {
-            // No test cases — just run the code
             const result = await pistonExecute(language, code, '', 10000);
             return {
                 passed: result.exitCode === 0 && !result.errorType,
@@ -115,7 +118,6 @@ export class ExecutionService {
             };
         }
 
-        // First, compile-check by running with the first test case
         const firstResult = await pistonExecute(language, code, allTestCases[0].input, 10000);
 
         if (firstResult.errorType === 'compilation_error') {
@@ -134,14 +136,11 @@ export class ExecutionService {
             };
         }
 
-        // Run all test cases
         const results: any[] = [];
         let allPassed = true;
 
         for (let i = 0; i < allTestCases.length; i++) {
             const tc = allTestCases[i];
-
-            // Reuse first result for index 0
             const pistonResult: PistonResult = i === 0
                 ? firstResult
                 : await pistonExecute(language, code, tc.input, 10000);
@@ -153,7 +152,6 @@ export class ExecutionService {
             if (actual === expected) {
                 passed = true;
             } else {
-                // Try JSON comparison for arrays/objects
                 try {
                     if (JSON.stringify(JSON.parse(actual)) === JSON.stringify(JSON.parse(expected))) {
                         passed = true;
@@ -186,7 +184,7 @@ export class ExecutionService {
             results,
             stats: {
                 runtime: Date.now() - startTime,
-                memory: 0, // Piston doesn't report memory usage
+                memory: 0,
             },
             errorType: allPassed ? undefined : ((results.find((r: any) => r.error)?.error?.includes('Time Limit') ? 'time_limit_exceeded' : undefined) as ErrorType | undefined),
         };
@@ -245,12 +243,12 @@ export class ExecutionService {
     }
 
     // ─── JavaScript VM Test Case Judging ──────────────────────────────────────
-    private async executeJavaScriptVM(code: string, problem: IProblem): Promise<ExecutionResult> {
+    private async executeJavaScriptVM(code: string, problem: MinimalProblem): Promise<ExecutionResult> {
         const startTime = process.hrtime();
         const results: any[] = [];
         let allPassed = true;
 
-        const allTestCases = [...problem.examples, ...problem.testCases];
+        const allTestCases = [...(problem.examples || []), ...(problem.testCases || [])];
 
         for (const testCase of allTestCases) {
             this.logBuffer = [];
@@ -270,24 +268,19 @@ export class ExecutionService {
             const context = vm.createContext(sandbox);
 
             try {
-                // Run the input setup (if it's executable code like variable assignments)
                 try { vm.runInContext(testCase.input, context, { timeout: 1000 }); } catch { /* input may not be executable JS */ }
-
-                // Run user code
                 const output = vm.runInContext(code, context, { timeout: 5000 });
 
-                // Normalize output
                 let actual = 'undefined';
                 if (this.logBuffer.length > 0) {
-                    actual = this.logBuffer[this.logBuffer.length - 1]; // Last console.log
+                    actual = this.logBuffer[this.logBuffer.length - 1];
                 } else if (output !== undefined) {
                     actual = typeof output === 'object' ? JSON.stringify(output) : String(output);
                 } else if (context.result !== undefined) {
                     actual = typeof context.result === 'object' ? JSON.stringify(context.result) : String(context.result);
                 }
 
-                // Compare
-                const expected = testCase.output.trim();
+                const expected = (testCase.output || '').trim();
                 let passed = false;
 
                 if (actual.trim() === expected) {
@@ -337,6 +330,4 @@ export class ExecutionService {
 }
 
 export const executionService = new ExecutionService();
-
-// Backwards compatible export
 export { executeCode as pistonExecute } from './execution';

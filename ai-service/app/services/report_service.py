@@ -1,4 +1,4 @@
-import ollama
+from app.services.llm_service import llm_service
 import json
 from typing import List, Dict, Any
 
@@ -99,20 +99,37 @@ class ReportService:
             "learning_resources": [
                 {{"topic": "...", "resource_url": "...", "reason": "..."}}
             ],
-            "readiness_level": "Junior/Mid/Senior/Staff"
+            "readiness_level": "Developing | Job Ready | Interview Ready"
         }}
         """
 
         try:
-            response = ollama.chat(model=self.model_name, messages=[
+            api_key = session_data.get("api_key")
+            response = llm_service.chat(messages=[
                 {"role": "system", "content": "You are a Senior Talent Strategist and Technical Recruiter."},
                 {"role": "user", "content": prompt}
-            ], format='json')
+            ], format='json', override_api_key=api_key)
 
             report_data = json.loads(response['message']['content'])
+            
+            # Map metrics to what the Node server expects (snake_case)
+            mapped_metrics = {
+                "relevance": avg_metrics["relevance"],
+                "technical_correctness": avg_metrics["technical_correctness"],
+                "clarity_structure": avg_metrics["clarity_structure"],
+                "confidence": avg_metrics["confidence"],
+                "communication": avg_metrics["communication"],
+                "concept_coverage": avg_metrics["concept_coverage"]
+            }
+
             result = {
                 "overall_score": round(overall_score, 1),
-                "metrics": avg_metrics,
+                "metrics": mapped_metrics,
+                "scores": {
+                    "technical": round(avg_metrics["technical_correctness"], 1),
+                    "communication": round(avg_metrics["communication"], 1),
+                    "confidence": round(avg_metrics["confidence"], 1)
+                },
                 **report_data
             }
             # Always include voice_summary if speech data was provided

@@ -42,7 +42,6 @@ interface Resource {
     url: string
     type: 'pdf' | 'video' | 'link' | 'doc'
     category: string
-    isProOnly: boolean
     createdAt: string
 }
 
@@ -70,6 +69,20 @@ export default function PlatformNexus() {
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
 
+    // ── Admin Auth Guard ──
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const session = localStorage.getItem('admin_session')
+        if (!session) { router.push('/admin/login'); return }
+        try {
+            const parsed = JSON.parse(session)
+            if (!parsed.token || parsed.expiresAt < Date.now()) {
+                localStorage.removeItem('admin_session')
+                router.push('/admin/login')
+            }
+        } catch { localStorage.removeItem('admin_session'); router.push('/admin/login') }
+    }, [router])
+
     // Form States
     const [showCreateAnnouncement, setShowCreateAnnouncement] = useState(false)
     const [newAnnouncement, setNewAnnouncement] = useState({
@@ -86,8 +99,7 @@ export default function PlatformNexus() {
         description: '',
         url: '',
         type: 'pdf',
-        category: 'Interview Prep',
-        isProOnly: false
+        category: 'Interview Prep'
     })
 
     const fetchData = useCallback(async () => {
@@ -178,7 +190,7 @@ export default function PlatformNexus() {
             })
             if (res.ok) {
                 setShowCreateResource(false)
-                setNewResource({ title: '', description: '', url: '', type: 'pdf', category: 'Interview Prep', isProOnly: false })
+                setNewResource({ title: '', description: '', url: '', type: 'pdf', category: 'Interview Prep' })
                 fetchData()
             }
         } catch (err) {
@@ -320,7 +332,7 @@ export default function PlatformNexus() {
                                                     <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                                                         <FileText className="w-6 h-6" />
                                                     </div>
-                                                    {res.isProOnly && <span className="px-2 py-0.5 rounded-[4px] text-[8px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-500 border border-amber-500/20">PRO ONLY</span>}
+
                                                 </div>
                                                 <h3 className="font-black text-white text-base mb-1 truncate">{res.title}</h3>
                                                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">{res.category}</p>
@@ -463,10 +475,6 @@ export default function PlatformNexus() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 block px-1">Category</label>
                                         <input type="text" value={newResource.category} onChange={e => setNewResource({ ...newResource, category: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold focus:border-emerald-500/50 outline-none" />
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-3 px-1">
-                                    <input type="checkbox" id="pro-only" checked={newResource.isProOnly} onChange={e => setNewResource({ ...newResource, isProOnly: e.target.checked })} className="w-4 h-4 rounded bg-white/5 border-white/10 text-emerald-500" />
-                                    <label htmlFor="pro-only" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 cursor-pointer">Restrict to PRO Members</label>
                                 </div>
                                 <Button type="submit" className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-emerald-500/20">{actionLoading === 'creating_resource' ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Index Asset'}</Button>
                             </form>

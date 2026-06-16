@@ -143,21 +143,21 @@ export default function CompanyMockPage() {
 
     if (sessionComplete) {
         return (
-            <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+            <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
                 <div className="max-w-3xl mx-auto space-y-6">
                     <div className="text-center space-y-4">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/20 rounded-full mb-4">
                             <CheckCircle2 className="w-10 h-10 text-primary" />
                         </div>
                         <h1 className="text-4xl font-black">Mock Interview Complete!</h1>
-                        <p className="text-lg text-zinc-400">
+                        <p className="text-lg text-slate-500 dark:text-zinc-400">
                             Great job completing the {companyName} mock interview
                         </p>
                     </div>
 
                     <Card className="bg-gradient-to-br from-primary/20 to-purple-500/20 border-primary/20">
                         <CardContent className="p-8 text-center">
-                            <div className="text-sm text-zinc-400 mb-2">Overall Score</div>
+                            <div className="text-sm text-slate-500 dark:text-zinc-400 mb-2">Overall Score</div>
                             <div className="text-6xl font-black text-primary mb-4">{overallScore}%</div>
                             <div className="text-lg font-bold">
                                 {overallScore >= 85 ? "Excellent Performance!" :
@@ -177,7 +177,7 @@ export default function CompanyMockPage() {
                         <Button
                             onClick={() => router.push("/dashboard/companies")}
                             variant="outline"
-                            className="h-14 border-white/10 hover:bg-white/5"
+                            className="h-14 border-slate-200 dark:border-white/10 hover:bg-white/5"
                         >
                             <Home className="w-5 h-5 mr-2" />
                             Browse Companies
@@ -189,7 +189,7 @@ export default function CompanyMockPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
             <div className="max-w-4xl mx-auto space-y-6">
                 <DashboardHeader
                     title={`${companyName} Mock Interview`}
@@ -202,10 +202,10 @@ export default function CompanyMockPage() {
                 />
 
                 {/* Progress */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardContent className="p-4 space-y-3">
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-zinc-400">Round {currentRound} of {totalRounds}</span>
+                            <span className="text-slate-500 dark:text-zinc-400">Round {currentRound} of {totalRounds}</span>
                             <span className="font-bold">Question {questionNumber}/3</span>
                         </div>
                         <Progress value={(currentRound / totalRounds) * 100} className="h-2" />
@@ -220,7 +220,7 @@ export default function CompanyMockPage() {
                                 <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
                                     <Volume2 className="w-8 h-8 text-primary" />
                                 </div>
-                                <p className="text-lg text-zinc-400">AI interviewer is asking a question...</p>
+                                <p className="text-lg text-slate-500 dark:text-zinc-400">AI interviewer is asking a question...</p>
                             </div>
                         ) : (
                             <div className="space-y-6">
@@ -244,12 +244,12 @@ export default function CompanyMockPage() {
                                                 }`}
                                         >
                                             {isRecording ? (
-                                                <MicOff className="w-10 h-10 text-white" />
+                                                <MicOff className="w-10 h-10 text-slate-900 dark:text-white" />
                                             ) : (
                                                 <Mic className="w-10 h-10 text-black" />
                                             )}
                                         </button>
-                                        <p className="text-sm text-zinc-400">
+                                        <p className="text-sm text-slate-500 dark:text-zinc-400">
                                             {isRecording ? "Click to stop recording" : "Click to start answering"}
                                         </p>
                                     </div>
@@ -257,9 +257,9 @@ export default function CompanyMockPage() {
 
                                 {/* Transcript */}
                                 {transcript && (
-                                    <div className="bg-zinc-900/50 rounded-lg p-4 border border-white/5">
+                                    <div className="bg-white/60 dark:bg-zinc-900/50 rounded-lg p-4 border border-slate-100 dark:border-white/5">
                                         <div className="text-xs text-zinc-500 mb-2">Your Answer:</div>
-                                        <p className="text-sm text-zinc-300">{transcript}</p>
+                                        <p className="text-sm text-slate-600 dark:text-zinc-300">{transcript}</p>
                                     </div>
                                 )}
 
@@ -270,7 +270,7 @@ export default function CompanyMockPage() {
                                             <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
                                             <div>
                                                 <div className="font-bold mb-1">Feedback</div>
-                                                <p className="text-sm text-zinc-300">
+                                                <p className="text-sm text-slate-600 dark:text-zinc-300">
                                                     Good answer! Your response was clear and well-structured.
                                                     Consider adding more specific examples next time.
                                                 </p>

@@ -1,4 +1,4 @@
-import ollama
+from app.services.llm_service import llm_service
 import json
 import re
 from typing import Dict, Any
@@ -7,7 +7,7 @@ class InterviewEvaluator:
     def __init__(self, model_name="llama3.1:8b"):
         self.model_name = model_name
 
-    def evaluate_answer(self, question: str, answer: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+    def evaluate_answer(self, question: str, answer: str, context: Dict[str, Any] = None, api_key: str = None) -> Dict[str, Any]:
         """
         Evaluates a single interview answer based on 6 key metrics.
         """
@@ -47,10 +47,10 @@ class InterviewEvaluator:
         """
         
         try:
-            response = ollama.chat(model=self.model_name, messages=[
+            response = llm_service.chat(messages=[
                 {"role": "system", "content": "You are an Expert Technical Interviewer. Output valid JSON only."},
                 {"role": "user", "content": prompt}
-            ], format='json')
+            ], format='json', override_api_key=api_key)
             
             return json.loads(response['message']['content'])
         except Exception as e:

@@ -1,7 +1,7 @@
 
 import express, { Request, Response } from 'express'
 import * as interviewController from '../controllers/interviewController'
-import { buildRAGContext, generateInterviewQuestions, evaluateInterview, RAGContext } from '../services/ollamaService'
+import { buildRAGContext, generateInterviewQuestions, evaluateInterview, RAGContext } from '../services/aiService'
 
 const router = express.Router()
 
@@ -86,26 +86,12 @@ router.post('/evaluate', async (req: Request, res: Response) => {
     }
 })
 
-// ─── NEW: Ollama Health Check ────────────────────────────────────────────────
-router.get('/ollama/status', async (_req: Request, res: Response) => {
-    try {
-        const axios = await import('axios')
-        const response = await axios.default.get(
-            `${process.env.OLLAMA_URL || 'http://localhost:11434'}/api/tags`,
-            { timeout: 3000 }
-        )
-        const models = response.data.models?.map((m: any) => m.name) || []
-        res.json({ online: true, models, preferred: process.env.OLLAMA_MODEL || 'llama3' })
-    } catch {
-        res.json({ online: false, models: [], preferred: process.env.OLLAMA_MODEL || 'llama3' })
-    }
-})
 
 // ─── Instant Interview Chat ──────────────────────────────────────────────────
 router.post('/instant/chat', async (req: Request, res: Response) => {
     try {
         const { messages, cvText } = req.body
-        const { generateInstantChatResponse } = await import('../services/ollamaService')
+        const { generateInstantChatResponse } = await import('../services/aiService')
 
         const reply = await generateInstantChatResponse(messages || [], cvText || '')
         res.json({ reply })

@@ -1,6 +1,6 @@
 import React from 'react';
 import XPLevelCard from './XPLevelCard';
-import AmitAICoin from '../reward-system/AmitAICoin';
+import IntervyxaCoin from '../reward-system/IntervyxaCoin';
 import DailyMissions from './DailyMissions';
 import BadgeGrid from './BadgeGrid';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ user }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-            {/* AmitAI Coin Balance & Level */}
+            {/* Intervyxa Coin Balance & Level */}
             <div className="md:col-span-12 lg:col-span-4 xl:col-span-3">
                 <XPLevelCard user={user} />
             </div>
@@ -31,8 +31,8 @@ const GamificationPanel: React.FC<GamificationPanelProps> = ({ user }) => {
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Coin Wallet</p>
                             <div className="flex items-center gap-2">
-                                <span className="text-3xl font-black text-white tabular-nums">{(user.amitaiCoins || 0).toLocaleString()}</span>
-                                <AmitAICoin size={24} animate={true} />
+                                <span className="text-3xl font-black text-white tabular-nums">{(user.intervyxaCoins || 0).toLocaleString()}</span>
+                                <IntervyxaCoin size={24} animate={true} />
                             </div>
                         </div>
                         <div className="bg-yellow-500/10 p-2.5 rounded-xl border border-yellow-500/20">

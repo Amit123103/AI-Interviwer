@@ -49,7 +49,7 @@ export default function CompanyDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 flex items-center justify-center">
                 <Zap className="w-12 h-12 text-primary animate-pulse" />
             </div>
         )
@@ -57,7 +57,7 @@ export default function CompanyDetailPage() {
 
     if (!company) {
         return (
-            <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center space-y-4">
+            <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center space-y-4">
                 <AlertCircle className="w-16 h-16 text-zinc-700" />
                 <h1 className="text-2xl font-bold">Company Not Found</h1>
                 <Button onClick={() => router.push("/dashboard/companies")}>
@@ -68,7 +68,7 @@ export default function CompanyDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <DashboardHeader
@@ -85,7 +85,7 @@ export default function CompanyDetailPage() {
                     {/* Left Column: Overview & Hiring Process */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Company Card */}
-                        <Card className="bg-zinc-950 border-white/10 overflow-hidden">
+                        <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10 overflow-hidden">
                             <div className="h-2 bg-primary w-full" />
                             <CardContent className="p-8 space-y-6">
                                 <div className="space-y-4">
@@ -93,12 +93,12 @@ export default function CompanyDetailPage() {
                                         <Building2 className="w-6 h-6 text-primary" />
                                         Company Overview
                                     </h2>
-                                    <p className="text-zinc-400 leading-relaxed text-lg">
+                                    <p className="text-slate-500 dark:text-zinc-400 leading-relaxed text-lg">
                                         {company.overview}
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/5">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-slate-100 dark:border-white/5">
                                     <div className="space-y-1">
                                         <div className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Difficulty</div>
                                         <div className="flex items-center gap-2">
@@ -137,10 +137,10 @@ export default function CompanyDetailPage() {
                             </h2>
                             <div className="space-y-4">
                                 {company.hiringProcess.map((round: any, index: number) => (
-                                    <Card key={index} className="bg-zinc-950 border-white/10 group hover:border-white/20 transition-all">
+                                    <Card key={index} className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10 group hover:border-white/20 transition-all">
                                         <CardContent className="p-6">
                                             <div className="flex flex-col md:flex-row md:items-start gap-6">
-                                                <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center font-black text-xl text-primary flex-shrink-0">
+                                                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 flex items-center justify-center font-black text-xl text-primary flex-shrink-0">
                                                     {index + 1}
                                                 </div>
                                                 <div className="flex-1 space-y-4">
@@ -150,11 +150,11 @@ export default function CompanyDetailPage() {
                                                                 {round.title}
                                                             </h3>
                                                             <div className="flex flex-wrap gap-3 mt-2">
-                                                                <Badge variant="outline" className="bg-zinc-900 border-white/5 text-zinc-400 capitalize">
+                                                                <Badge variant="outline" className="bg-white dark:bg-zinc-900 border-slate-100 dark:border-white/5 text-slate-500 dark:text-zinc-400 capitalize">
                                                                     <Clock className="w-3 h-3 mr-1.5" />
                                                                     {round.duration}
                                                                 </Badge>
-                                                                <Badge variant="outline" className="bg-zinc-900 border-white/5 text-zinc-400 capitalize">
+                                                                <Badge variant="outline" className="bg-white dark:bg-zinc-900 border-slate-100 dark:border-white/5 text-slate-500 dark:text-zinc-400 capitalize">
                                                                     <Briefcase className="w-3 h-3 mr-1.5" />
                                                                     {round.format}
                                                                 </Badge>
@@ -164,14 +164,14 @@ export default function CompanyDetailPage() {
                                                             {round.difficulty}
                                                         </Badge>
                                                     </div>
-                                                    <p className="text-zinc-400 text-sm leading-relaxed">
+                                                    <p className="text-slate-500 dark:text-zinc-400 text-sm leading-relaxed">
                                                         {round.description}
                                                     </p>
                                                     <div className="space-y-2">
                                                         <div className="text-[10px] uppercase tracking-widest font-black text-zinc-600">Key Topics Focus</div>
                                                         <div className="flex flex-wrap gap-2">
                                                             {round.topics.map((topic: string, i: number) => (
-                                                                <span key={i} className="px-2 py-1 rounded bg-zinc-900 text-zinc-300 text-xs font-medium border border-white/5">
+                                                                <span key={i} className="px-2 py-1 rounded bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 text-xs font-medium border border-slate-100 dark:border-white/5">
                                                                     {topic}
                                                                 </span>
                                                             ))}
@@ -198,7 +198,7 @@ export default function CompanyDetailPage() {
                                     </p>
                                 </div>
                                 <Button
-                                    className="w-full h-14 bg-black text-white hover:bg-zinc-900 font-black text-lg gap-3"
+                                    className="w-full h-14 bg-slate-50 dark:bg-black text-slate-900 dark:text-white hover:bg-white dark:bg-zinc-900 font-black text-lg gap-3"
                                     onClick={() => router.push(`/dashboard/companies/${slug}/mock`)}
                                 >
                                     <Play className="w-6 h-6 fill-current" />
@@ -208,7 +208,7 @@ export default function CompanyDetailPage() {
                         </Card>
 
                         {/* Common Questions */}
-                        <Card className="bg-zinc-950 border-white/10">
+                        <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <HelpCircle className="w-5 h-5 text-primary" />
@@ -218,10 +218,10 @@ export default function CompanyDetailPage() {
                             <CardContent className="space-y-4">
                                 {company.commonQuestions.map((q: string, i: number) => (
                                     <div key={i} className="flex gap-3 text-sm group">
-                                        <div className="w-5 h-5 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-[10px] font-bold text-zinc-500 flex-shrink-0 group-hover:border-primary/50 group-hover:text-primary transition-colors">
+                                        <div className="w-5 h-5 rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 flex items-center justify-center text-[10px] font-bold text-zinc-500 flex-shrink-0 group-hover:border-primary/50 group-hover:text-primary transition-colors">
                                             {i + 1}
                                         </div>
-                                        <span className="text-zinc-300 leading-snug">{q}</span>
+                                        <span className="text-slate-600 dark:text-zinc-300 leading-snug">{q}</span>
                                     </div>
                                 ))}
                                 <Button variant="link" className="text-primary p-0 h-auto text-xs font-bold hover:no-underline">
@@ -231,7 +231,7 @@ export default function CompanyDetailPage() {
                         </Card>
 
                         {/* Tips & Expert Advice */}
-                        <Card className="bg-zinc-950 border-white/10">
+                        <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <Lightbulb className="w-5 h-5 text-yellow-500" />
@@ -242,14 +242,14 @@ export default function CompanyDetailPage() {
                                 {company.tips.map((tip: string, i: number) => (
                                     <div key={i} className="flex items-start gap-3 text-sm">
                                         <CheckCircle2 className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
-                                        <span className="text-zinc-400">{tip}</span>
+                                        <span className="text-slate-500 dark:text-zinc-400">{tip}</span>
                                     </div>
                                 ))}
                             </CardContent>
                         </Card>
 
                         {/* Common Mistakes */}
-                        <Card className="bg-zinc-950 border-white/10">
+                        <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <XCircle className="w-5 h-5 text-red-500" />
@@ -260,7 +260,7 @@ export default function CompanyDetailPage() {
                                 {company.commonMistakes.map((mistake: string, i: number) => (
                                     <div key={i} className="flex items-start gap-3 text-sm">
                                         <AlertCircle className="w-4 h-4 text-red-500/50 mt-1 flex-shrink-0" />
-                                        <span className="text-zinc-400">{mistake}</span>
+                                        <span className="text-slate-500 dark:text-zinc-400">{mistake}</span>
                                     </div>
                                 ))}
                             </CardContent>

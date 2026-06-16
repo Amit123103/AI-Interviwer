@@ -83,12 +83,12 @@ export default function MentorPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex flex-col pt-16 md:pt-20">
+        <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col pt-16 md:pt-20">
             {/* Header / Nav */}
-            <div className="border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
+            <div className="border-b border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">
+                        <Link href="/dashboard" className="text-zinc-500 hover:text-slate-900 dark:text-white transition-colors">
                             Dashboard
                         </Link>
                         <ChevronRight className="w-4 h-4 text-zinc-700" />
@@ -96,7 +96,7 @@ export default function MentorPage() {
                             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
                                 <Bot className="w-4 h-4 text-blue-400" />
                             </div>
-                            <span className="font-semibold text-white">AI Career Mentor</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">AI Career Mentor</span>
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@ export default function MentorPage() {
             <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0 h-[calc(100vh-8rem)]">
 
                 {/* Left Panel: The Chat Interface */}
-                <div className="lg:col-span-8 flex flex-col bg-zinc-900/40 border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
+                <div className="lg:col-span-8 flex flex-col bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
                     {/* Background glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -134,8 +134,8 @@ export default function MentorPage() {
 
                                     {/* Bubble */}
                                     <div className={`max-w-[75%] rounded-2xl px-5 py-3.5 text-sm leading-relaxed ${msg.role === "user"
-                                        ? "bg-indigo-500 text-white rounded-tr-sm shadow-[0_0_20px_rgba(99,102,241,0.15)]"
-                                        : "bg-white/5 text-zinc-300 border border-white/10 rounded-tl-sm shadow-xl"
+                                        ? "bg-indigo-500 text-slate-900 dark:text-white rounded-tr-sm shadow-[0_0_20px_rgba(99,102,241,0.15)]"
+                                        : "bg-white/5 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-white/10 rounded-tl-sm shadow-xl"
                                         }`}>
                                         {msg.content}
                                     </div>
@@ -151,7 +151,7 @@ export default function MentorPage() {
                                     <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0">
                                         <Bot className="w-4 h-4" />
                                     </div>
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-sm px-5 py-4 flex flex-col gap-2 min-w-[120px]">
+                                    <div className="bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl rounded-tl-sm px-5 py-4 flex flex-col gap-2 min-w-[120px]">
                                         <div className="flex gap-1">
                                             <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1" />
                                             <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.4, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1" />
@@ -165,7 +165,7 @@ export default function MentorPage() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="p-4 bg-zinc-950/80 backdrop-blur-md border-t border-white/5 relative z-10">
+                    <div className="p-4 bg-white dark:bg-zinc-950/80 backdrop-blur-md border-t border-slate-100 dark:border-white/5 relative z-10">
                         {/* Quick Prompts */}
                         {messages.length === 1 && (
                             <div className="flex overflow-x-auto gap-2 mb-4 pb-2 custom-scrollbar mask-gradient-right">
@@ -173,7 +173,7 @@ export default function MentorPage() {
                                     <button
                                         key={i}
                                         onClick={() => handleSend(prompt.label)}
-                                        className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+                                        className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
                                     >
                                         <prompt.icon className="w-3.5 h-3.5" />
                                         {prompt.label}
@@ -193,13 +193,13 @@ export default function MentorPage() {
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="Ask about resume, interviews, or career growth..."
-                                className="w-full bg-white/5 border-white/10 h-14 pl-6 pr-14 text-sm rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 shadow-inner group-hover:bg-white/[0.07] transition-colors"
+                                className="w-full bg-white/5 border-slate-200 dark:border-white/10 h-14 pl-6 pr-14 text-sm rounded-2xl focus-visible:ring-1 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 shadow-inner group-hover:bg-white/[0.07] transition-colors"
                             />
                             <Button
                                 type="submit"
                                 size="icon"
                                 disabled={!inputValue.trim() || isTyping}
-                                className="absolute right-2 h-10 w-10 bg-blue-500 hover:bg-blue-400 text-white rounded-xl disabled:opacity-50 disabled:bg-zinc-800 disabled:text-zinc-500 transition-colors"
+                                className="absolute right-2 h-10 w-10 bg-blue-500 hover:bg-blue-400 text-slate-900 dark:text-white rounded-xl disabled:opacity-50 disabled:bg-zinc-800 disabled:text-zinc-500 transition-colors"
                             >
                                 <Send className="w-4 h-4" />
                             </Button>
@@ -215,17 +215,17 @@ export default function MentorPage() {
                         <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/20 rounded-full blur-[30px] group-hover:bg-indigo-400/30 transition-colors" />
                         <div className="flex items-center gap-3 mb-4 relative z-10">
                             <Target className="w-5 h-5 text-indigo-400" />
-                            <h3 className="font-semibold text-white">Current Target</h3>
+                            <h3 className="font-semibold text-slate-900 dark:text-white">Current Target</h3>
                         </div>
                         <div className="text-2xl font-bold mb-1 relative z-10">Senior SDE</div>
-                        <div className="text-sm text-zinc-400 mb-4 relative z-10">Google / Microsoft Track</div>
+                        <div className="text-sm text-slate-500 dark:text-zinc-400 mb-4 relative z-10">Google / Microsoft Track</div>
 
                         <div className="space-y-1.5 relative z-10">
                             <div className="flex justify-between text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                                 <span>Readiness</span>
                                 <span className="text-indigo-400">68%</span>
                             </div>
-                            <div className="h-1.5 bg-zinc-950 rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-white dark:bg-zinc-950 rounded-full overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-[68%] rounded-full relative">
                                     <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]" />
                                 </div>
@@ -234,13 +234,13 @@ export default function MentorPage() {
                     </div>
 
                     {/* Daily Tasks */}
-                    <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-6">
+                    <div className="bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 rounded-3xl p-6">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400">
                                     <Flame className="w-4 h-4" />
                                 </div>
-                                <h3 className="font-semibold text-white">Daily Setup</h3>
+                                <h3 className="font-semibold text-slate-900 dark:text-white">Daily Setup</h3>
                             </div>
                             <span className="text-xs font-medium text-orange-400">1 of 3</span>
                         </div>
@@ -249,32 +249,32 @@ export default function MentorPage() {
                             {DAILY_TASKS.map((task, i) => (
                                 <div key={i} className={`flex items-start gap-3 p-3 rounded-2xl border transition-colors ${task.done
                                     ? "bg-emerald-500/5 border-emerald-500/10 opacity-70"
-                                    : "bg-white/[0.02] border-white/5 hover:bg-white/[0.04]"
+                                    : "bg-white/[0.02] border-slate-100 dark:border-white/5 hover:bg-white/[0.04]"
                                     }`}>
                                     <div className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${task.done ? "bg-emerald-500 border-emerald-500" : "border-zinc-600"
                                         }`}>
                                         {task.done && <Sparkles className="w-2.5 h-2.5 text-zinc-950" />}
                                     </div>
-                                    <span className={`text-sm ${task.done ? "text-zinc-500 line-through" : "text-zinc-300"}`}>
+                                    <span className={`text-sm ${task.done ? "text-zinc-500 line-through" : "text-slate-600 dark:text-zinc-300"}`}>
                                         {task.label}
                                     </span>
                                 </div>
                             ))}
                         </div>
 
-                        <Button className="w-full mt-6 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/5">
+                        <Button className="w-full mt-6 bg-white/5 hover:bg-white/10 text-slate-600 dark:text-zinc-300 border border-slate-100 dark:border-white/5">
                             Auto-Generate New Tasks
                         </Button>
                     </div>
 
                     {/* Quick Stats */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
+                        <div className="bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
                             <CalendarClock className="w-6 h-6 text-blue-400 mb-2" />
                             <div className="text-2xl font-bold">14</div>
                             <div className="text-[10px] uppercase tracking-widest text-zinc-500">Days Active</div>
                         </div>
-                        <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
+                        <div className="bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
                             <Trophy className="w-6 h-6 text-amber-400 mb-2" />
                             <div className="text-2xl font-bold">Lvl 4</div>
                             <div className="text-[10px] uppercase tracking-widest text-zinc-500">Coach Tier</div>

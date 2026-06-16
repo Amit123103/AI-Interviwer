@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { toast } from "sonner"
 import axios from "axios"
-import { Camera, Save, Loader2, User, Sparkles } from "lucide-react"
+import { Camera, Save, Loader2, User, Sparkles, Link as LinkIcon, Github, Linkedin, Target } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function ProfilePanel({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
@@ -17,7 +18,10 @@ export default function ProfilePanel({ user }: { user: any }) {
         department: "",
         dreamCompany: "",
         bio: "",
-        profilePhoto: ""
+        profilePhoto: "",
+        interviewGoal: "",
+        githubLinked: false,
+        linkedinLinked: false
     })
 
     useEffect(() => {
@@ -34,7 +38,10 @@ export default function ProfilePanel({ user }: { user: any }) {
                     department: res.data.department || "",
                     dreamCompany: res.data.dreamCompany || "",
                     bio: res.data.bio || "",
-                    profilePhoto: res.data.profilePhoto || ""
+                    profilePhoto: res.data.profilePhoto || "",
+                    interviewGoal: res.data.interviewGoal || "",
+                    githubLinked: res.data.githubLinked || false,
+                    linkedinLinked: res.data.linkedinLinked || false
                 }))
             } catch (err) {
                 console.error("Error fetching profile:", err)
@@ -56,14 +63,17 @@ export default function ProfilePanel({ user }: { user: any }) {
             data.append("department", formData.department)
             data.append("dreamCompany", formData.dreamCompany)
             if (formData.bio) data.append("bio", formData.bio)
+            if (formData.interviewGoal) data.append("interviewGoal", formData.interviewGoal)
+            data.append("githubLinked", String(formData.githubLinked))
+            data.append("linkedinLinked", String(formData.linkedinLinked))
 
-            const res = await axios.post(
+            await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/profile`,
                 data,
                 { headers: { Authorization: `Bearer ${user.token}` } }
             )
 
-            toast.success("Profile updated successfully")
+            toast.success("Profile updated")
         } catch (err) {
             console.error("Error updating profile:", err)
             toast.error("Failed to update profile")
@@ -73,110 +83,131 @@ export default function ProfilePanel({ user }: { user: any }) {
     }
 
     return (
-        <div className="space-y-6 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <User className="w-5 h-5 text-violet-400" />
-                        <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">Public Profile</span>
-                    </CardTitle>
-                    <CardDescription>This information will be displayed on your public profile.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {/* Photo Placeholder */}
-                    <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 rounded-full bg-zinc-800/50 flex items-center justify-center border-2 border-dashed border-violet-500/30 relative overflow-hidden group hover:border-violet-500/50 transition-colors">
+        <div className="space-y-6 max-w-3xl">
+            <section className="grid gap-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6 border-b border-slate-100 dark:border-white/5">
+                    <div className="relative group">
+                        <div className="w-24 h-24 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 overflow-hidden flex items-center justify-center">
                             {formData.profilePhoto ? (
                                 <img src={formData.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                                <Camera className="w-8 h-8 text-violet-400/50" />
+                                <User className="w-10 h-10 text-slate-300 dark:text-zinc-600" />
                             )}
-                            <div className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center cursor-pointer">
-                                <span className="text-xs font-bold text-white">Change</span>
-                            </div>
                         </div>
-                        <div className="space-y-1">
-                            <h3 className="font-bold">Profile Photo</h3>
-                            <p className="text-xs text-zinc-500">JPG, GIF or PNG. Max 1MB.</p>
-                            <Button variant="outline" size="sm" className="mt-2 h-8 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/10 text-violet-400">Upload New</Button>
-                        </div>
+                        <button className="absolute -bottom-2 -right-2 p-2 bg-blue-600 rounded-xl text-white shadow-lg hover:bg-blue-700 transition-colors">
+                            <Camera className="w-4 h-4" />
+                        </button>
                     </div>
+                    <div>
+                        <h3 className="font-semibold text-lg text-slate-900 dark:text-white">Profile picture</h3>
+                        <p className="text-sm text-slate-500 dark:text-zinc-400 mb-3">PNG, JPG or GIF. Max size 2MB.</p>
+                        <Button variant="outline" size="sm" className="h-9 rounded-lg">Upload new photo</Button>
+                    </div>
+                </div>
 
-                    <div className="grid gap-4">
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium leading-none text-zinc-300 hover:text-violet-400 transition-colors">Full Name</label>
-                            <Input
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleChange}
-                                placeholder="John Doe"
-                                className="bg-zinc-900/50 border-white/[0.06] focus:border-violet-500/40 focus:ring-violet-500/20"
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium leading-none text-zinc-300 hover:text-violet-400 transition-colors">Bio</label>
-                            <Textarea
-                                name="bio"
-                                value={formData.bio}
-                                onChange={handleChange}
-                                placeholder="I am a passionate software engineer..."
-                                className="bg-zinc-900/50 border-white/[0.06] min-h-[100px] focus:border-violet-500/40 focus:ring-violet-500/20"
-                            />
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Full name</label>
+                        <Input
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            placeholder="e.g. John Doe"
+                            className="h-11 rounded-lg"
+                        />
                     </div>
-                </CardContent>
-            </Card>
-
-            <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-fuchsia-400" />
-                        <span className="bg-gradient-to-r from-fuchsia-400 to-violet-400 bg-clip-text text-transparent">Academic & Career</span>
-                    </CardTitle>
-                    <CardDescription>Tailor your interview experience.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium leading-none text-zinc-300 hover:text-violet-400 transition-colors">Course / Major</label>
-                            <Input
-                                name="course"
-                                value={formData.course}
-                                onChange={handleChange}
-                                placeholder="Computer Science"
-                                className="bg-zinc-900/50 border-white/[0.06] focus:border-violet-500/40 focus:ring-violet-500/20"
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium leading-none text-zinc-300 hover:text-violet-400 transition-colors">Department</label>
-                            <Input
-                                name="department"
-                                value={formData.department}
-                                onChange={handleChange}
-                                placeholder="Engineering"
-                                className="bg-zinc-900/50 border-white/[0.06] focus:border-violet-500/40 focus:ring-violet-500/20"
-                            />
-                        </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <label className="text-sm font-medium leading-none text-zinc-300 hover:text-violet-400 transition-colors">Dream Company</label>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Dream company</label>
                         <Input
                             name="dreamCompany"
                             value={formData.dreamCompany}
                             onChange={handleChange}
-                            placeholder="Google, Amazon, etc."
-                            className="bg-zinc-900/50 border-white/[0.06] focus:border-violet-500/40 focus:ring-violet-500/20"
+                            placeholder="e.g. Google"
+                            className="h-11 rounded-lg"
                         />
                     </div>
-                </CardContent>
-            </Card>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Degree / Course</label>
+                        <Input
+                            name="course"
+                            value={formData.course}
+                            onChange={handleChange}
+                            placeholder="e.g. B.Tech Computer Science"
+                            className="h-11 rounded-lg"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Department</label>
+                        <Input
+                            name="department"
+                            value={formData.department}
+                            onChange={handleChange}
+                            placeholder="e.g. Engineering"
+                            className="h-11 rounded-lg"
+                        />
+                    </div>
+                </div>
 
-            <div className="flex justify-end">
-                <Button onClick={handleSave} disabled={loading} className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 hover:from-violet-500 hover:via-fuchsia-500 hover:to-cyan-500 text-white font-bold px-8 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] transition-all duration-300 border-0">
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                    Save Changes
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Bio</label>
+                    <Textarea
+                        name="bio"
+                        value={formData.bio}
+                        onChange={handleChange}
+                        placeholder="Tell us a little about yourself..."
+                        className="min-h-[100px] rounded-lg resize-none"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Current interview goal</label>
+                    <Input
+                        name="interviewGoal"
+                        value={formData.interviewGoal}
+                        onChange={handleChange}
+                        placeholder="e.g. I want to land a SDE role at Meta"
+                        className="h-11 rounded-lg"
+                    />
+                </div>
+            </section>
+
+            <section className="pt-6 border-t border-slate-100 dark:border-white/5 space-y-4">
+                <h3 className="font-semibold text-slate-900 dark:text-white">Connected accounts</h3>
+                <div className="grid gap-3">
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+                        <div className="flex items-center gap-3">
+                            <Github className="w-5 h-5" />
+                            <div>
+                                <p className="text-sm font-medium">GitHub</p>
+                                <p className="text-xs text-slate-500">{formData.githubLinked ? 'Connected' : 'Not connected'}</p>
+                            </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => setFormData(p => ({ ...p, githubLinked: !p.githubLinked }))}>
+                            {formData.githubLinked ? 'Disconnect' : 'Connect'}
+                        </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+                        <div className="flex items-center gap-3">
+                            <Linkedin className="w-5 h-5 text-[#0077b5]" />
+                            <div>
+                                <p className="text-sm font-medium">LinkedIn</p>
+                                <p className="text-xs text-slate-500">{formData.linkedinLinked ? 'Connected' : 'Not connected'}</p>
+                            </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => setFormData(p => ({ ...p, linkedinLinked: !p.linkedinLinked }))}>
+                            {formData.linkedinLinked ? 'Disconnect' : 'Connect'}
+                        </Button>
+                    </div>
+                </div>
+            </section>
+
+            <div className="flex justify-end pt-6">
+                <Button onClick={handleSave} disabled={loading} className="h-11 px-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center gap-2">
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Save changes
                 </Button>
             </div>
         </div>
     )
 }
+

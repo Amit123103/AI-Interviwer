@@ -97,7 +97,7 @@ export default function CustomListsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
             <div className="max-w-5xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -110,7 +110,7 @@ export default function CustomListsPage() {
                         <h1 className="text-3xl sm:text-4xl font-black tracking-tighter">
                             My Practice Lists
                         </h1>
-                        <p className="text-zinc-400 mt-2">
+                        <p className="text-slate-500 dark:text-zinc-400 mt-2">
                             Organize questions into custom lists for focused practice
                         </p>
                     </div>
@@ -125,27 +125,27 @@ export default function CustomListsPage() {
 
                 {/* Create List Form */}
                 {isCreating && (
-                    <Card className="bg-zinc-950 border-primary/20">
+                    <Card className="bg-white dark:bg-zinc-950 border-primary/20">
                         <CardHeader>
                             <CardTitle>Create New List</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <label className="text-sm text-zinc-400 mb-2 block">List Name</label>
+                                <label className="text-sm text-slate-500 dark:text-zinc-400 mb-2 block">List Name</label>
                                 <Input
                                     value={newListName}
                                     onChange={(e) => setNewListName(e.target.value)}
                                     placeholder="e.g., System Design Practice"
-                                    className="bg-zinc-900 border-white/10"
+                                    className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                 />
                             </div>
                             <div>
-                                <label className="text-sm text-zinc-400 mb-2 block">Description (Optional)</label>
+                                <label className="text-sm text-slate-500 dark:text-zinc-400 mb-2 block">Description (Optional)</label>
                                 <Input
                                     value={newListDesc}
                                     onChange={(e) => setNewListDesc(e.target.value)}
                                     placeholder="e.g., Questions for system design interviews"
-                                    className="bg-zinc-900 border-white/10"
+                                    className="bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10"
                                 />
                             </div>
                             <div className="flex gap-3">
@@ -163,7 +163,7 @@ export default function CustomListsPage() {
                                         setNewListDesc("")
                                     }}
                                     variant="outline"
-                                    className="border-white/10 hover:bg-white/5"
+                                    className="border-slate-200 dark:border-white/10 hover:bg-white/5"
                                 >
                                     <X className="w-4 h-4 mr-2" />
                                     Cancel
@@ -176,13 +176,13 @@ export default function CustomListsPage() {
                 {/* Lists Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {lists.map((list) => (
-                        <Card key={list.id} className="bg-zinc-950 border-white/10 hover:border-primary/50 transition-all">
+                        <Card key={list.id} className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10 hover:border-primary/50 transition-all">
                             <CardContent className="p-6 space-y-4">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex-1">
                                         <h3 className="font-bold text-lg mb-1">{list.name}</h3>
                                         {list.description && (
-                                            <p className="text-sm text-zinc-400">{list.description}</p>
+                                            <p className="text-sm text-slate-500 dark:text-zinc-400">{list.description}</p>
                                         )}
                                     </div>
                                     <button
@@ -207,7 +207,7 @@ export default function CustomListsPage() {
                                     </div>
                                 </div>
 
-                                <div className="pt-4 border-t border-white/5 flex gap-2">
+                                <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex gap-2">
                                     <Button
                                         onClick={() => practiceList(list.id)}
                                         className="flex-1 bg-primary hover:bg-primary/90 text-black font-bold"
@@ -219,7 +219,7 @@ export default function CustomListsPage() {
                                     <Button
                                         onClick={() => router.push("/dashboard/questions")}
                                         variant="outline"
-                                        className="border-white/10 hover:bg-white/5"
+                                        className="border-slate-200 dark:border-white/10 hover:bg-white/5"
                                     >
                                         <Plus className="w-4 h-4 mr-2" />
                                         Add Questions
@@ -232,11 +232,11 @@ export default function CustomListsPage() {
 
                 {/* Empty State */}
                 {lists.length === 0 && !isCreating && (
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardContent className="p-12 text-center">
                             <BookOpen className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
                             <h3 className="text-xl font-bold mb-2">No custom lists yet</h3>
-                            <p className="text-zinc-400 mb-6">
+                            <p className="text-slate-500 dark:text-zinc-400 mb-6">
                                 Create your first list to organize questions for focused practice
                             </p>
                             <Button
@@ -254,7 +254,7 @@ export default function CustomListsPage() {
                 <Card className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-primary/20">
                     <CardContent className="p-6">
                         <h3 className="font-bold mb-2">How to use custom lists</h3>
-                        <ul className="text-sm text-zinc-300 space-y-1">
+                        <ul className="text-sm text-slate-600 dark:text-zinc-300 space-y-1">
                             <li>• Create lists to organize questions by topic or difficulty</li>
                             <li>• Add questions from the question bank to your lists</li>
                             <li>• Practice entire lists to focus on specific areas</li>

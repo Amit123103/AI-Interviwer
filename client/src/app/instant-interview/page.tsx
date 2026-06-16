@@ -77,7 +77,7 @@ export default function InstantInterviewPage() {
 
         // Bypassing setup page hardware checks (will handle in interview page)
         setTimeout(() => {
-            router.push("/interview")
+            router.push("/dashboard/interview/setup")
         }, 1500)
     }
 

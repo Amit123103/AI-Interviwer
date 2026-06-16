@@ -2,12 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -21,11 +21,16 @@ enum AccountStatus {
   SUSPENDED
 }
 
-enum SubscriptionPlan {
-  FREE
-  MONTHLY
-  SIX_MONTH
-  YEARLY
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+}
+
+enum ModelDifficulty {
+  easy
+  intermediate
+  advanced
 }
 
 model User {
@@ -35,59 +40,383 @@ model User {
   passwordHash     String
   role             Role          @default(STUDENT)
   accountStatus    AccountStatus @default(ACTIVE)
-  xp               Int           @default(0)
+  intervyxaCoins   Int           @default(0)
+  weeklyCoins      Int           @default(0)
+  currentWeek      String        @default("")
   level            Int           @default(1)
+  xp               Int           @default(0)
   streak           Int           @default(0)
-  maxStreak        Int           @default(0)
-  subscriptionStatus SubscriptionPlan @default(FREE)
-  
+  lastPracticeDate DateTime?
+
   // Relations
-  profile          Profile?
-  preferences      Preferences?
-  adminLogs        AdminLog[]
-  announcements    Announcement[] @relation("CreatedAnnouncements")
-  resources        Resource[]     @relation("CreatedResources")
-  upgradeRequests  UpgradeRequest[]
-  
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  profile       Profile?
+  preferences   Preferences?
+  adminLogs     AdminLog[]
+  announcements Announcement[] @relation("CreatedAnnouncements")
+  resources     Resource[]     @relation("CreatedResources")
+
+  loginLogs           LoginLog[]
+  interviews          Interview[]
+  interviewSessions   InterviewSession[]
+  codingSessions      CodingRoundSession[]
+  submissions         Submission[]
+  contests            Contest[]            @relation("ContestParticipants")
+  feedbackSubmissions FeedbackSubmission[]
+  quizAttempts        QuizAttempt[]
+  activities          StudentActivity[]
+
+  portfolios       Portfolio?
+  customLists      CustomQuestionList[]
+  posts            Post[]
+  questionProgress UserQuestionProgress[]
+  createdQuizzes   Quiz[]
+  reviewReviews    PeerReview[]           @relation("Reviewer")
+  reports          Report[]
+  mockResults      MockInterviewResult[]
+  advancedNotes    AdvancedNote[]
+  onsiteLoops      OnsiteLoop[]
+  practiceSessions PracticeSession[]
+
+  twoFactorEnabled     Boolean   @default(false)
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
 }
 
 model Profile {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  totalInterviews Int      @default(0)
-  totalCodeLines  Int      @default(0)
-  averageScore    Float    @default(0)
-  
-  achievements    Json?    // Array of achievement objects
-  dailyMissions   Json?    // Array of mission objects
-  weeklyGoal      Json?    // Weekly goal settings
-  
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName       String?
+  course         String?
+  department     String?
+  dreamCompany   String?
+  bio            String?
+  profilePhoto   String?
+  resumePath     String?
+  resumeText     String?
+  skills         String[]
+  projects       String[]
+  internships    String[]
+  tools          String[]
+  certifications String[]
+  achievements   Json?
+
+  totalInterviews Int   @default(0)
+  totalCodeLines  Int   @default(0)
+  averageScore    Float @default(0)
+
+  dailyMissions Json? // Array of mission objects
+  weeklyGoal    Json? // Weekly goal settings
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("user_profiles")
 }
 
 model Preferences {
-  id                  String   @id @default(uuid())
-  userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  defaultVoice        String   @default("Female (Alloy)")
-  defaultDifficulty   String   @default("Intermediate")
-  defaultQuestionCount Int     @default(10)
-  language            String   @default("English")
-  theme               String   @default("dark")
-  accentColor         String   @default("#10b981")
-  
-  emailNotifications  Boolean  @default(true)
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  defaultVoice         String @default("Female (Alloy)")
+  defaultDifficulty    String @default("Intermediate")
+  defaultQuestionCount Int    @default(10)
+  language             String @default("English")
+  theme                String @default("dark")
+  accentColor          String @default("#10b981")
+
+  emailNotifications    Boolean @default(true)
   reminderNotifications Boolean @default(true)
-  updateNotifications Boolean  @default(true)
-  
+  updateNotifications   Boolean @default(true)
+
   @@map("user_preferences")
+}
+
+model Interview {
+  id                 String          @id @default(uuid())
+  studentId          String
+  student            User            @relation(fields: [studentId], references: [id])
+  date               DateTime        @default(now())
+  level              ModelDifficulty
+  score              Float           @default(0)
+  focusScore         Float           @default(0)
+  communicationScore Float           @default(0)
+  technicalScore     Float           @default(0)
+  questions          Json // Array of IQuestionResponse
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("interviews")
+}
+
+model Problem {
+  id              String     @id @default(uuid())
+  slug            String     @unique
+  title           String
+  description     String
+  difficulty      Difficulty
+  category        String
+  tags            String[]
+  companies       String[]
+  starterCode     Json
+  testCases       Json
+  timeLimit       Int        @default(2000)
+  memoryLimit     Int        @default(256)
+  constraints     String[]
+  examples        Json
+  stats           Json?
+  isGenerated     Boolean    @default(false)
+  sourceSessionId String?
+
+  submissions     Submission[]
+  contestProblems Contest[]    @relation("ContestProblems")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("problems")
+}
+
+model Question {
+  id                      String   @id @default(uuid())
+  title                   String
+  type                    String // technical, behavioral, system-design, coding
+  difficulty              String // easy, medium, hard
+  role                    String[]
+  subject                 String[]
+  explanation             String
+  sampleAnswer            String
+  keyPoints               String[]
+  interviewerExpectations String[]
+  commonMistakes          String[]
+  tags                    String[]
+  expectedKeywords        String[]
+  estimatedTime           Int?
+
+  progress    UserQuestionProgress[]
+  customLists CustomQuestionList[]   @relation("ListQuestions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("questions")
+}
+
+model InterviewSession {
+  id                  String    @id @default(uuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  problems            Json // List of problem attempts
+  currentProblemIndex Int       @default(0)
+  status              String    @default("Setup") // Setup, Live, Completed, Expired
+  startTime           DateTime?
+  endTime             DateTime?
+  durationMinutes     Int       @default(45)
+  resumeText          String?
+  extractedSkills     Json?
+  codeSnapshot        String?
+  score               Json?
+  feedback            String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("interview_sessions")
+}
+
+model Submission {
+  id              String  @id @default(uuid())
+  userId          String
+  user            User    @relation(fields: [userId], references: [id])
+  problemId       String
+  problem         Problem @relation(fields: [problemId], references: [id])
+  code            String
+  language        String
+  status          String  @default("Pending")
+  runtime         Int?
+  memory          Int?
+  testCasesPassed Int     @default(0)
+  totalTestCases  Int     @default(0)
+  executionTime   Int     @default(0)
+  memoryUsage     Int     @default(0)
+  failureDetail   Json?
+  aiAnalysis      Json?
+  errorLog        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("submissions")
+}
+
+model Report {
+  id                   String   @id @default(uuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
+  overallScore         Float?   @default(0)
+  readinessLevel       String?  @default("Developing")
+  interviewType        String?  @default("Mixed")
+  aiEvaluation         Json?
+  questionFeedback     Json?
+  scores               Json?
+  feedback             String?
+  improvement_tips     String[]
+  fillerWords          Json?
+  wpm                  Float?   @default(0)
+  confidenceScore      Float?   @default(0)
+  sector               String?  @default("General")
+  sectorMatchScore     Float?   @default(0)
+  persona              String?  @default("Friendly Mentor")
+  targetCompany        String?
+  jobDescription       String?
+  skillMatrix          Json?
+  transcriptAnalysis   Json?
+  integrityScore       Float?   @default(100)
+  professionalismScore Float?   @default(10)
+  advancedMetrics      Json?
+  voiceAnalysis        Json?
+  finalCode            String?
+  codeAnalysis         String?
+  videoUrl             String?
+  eventLogs            Json?
+  deepAnalysis         Json?
+  peerFeedback         Json?
+  mentorComments       Json?
+  behavioralDNA        Json?
+  negotiationLog       Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reports")
+}
+
+model Company {
+  id                 String   @id @default(uuid())
+  name               String   @unique
+  slug               String   @unique
+  category           String
+  logo               String?
+  difficulty         String
+  overview           String
+  culture            String?
+  salaryRange        String?
+  timeline           String?
+  successRate        Float?
+  hiringProcess      Json?
+  commonQuestions    String[]
+  evaluationCriteria String[]
+  tips               String[]
+  commonMistakes     String[]
+  isActive           Boolean  @default(true)
+
+  mockResults MockInterviewResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("companies")
+}
+
+model MockInterviewResult {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  companyId    String
+  company      Company   @relation(fields: [companyId], references: [id])
+  rounds       Json
+  overallScore Int?
+  feedback     String[]
+  strengths    String[]
+  weaknesses   String[]
+  passed       Boolean?
+  completedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mock_interview_results")
+}
+
+model CodingRoundSession {
+  id                    String    @id @default(uuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id])
+  studentDetails        Json
+  cvData                Json?
+  config                Json
+  questions             Json
+  currentQuestionIndex  Int       @default(0)
+  startedAt             DateTime?
+  finishedAt            DateTime?
+  totalTimeTakenSeconds Int?
+  evaluation            Json?
+  status                String    @default("setup")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("coding_round_sessions")
+}
+
+model Contest {
+  id           String    @id @default(uuid())
+  title        String
+  description  String
+  startTime    DateTime
+  endTime      DateTime
+  status       String    @default("Upcoming")
+  problems     Problem[] @relation("ContestProblems")
+  participants User[]    @relation("ContestParticipants")
+  leaderboard  Json?
+  prizes       String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contests")
+}
+
+model Quiz {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  creatorId   String
+  creator     User    @relation(fields: [creatorId], references: [id])
+  code        String  @unique
+  isPublic    Boolean @default(false)
+  questions   Json
+
+  attempts QuizAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quizzes")
+}
+
+model QuizAttempt {
+  id          String @id @default(uuid())
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+  quizId      String
+  quiz        Quiz   @relation(fields: [quizId], references: [id])
+  score       Int    @default(0)
+  coinsEarned Int    @default(0)
+  answers     Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quiz_attempts")
 }
 
 model AdminLog {
@@ -95,64 +424,237 @@ model AdminLog {
   adminId    String
   adminName  String
   admin      User     @relation(fields: [adminId], references: [id])
-  
   action     String
   targetId   String?
   targetName String?
   details    Json?
   ipAddress  String?
-  
   createdAt  DateTime @default(now())
 
   @@map("admin_logs")
 }
 
 model Announcement {
-  id         String   @id @default(uuid())
-  title      String
-  content    String
-  priority   String   @default("medium") // low, medium, high, urgent
-  audience   String   @default("all")    // all, students, pro
-  
-  createdBy  String
-  creator    User     @relation("CreatedAnnouncements", fields: [createdBy], references: [id])
-  
-  expiresAt  DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String    @id @default(uuid())
+  title     String
+  content   String
+  priority  String    @default("medium")
+  audience  String    @default("all")
+  createdBy String
+  creator   User      @relation("CreatedAnnouncements", fields: [createdBy], references: [id])
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("announcements")
 }
 
 model Resource {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
   url         String
-  type        String   // pdf, video, link, doc
+  type        String
   category    String
-  isProOnly   Boolean  @default(false)
-  
-  createdBy   String
-  creator     User     @relation("CreatedResources", fields: [createdBy], references: [id])
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdBy String
+  creator   User     @relation("CreatedResources", fields: [createdBy], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("resources")
 }
 
-model UpgradeRequest {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  
-  requestedPlan String
-  status        String   @default("pending") // pending, approved, rejected
-  adminNote     String?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model LoginLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  email     String
+  ipAddress String
+  userAgent String
+  timestamp DateTime @default(now())
 
-  @@map("upgrade_requests")
+  @@map("login_logs")
+}
+
+model AdvancedNote {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String   @default("Untitled Note")
+  previewText String?  @default("")
+  pages       Json?    @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("advanced_notes")
+}
+
+model FeedbackSubmission {
+  id       String @id @default(uuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  question String
+  answer   String
+  type     String @default("behavioral")
+  status   String @default("open")
+
+  reviews PeerReview[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("feedback_submissions")
+}
+
+model CustomQuestionList {
+  id          String  @id @default(uuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+  name        String
+  description String?
+  isPublic    Boolean @default(false)
+
+  questions Question[] @relation("ListQuestions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("custom_question_lists")
+}
+
+model PeerReview {
+  id            String             @id @default(uuid())
+  submissionId  String
+  submission    FeedbackSubmission @relation(fields: [submissionId], references: [id])
+  reviewerId    String
+  reviewer      User               @relation("Reviewer", fields: [reviewerId], references: [id])
+  clarityScore  Int
+  accuracyScore Int
+  comments      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("peer_reviews")
+}
+
+model Portfolio {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  templateId      String   @default("modern")
+  isPublished     Boolean  @default(false)
+  customSlug      String?  @unique
+  personalDetails Json
+  experience      Json
+  education       Json
+  projects        Json
+  skills          String[]
+  customTheme     Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("portfolios")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  username  String
+  title     String
+  content   String
+  category  String   @default("General")
+  tags      String[]
+  upvotes   String[] // User IDs
+  downvotes String[] // User IDs
+  views     Int      @default(0)
+  comments  Json // Array of comments
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("posts")
+}
+
+model UserQuestionProgress {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  questionId      String
+  question        Question  @relation(fields: [questionId], references: [id])
+  bookmarked      Boolean   @default(false)
+  practiced       Boolean   @default(false)
+  mastered        Boolean   @default(false)
+  attempts        Int       @default(0)
+  lastPracticed   DateTime?
+  averageScore    Float?
+  bestScore       Float?
+  practiceHistory Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questionId])
+  @@map("user_question_progress")
+}
+
+model StudentActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  action    String
+  details   String?
+  metadata  Json?
+  sessionId String?
+  timestamp DateTime @default(now())
+
+  @@map("student_activities")
+}
+
+model Config {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("configs")
+}
+
+model OnsiteLoop {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    String   @default("Upcoming")
+  rounds    Json // Array of round objects
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("onsite_loops")
+}
+
+model PracticeSession {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  configuration   Json      @default("{}")
+  metrics         Json?
+  overallScore    Float?
+  strengths       String[]
+  weaknesses      String[]
+  recommendations String[]
+  badges          String[]
+  status          String    @default("pending")
+  completedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("practice_sessions")
 }

@@ -9,16 +9,25 @@ router = APIRouter(prefix="/speak", tags=["TTS"])
 class SpeakRequest(BaseModel):
     text: str
     persona: str = "Friendly Mentor"
+    voice: str = ""  # "Male" or "Female" — overrides persona-based voice
+    api_key: str = None
 
 @router.post("")
 async def speak(request: SpeakRequest):
     try:
-        voice_map = {
-            "Friendly Mentor": "en-US-EmmaNeural",
-            "Strict Lead": "en-GB-RyanNeural",
-            "Stress Tester": "en-US-GuyNeural"
-        }
-        voice = voice_map.get(request.persona, "en-US-EmmaNeural")
+        # User's explicit voice choice takes priority
+        if request.voice.lower() == "male":
+            voice = "en-GB-RyanNeural"
+        elif request.voice.lower() == "female":
+            voice = "en-US-EmmaNeural"
+        else:
+            # Fallback to persona-based mapping
+            voice_map = {
+                "Friendly Mentor": "en-US-EmmaNeural",
+                "Strict Lead": "en-GB-RyanNeural",
+                "Stress Tester": "en-US-GuyNeural"
+            }
+            voice = voice_map.get(request.persona, "en-US-EmmaNeural")
         
         communicate = edge_tts.Communicate(request.text, voice)
         mp3_fp = io.BytesIO()

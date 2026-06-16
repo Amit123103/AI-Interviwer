@@ -46,7 +46,7 @@ export default function PrivacyPanel({ user }: { user: any }) {
             link.remove();
             setTimeout(() => window.URL.revokeObjectURL(url), 100);
 
-            toast.success("Data downloaded successfully")
+            toast.success("Data downloaded")
         } catch (err) {
             console.error("Error downloading data:", err)
             toast.error("Failed to download data")
@@ -66,7 +66,7 @@ export default function PrivacyPanel({ user }: { user: any }) {
                     data: { password: deletePassword }
                 }
             )
-            toast.success("Account deleted. Goodbye!")
+            toast.success("Account deleted")
             localStorage.clear()
             router.push("/")
         } catch (err: any) {
@@ -77,84 +77,77 @@ export default function PrivacyPanel({ user }: { user: any }) {
     }
 
     return (
-        <div className="space-y-6 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card className="bg-zinc-950/80 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/20 hover:shadow-[0_0_40px_rgba(139,92,246,0.06)] transition-all duration-500">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-violet-400" />
-                        <span className="bg-gradient-to-r from-violet-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">Data Privacy</span>
-                    </CardTitle>
-                    <CardDescription>Manage your personal data.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-cyan-500/5 rounded-xl border border-cyan-500/10 hover:border-cyan-500/25 transition-colors">
-                        <div className="space-y-1">
-                            <h3 className="font-bold text-white flex items-center gap-2"><Download className="w-4 h-4 text-cyan-400" />Download My Data</h3>
-                            <p className="text-sm text-zinc-500">Get a copy of your profile, interview history, and reports.</p>
+        <div className="space-y-12 max-w-3xl">
+            <section className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Download your data</h3>
+                <p className="text-sm text-slate-500 dark:text-zinc-400">Get a copy of your personal information, interview history, and performance metrics.</p>
+                <div className="p-6 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-between shadow-sm">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
+                            <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
-                        <Button variant="outline" onClick={handleDownload} disabled={downloading} className="border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-400">
-                            {downloading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Download className="w-4 h-4 mr-2" />}
-                            Download ZIP
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card className="bg-red-950/10 border-red-500/15 hover:border-red-500/30 hover:shadow-[0_0_40px_rgba(239,68,68,0.08)] transition-all duration-500 backdrop-blur-2xl">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-red-500">
-                        <AlertTriangle className="w-5 h-5" />
-                        <span className="bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">Danger Zone</span>
-                    </CardTitle>
-                    <CardDescription className="text-red-200/60">Irreversible actions.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                            <h3 className="font-bold text-red-400">Delete Account</h3>
-                            <p className="text-sm text-red-200/50">Permanently remove your account and all data.</p>
+                        <div>
+                            <p className="text-sm font-medium">Personal data archive</p>
+                            <p className="text-xs text-slate-500 mt-1">Includes profile info and all interview logs.</p>
                         </div>
-
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive" className="bg-red-600 hover:bg-red-700 shadow-[0_0_20px_rgba(239,68,68,0.2)] hover:shadow-[0_0_30px_rgba(239,68,68,0.4)] transition-all">
-                                    <Trash2 className="w-4 h-4 mr-2" /> Delete Account
-                                </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-zinc-950 border-red-500/20 text-white backdrop-blur-2xl">
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-red-400">Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete your
-                                        account and remove your data from our servers.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <div className="py-4">
-                                    <label className="text-sm text-zinc-400 mb-2 block">Confirm Password</label>
-                                    <Input
-                                        type="password"
-                                        value={deletePassword}
-                                        onChange={(e) => setDeletePassword(e.target.value)}
-                                        className="bg-black border-red-500/20 focus:border-red-500/40"
-                                        placeholder="Enter your password to confirm"
-                                    />
-                                </div>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel className="bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-white">Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                        onClick={handleDeleteAccount}
-                                        disabled={!deletePassword || deleting}
-                                        className="bg-red-600 hover:bg-red-700 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]"
-                                    >
-                                        {deleting ? "Deleting..." : "Permanently Delete"}
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-
                     </div>
-                </CardContent>
-            </Card>
+                    <Button onClick={handleDownload} disabled={downloading} variant="outline" className="h-10 rounded-lg font-medium text-xs">
+                        {downloading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Download className="w-4 h-4 mr-2" />}
+                        Download archive
+                    </Button>
+                </div>
+            </section>
+
+            <section className="pt-12 border-t border-slate-100 dark:border-white/5 space-y-4">
+                <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+                    <AlertTriangle className="w-5 h-5" />
+                    <h3 className="text-lg font-semibold">Delete account</h3>
+                </div>
+                <p className="text-sm text-slate-500 dark:text-zinc-400">Permanently delete your account and all associated data. This action is irreversible.</p>
+                
+                <div className="p-6 rounded-2xl border border-rose-100 dark:border-rose-500/20 bg-rose-50/30 dark:bg-rose-500/5 flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-rose-900 dark:text-rose-100">Delete my account</p>
+                        <p className="text-xs text-rose-600/70 dark:text-rose-400/70 mt-1">All data will be permanently removed from our servers.</p>
+                    </div>
+
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" className="h-10 px-6 rounded-lg font-medium text-xs">
+                                Delete account
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="max-w-md rounded-2xl">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete your account and remove all data from our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="py-4 space-y-2">
+                                <label className="text-xs font-medium text-slate-700 dark:text-zinc-300">Confirm with password</label>
+                                <Input
+                                    type="password"
+                                    value={deletePassword}
+                                    onChange={(e) => setDeletePassword(e.target.value)}
+                                    placeholder="Enter your password"
+                                    className="h-11 rounded-lg"
+                                />
+                            </div>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel className="rounded-lg h-11">Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDeleteAccount}
+                                    disabled={!deletePassword || deleting}
+                                    className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg h-11"
+                                >
+                                    {deleting ? "Deleting..." : "Delete account"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
+            </section>
         </div>
     )
 }

@@ -56,7 +56,7 @@ function TemplateSelectionContent() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -80,8 +80,8 @@ function TemplateSelectionContent() {
                                 <Card
                                     onClick={() => setSelectedTemplate(tpl.id)}
                                     className={`relative overflow-hidden transition-all duration-300 cursor-pointer h-full border ${isSelected
-                                        ? `bg-zinc-900 border-${tpl.color}-500 shadow-[0_0_30px_rgba(var(--${tpl.color}-500),0.15)] scale-105`
-                                        : 'bg-zinc-900/40 border-white/10 hover:border-white/20 hover:bg-zinc-900/60'
+                                        ? `bg-white dark:bg-zinc-900 border-${tpl.color}-500 shadow-[0_0_30px_rgba(var(--${tpl.color}-500),0.15)] scale-105`
+                                        : 'bg-white dark:bg-zinc-900/40 border-slate-200 dark:border-white/10 hover:border-white/20 hover:bg-white dark:bg-zinc-900/60'
                                         }`}
                                 >
                                     {isSelected && (
@@ -89,8 +89,8 @@ function TemplateSelectionContent() {
                                             <Check className="w-4 h-4 text-black" />
                                         </div>
                                     )}
-                                    <div className="h-48 w-full bg-black/40 border-b border-white/10 flex items-center justify-center relative overflow-hidden group">
-                                        <LayoutTemplate className={`w-16 h-16 text-zinc-700 transition-colors ${isSelected ? `text-${tpl.color}-400/20` : 'group-hover:text-white/10'}`} />
+                                    <div className="h-48 w-full bg-white dark:bg-black/40 border-b border-slate-200 dark:border-white/10 flex items-center justify-center relative overflow-hidden group">
+                                        <LayoutTemplate className={`w-16 h-16 text-zinc-700 transition-colors ${isSelected ? `text-${tpl.color}-400/20` : 'group-hover:text-slate-900 dark:text-white/10'}`} />
 
                                         {/* Simulated wireframe lines for aesthetic */}
                                         <div className="absolute inset-x-8 top-8 h-4 bg-white/5 rounded" />
@@ -102,7 +102,7 @@ function TemplateSelectionContent() {
                                         )}
                                     </div>
                                     <CardContent className="p-6">
-                                        <h3 className={`text-xl font-bold mb-2 ${isSelected ? `text-${tpl.color}-400` : 'text-zinc-200'}`}>
+                                        <h3 className={`text-xl font-bold mb-2 ${isSelected ? `text-${tpl.color}-400` : 'text-slate-900 dark:text-zinc-200'}`}>
                                             {tpl.name}
                                         </h3>
                                         <p className="text-sm text-zinc-500 leading-relaxed">
@@ -144,7 +144,7 @@ function TemplateSelectionContent() {
 
 export default function TemplateSelectionPage() {
     return (
-        <React.Suspense fallback={<div className="min-h-screen bg-black flex justify-center items-center text-white"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
+        <React.Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-black flex justify-center items-center text-slate-900 dark:text-white"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
             <TemplateSelectionContent />
         </React.Suspense>
     )

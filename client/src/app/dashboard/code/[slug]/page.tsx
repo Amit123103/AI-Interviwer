@@ -314,7 +314,7 @@ export default function CodingWorkspace() {
 
     if (loading) {
         return (
-            <div className="flex flex-col justify-center items-center h-screen bg-[#050505] text-white aurora-glow relative overflow-hidden">
+            <div className="flex flex-col justify-center items-center h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white aurora-glow relative overflow-hidden">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
                 <div className="absolute bottom-20 right-20 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
                 <motion.div
@@ -336,14 +336,14 @@ export default function CodingWorkspace() {
 
     if (!problem) {
         return (
-            <div className="flex flex-col items-center justify-center h-screen bg-[#050505] text-white aurora-glow relative overflow-hidden">
+            <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white aurora-glow relative overflow-hidden">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-red-500/3 rounded-full blur-[140px] pointer-events-none" />
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-zinc-900/40 backdrop-blur-2xl border border-red-500/10 p-8 rounded-2xl text-center max-w-sm relative z-10">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border border-red-500/10 p-8 rounded-2xl text-center max-w-sm relative z-10">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
                     <Code2 className="w-10 h-10 text-red-400 mx-auto mb-4" />
                     <h2 className="text-lg font-black text-red-300 mb-2">Problem Not Found</h2>
                     <p className="text-zinc-500 text-sm mb-4">The problem you&apos;re looking for doesn&apos;t exist.</p>
-                    <Button onClick={() => router.back()} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-0 font-black text-[10px] uppercase tracking-widest">Go Back</Button>
+                    <Button onClick={() => router.back()} className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white border-0 font-black text-[10px] uppercase tracking-widest">Go Back</Button>
                 </motion.div>
             </div>
         );
@@ -358,14 +358,14 @@ export default function CodingWorkspace() {
     const langConf = LANG_CONFIG[language] || LANG_CONFIG.javascript;
 
     return (
-        <div className="h-[calc(100vh-4rem)] flex flex-col bg-[#050505] text-white overflow-hidden relative aurora-glow">
+        <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden relative aurora-glow">
             {/* Ambient glow */}
             <div className="absolute top-0 left-0 w-72 h-72 bg-violet-500/3 rounded-full blur-[140px] pointer-events-none orb-float" />
             <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-500/3 rounded-full blur-[120px] pointer-events-none orb-float" style={{ animationDelay: '3s' }} />
             {showConfetti && <ReactConfetti numberOfPieces={200} recycle={false} />}
 
             {/* Header HUD */}
-            <div className="h-14 border-b border-white/[0.06] flex items-center justify-between px-3 sm:px-4 bg-zinc-900/60 backdrop-blur-2xl relative z-10">
+            <div className="h-14 border-b border-white/[0.06] flex items-center justify-between px-3 sm:px-4 bg-white dark:bg-zinc-900/60 backdrop-blur-2xl relative z-10">
                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/15 to-transparent" />
 
                 <div className="flex items-center gap-3">
@@ -384,12 +384,12 @@ export default function CodingWorkspace() {
                     {/* Timer */}
                     <div className="hidden sm:flex items-center gap-1.5 bg-zinc-800/50 border border-white/[0.04] rounded-lg px-2.5 py-1">
                         <Clock className="w-3 h-3 text-violet-400" />
-                        <span className="text-[10px] font-mono font-black text-zinc-400">{formatTime(timer)}</span>
+                        <span className="text-[10px] font-mono font-black text-slate-500 dark:text-zinc-400">{formatTime(timer)}</span>
                     </div>
 
                     {/* Language selector */}
                     <Select value={language} onValueChange={handleLanguageChange}>
-                        <SelectTrigger className="w-[110px] h-8 bg-black/40 border-white/[0.06] text-[10px] font-black uppercase tracking-widest focus:ring-violet-500/20 rounded-lg">
+                        <SelectTrigger className="w-[110px] h-8 bg-white dark:bg-black/40 border-white/[0.06] text-[10px] font-black uppercase tracking-widest focus:ring-violet-500/20 rounded-lg">
                             <SelectValue placeholder="Language" />
                         </SelectTrigger>
                         <SelectContent>
@@ -404,7 +404,7 @@ export default function CodingWorkspace() {
                     {/* Run button */}
                     <Button
                         size="sm"
-                        className="h-8 gap-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] border-0 transition-all rounded-lg"
+                        className="h-8 gap-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] border-0 transition-all rounded-lg"
                         onClick={handleRun}
                         disabled={executing}
                     >
@@ -415,7 +415,7 @@ export default function CodingWorkspace() {
                     {/* Submit button */}
                     <Button
                         size="sm"
-                        className="h-8 gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] border-0 transition-all rounded-lg"
+                        className="h-8 gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 text-slate-900 dark:text-white font-black text-[9px] uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] border-0 transition-all rounded-lg"
                         onClick={handleSubmit}
                         disabled={executing}
                     >
@@ -429,7 +429,7 @@ export default function CodingWorkspace() {
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
                 {/* Left Panel: Problem Description */}
-                <div className="w-full md:w-[380px] lg:w-[420px] border-r border-white/[0.06] flex flex-col bg-zinc-900/30 backdrop-blur-xl relative z-10 shrink-0">
+                <div className="w-full md:w-[380px] lg:w-[420px] border-r border-white/[0.06] flex flex-col bg-white dark:bg-zinc-900/30 backdrop-blur-xl relative z-10 shrink-0">
 
                     {/* Tabs */}
                     <div className="flex border-b border-white/[0.06] justify-between items-center pr-2">
@@ -439,7 +439,7 @@ export default function CodingWorkspace() {
                                     key={tab}
                                     className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === tab
                                         ? 'border-violet-500 text-violet-400 shadow-[0_2px_10px_rgba(139,92,246,0.15)]'
-                                        : 'border-transparent text-zinc-600 hover:text-zinc-400'
+                                        : 'border-transparent text-zinc-600 hover:text-slate-900 dark:text-zinc-400'
                                         }`}
                                     onClick={() => setActiveTab(tab as any)}
                                 >
@@ -463,7 +463,7 @@ export default function CodingWorkspace() {
                             <div className="space-y-6">
                                 {/* Problem description */}
                                 <div className="prose prose-invert prose-sm max-w-none">
-                                    <div className="whitespace-pre-wrap text-zinc-400 text-sm leading-relaxed">
+                                    <div className="whitespace-pre-wrap text-slate-500 dark:text-zinc-400 text-sm leading-relaxed">
                                         {problem.description}
                                     </div>
                                 </div>
@@ -472,15 +472,15 @@ export default function CodingWorkspace() {
                                 <div className="space-y-3">
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.15em] bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Examples</h3>
                                     {problem.examples.map((ex, i) => (
-                                        <div key={i} className="bg-black/40 rounded-xl p-4 border border-white/[0.04] hover:border-violet-500/10 transition-all space-y-2 group">
+                                        <div key={i} className="bg-white dark:bg-black/40 rounded-xl p-4 border border-white/[0.04] hover:border-violet-500/10 transition-all space-y-2 group">
                                             <div className="text-[9px] font-black uppercase tracking-widest text-violet-400/50">Example {i + 1}</div>
                                             <div className="font-mono text-sm">
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700 block mb-1">Input</span>
-                                                <div className="text-cyan-300 bg-black/30 rounded-lg p-2 border border-white/[0.03]">{ex.input}</div>
+                                                <div className="text-cyan-300 bg-white dark:bg-black/30 rounded-lg p-2 border border-white/[0.03]">{ex.input}</div>
                                             </div>
                                             <div className="font-mono text-sm">
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-zinc-700 block mb-1">Output</span>
-                                                <div className="text-emerald-300 bg-black/30 rounded-lg p-2 border border-white/[0.03]">{ex.output}</div>
+                                                <div className="text-emerald-300 bg-white dark:bg-black/30 rounded-lg p-2 border border-white/[0.03]">{ex.output}</div>
                                             </div>
                                             {ex.explanation && (
                                                 <div className="text-xs text-zinc-500 mt-2 p-2 bg-white/[0.02] rounded-lg border border-white/[0.03]">
@@ -498,7 +498,7 @@ export default function CodingWorkspace() {
                                         {problem.constraints.map((c, i) => (
                                             <li key={i} className="flex items-start gap-2 text-sm text-zinc-500">
                                                 <span className="text-cyan-500/40 mt-1 shrink-0">•</span>
-                                                <code className="text-zinc-400 text-xs bg-zinc-800/50 px-1.5 py-0.5 rounded">{c}</code>
+                                                <code className="text-slate-500 dark:text-zinc-400 text-xs bg-zinc-800/50 px-1.5 py-0.5 rounded">{c}</code>
                                             </li>
                                         ))}
                                     </ul>
@@ -560,7 +560,7 @@ export default function CodingWorkspace() {
                             </Button>
                             <button
                                 onClick={handleCopy}
-                                className="h-7 w-7 flex items-center justify-center rounded-lg bg-zinc-800/50 backdrop-blur-xl border border-white/[0.06] text-zinc-500 hover:text-white hover:bg-zinc-700/50 transition-all"
+                                className="h-7 w-7 flex items-center justify-center rounded-lg bg-zinc-800/50 backdrop-blur-xl border border-white/[0.06] text-zinc-500 hover:text-slate-900 dark:text-white hover:bg-zinc-700/50 transition-all"
                             >
                                 {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                             </button>
@@ -568,7 +568,7 @@ export default function CodingWorkspace() {
 
                         {/* Language badge */}
                         <div className="absolute top-2 left-4 z-20">
-                            <div className={`flex items-center gap-1 bg-black/60 backdrop-blur-xl border border-white/[0.06] rounded-md px-2 py-1`}>
+                            <div className={`flex items-center gap-1 bg-white dark:bg-black/60 backdrop-blur-xl border border-white/[0.06] rounded-md px-2 py-1`}>
                                 <span className={`text-[9px] font-black ${langConf.color}`}>{langConf.icon}</span>
                                 <span className="text-[8px] text-zinc-600 font-black uppercase tracking-widest">{langConf.label}</span>
                             </div>

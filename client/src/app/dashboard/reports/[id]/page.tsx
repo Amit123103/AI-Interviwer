@@ -116,7 +116,7 @@ export default function ReportPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
+            <div className="min-h-screen bg-slate-50 dark:bg-black flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-10 h-10 text-primary animate-spin" />
                 <p className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Generating Your Expert Report...</p>
             </div>
@@ -125,7 +125,7 @@ export default function ReportPage() {
 
     if (!report) {
         return (
-            <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
+            <div className="min-h-screen bg-slate-50 dark:bg-black flex flex-col items-center justify-center gap-4">
                 <AlertTriangle className="w-12 h-12 text-red-500" />
                 <p className="text-xl font-bold">Report Not Found</p>
                 <Button onClick={() => router.push('/dashboard')}>Back to Dashboard</Button>
@@ -138,16 +138,16 @@ export default function ReportPage() {
     const score = report.overallScore || 0
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-4 md:p-10 pb-20">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white p-4 md:p-10 pb-20">
             <div className="max-w-6xl mx-auto space-y-8">
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <Button variant="ghost" onClick={() => router.push('/dashboard')} className="gap-2 text-zinc-400 hover:text-white transition-colors">
+                    <Button variant="ghost" onClick={() => router.push('/dashboard')} className="gap-2 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white transition-colors">
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Button>
                     <div className="flex gap-3">
-                        <Button variant="outline" className="gap-2 border-zinc-800 bg-black/50 hover:bg-zinc-900">
+                        <Button variant="outline" className="gap-2 border-zinc-800 bg-white dark:bg-black/50 hover:bg-white dark:bg-zinc-900">
                             <Download className="w-4 h-4" /> Export PDF
                         </Button>
                         <Button className="gap-2 bg-primary text-black font-bold hover:primary/90">
@@ -168,7 +168,7 @@ export default function ReportPage() {
                             <CardContent className="h-full flex flex-col items-center justify-center p-8 text-black relative z-10">
                                 <div className="text-8xl font-black tracking-tighter mb-2">{score}</div>
                                 <div className="text-lg font-black uppercase tracking-widest opacity-80">Composite Score</div>
-                                <div className="mt-6 px-4 py-1.5 bg-black/10 rounded-full text-xs font-bold uppercase tracking-widest border border-black/5">
+                                <div className="mt-6 px-4 py-1.5 bg-white dark:bg-black/10 rounded-full text-xs font-bold uppercase tracking-widest border border-black/5">
                                     Top 5% Candidate
                                 </div>
                             </CardContent>
@@ -177,7 +177,7 @@ export default function ReportPage() {
 
                     {/* Radar Chart Card */}
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-5">
-                        <Card className="h-full bg-zinc-900/50 border-zinc-800 backdrop-blur-xl">
+                        <Card className="h-full bg-white/60 dark:bg-zinc-900/50 border-zinc-800 backdrop-blur-xl">
                             <CardHeader className="pb-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-zinc-500">Skills Matrix</CardTitle>
                             </CardHeader>
@@ -189,7 +189,7 @@ export default function ReportPage() {
 
                     {/* Readiness & Breakdown Card */}
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-4 flex flex-col gap-4">
-                        <Card className="bg-zinc-900 border-zinc-800 flex-1 overflow-hidden">
+                        <Card className="bg-white dark:bg-zinc-900 border-zinc-800 flex-1 overflow-hidden">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-xs font-black uppercase tracking-widest text-zinc-500">Readiness Status</CardTitle>
                             </CardHeader>
@@ -203,7 +203,7 @@ export default function ReportPage() {
                                         <div className="absolute inset-0 flex items-center justify-center text-xs font-black">{score}%</div>
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-black text-white">{readiness}</p>
+                                        <p className="text-2xl font-black text-slate-900 dark:text-white">{readiness}</p>
                                         <p className="text-xs text-zinc-500 font-medium">Next Milestone: Expert Level</p>
                                     </div>
                                 </div>
@@ -211,14 +211,14 @@ export default function ReportPage() {
                         </Card>
 
                         <div className="grid grid-cols-2 gap-4 flex-1">
-                            <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col justify-center">
+                            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-800 flex flex-col justify-center">
                                 <div className="flex items-center gap-2 text-zinc-500 mb-1">
                                     <TrendingUp size={12} />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Consistency</span>
                                 </div>
                                 <div className="text-xl font-black text-emerald-400">High</div>
                             </div>
-                            <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col justify-center">
+                            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-800 flex flex-col justify-center">
                                 <div className="flex items-center gap-2 text-zinc-500 mb-1">
                                     <Shield size={12} />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Integrity</span>
@@ -231,14 +231,14 @@ export default function ReportPage() {
 
                 {/* AI Executive Summary */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                    <Card className="bg-zinc-900/30 border-zinc-800 border-l-4 border-l-primary overflow-hidden">
+                    <Card className="bg-white dark:bg-zinc-900/30 border-zinc-800 border-l-4 border-l-primary overflow-hidden">
                         <CardHeader className="bg-primary/5 pb-2">
                             <CardTitle className="flex items-center gap-2 text-primary text-sm font-black uppercase tracking-wider">
                                 <Sparkles size={16} /> AI Executive Summary
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-4">
-                            <p className="text-zinc-300 leading-relaxed font-medium">
+                            <p className="text-slate-600 dark:text-zinc-300 leading-relaxed font-medium">
                                 {evaluation.aiSummary || "Candidate demonstrated strong technical aptitude and clear communication. Areas of focus should be refining system design trade-offs and confidence in complex scenario handling."}
                             </p>
                         </CardContent>
@@ -247,7 +247,7 @@ export default function ReportPage() {
 
                 {/* Strengths & Weaknesses */}
                 <div className="grid md:grid-cols-2 gap-6">
-                    <Card className="bg-zinc-900/20 border-zinc-800 border-t-2 border-t-emerald-500/50">
+                    <Card className="bg-white dark:bg-zinc-900/20 border-zinc-800 border-t-2 border-t-emerald-500/50">
                         <CardHeader className="pb-2">
                             <CardTitle className="flex items-center gap-2 text-emerald-400 text-sm font-black uppercase tracking-wider">
                                 <CheckCircle2 size={16} /> Core Strengths
@@ -259,13 +259,13 @@ export default function ReportPage() {
                                     <div className="mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
                                         <CheckCircle2 size={10} className="text-emerald-500" />
                                     </div>
-                                    <p className="text-sm text-zinc-400 group-hover:text-zinc-200 transition-colors">{s}</p>
+                                    <p className="text-sm text-slate-500 dark:text-zinc-400 group-hover:text-slate-900 dark:text-zinc-200 transition-colors">{s}</p>
                                 </div>
                             ))}
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/20 border-zinc-800 border-t-2 border-t-amber-500/50">
+                    <Card className="bg-white dark:bg-zinc-900/20 border-zinc-800 border-t-2 border-t-amber-500/50">
                         <CardHeader className="pb-2">
                             <CardTitle className="flex items-center gap-2 text-amber-500 text-sm font-black uppercase tracking-wider">
                                 <AlertTriangle size={16} /> Critical Weaknesses
@@ -277,7 +277,7 @@ export default function ReportPage() {
                                     <div className="mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-amber-500/10 flex items-center justify-center">
                                         <AlertTriangle size={10} className="text-amber-500" />
                                     </div>
-                                    <p className="text-sm text-zinc-400 group-hover:text-zinc-200 transition-colors">{w}</p>
+                                    <p className="text-sm text-slate-500 dark:text-zinc-400 group-hover:text-slate-900 dark:text-zinc-200 transition-colors">{w}</p>
                                 </div>
                             ))}
                         </CardContent>
@@ -293,14 +293,14 @@ export default function ReportPage() {
                     <div className="grid gap-4">
                         {(report.questionFeedback || []).map((q: any, i: number) => (
                             <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * i }}>
-                                <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+                                <Card className="bg-white dark:bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
                                     <CardContent className="p-5 flex gap-4">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-black border border-zinc-800 flex items-center justify-center font-black text-zinc-500">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-50 dark:bg-black border border-zinc-800 flex items-center justify-center font-black text-zinc-500">
                                             {i + 1}
                                         </div>
                                         <div className="flex-1 space-y-3">
-                                            <p className="text-sm font-bold text-white leading-relaxed">"{q.question}"</p>
-                                            <div className="p-3 rounded-lg bg-black/40 border border-zinc-800/50">
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white leading-relaxed">"{q.question}"</p>
+                                            <div className="p-3 rounded-lg bg-white dark:bg-black/40 border border-zinc-800/50">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">AI Evaluation</span>
                                                     <div className="flex items-center gap-1">
@@ -309,7 +309,7 @@ export default function ReportPage() {
                                                         ))}
                                                     </div>
                                                 </div>
-                                                <p className="text-xs text-zinc-400 leading-relaxed italic">
+                                                <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed italic">
                                                     {q.feedback}
                                                 </p>
                                             </div>
@@ -348,7 +348,7 @@ export default function ReportPage() {
                                     </div>
                                     <div className="space-y-2">
                                         {phase.steps.map((step, j) => (
-                                            <div key={j} className="flex gap-2 items-center text-xs font-medium text-zinc-400 bg-black/40 p-2 rounded-lg border border-zinc-800">
+                                            <div key={j} className="flex gap-2 items-center text-xs font-medium text-slate-500 dark:text-zinc-400 bg-white dark:bg-black/40 p-2 rounded-lg border border-zinc-800">
                                                 <ChevronRight size={10} className="text-zinc-600" />
                                                 {step}
                                             </div>

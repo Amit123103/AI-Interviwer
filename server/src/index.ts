@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
+
 import cors from 'cors';
 import http from 'http';
 import path from 'path';
-import connectDB from './config/db';
+import prisma from './prisma';
 import { startHealthMonitor, waitForAI, ServiceStatus } from './services/healthMonitor';
 import {
     helmetMiddleware,
@@ -13,9 +14,6 @@ import {
     injectionGuard,
     requestLogger,
 } from './middleware/securityMiddleware';
-
-// ── Bootstrap: Load env ONCE ────────────────────────────────────────
-dotenv.config();
 
 // ── Global Error Handlers (MUST be registered before anything else) ─
 // These prevent nodemon from crashing on unhandled async errors.
@@ -42,11 +40,13 @@ function gracefulShutdown(signal: string) {
     setTimeout(() => { process.exit(1); }, 10_000);
 }
 
-// ── Connect to MongoDB (non-fatal) ─────────────────────────────────
-connectDB().catch((err: Error) => {
-    console.error('[DB] MongoDB connection failed at startup:', err.message);
-    console.warn('[DB] Server will continue — retrying in background…');
-});
+// ── Connect to PostgreSQL via Prisma ─────────────────────────────────
+prisma.$connect()
+    .then(() => console.log('[DB] PostgreSQL Connected via Prisma'))
+    .catch((err: Error) => {
+        console.error('[DB] PostgreSQL connection failed at startup:', err.message);
+        console.warn('[DB] Server will continue — check DATABASE_URL');
+    });
 
 // ── Express App ─────────────────────────────────────────────────────
 const app = express();
@@ -57,11 +57,8 @@ app.use(cors({
         ? process.env.CORS_ORIGIN.split(',')
         : [
             'http://localhost:3000',
-            'https://amit-ai-interviwer.vercel.app',
-            'https://amit-ai-interviwer-git-main-amitakhil001-7185s-projects.vercel.app',
-            'https://amit-ai-interviwer-10x6s7ee6-amitakhil001-7185s-projects.vercel.app',
-            'https://interviewer-amit123103s-projects.vercel.app',
-            'https://interviewer-git-main-amit123103s-projects.vercel.app',
+            'https://intervyxa-ai.vercel.app',
+            'https://intervyxa-ai-git-main.vercel.app',
         ],
     credentials: true,
 }));
@@ -70,15 +67,13 @@ app.use(generalLimiter);       // Global rate limit
 app.use(requestLogger);        // Structured request logging
 app.use(injectionGuard);       // NoSQL injection blocker
 
-// Payments route before express.json() to preserve raw webhook body
-import paymentRoutes from './routes/paymentRoutes';
-app.use('/api/payments', paymentRoutes);
+
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.get('/', (_req, res) => {
-    res.send('AI Interviewer API is running…');
+    res.send('Intervyxa AI API is running…');
 });
 
 // ── System status endpoint ──────────────────────────────────────────
@@ -113,16 +108,22 @@ import questionRoutes from './routes/questionRoutes';
 import companyRoutes from './routes/companyRoutes';
 import contentRoutes from './routes/contentRoutes'
 import adminRoutes from './routes/adminRoutes'
-import proSubscriptionRoutes from './routes/proSubscriptionRoutes'
+import performanceRoutes from './routes/performanceRoutes'
+
 import sqlRoutes from './routes/sqlRoutes'
 import portfolioRoutes from './routes/portfolioRoutes'
 import advancedNotesRoutes from './routes/advancedNotesRoutes'
 import notesOcrRoutes from './routes/notesOcrRoutes'
 import mentorRoutes from './routes/mentorRoutes'
+import quizRoutes from './routes/quizRoutes'
+import feedbackRoutes from './routes/feedbackRoutes'
+import trackingRoutes from './routes/trackingRoutes'
+import projectsRoutes from './routes/projectsRoutes'
 
 app.use('/api/auth', authLimiter, authRoutes);   // Stricter limit on auth
 app.use('/api/profile', profileRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/performance', performanceRoutes);
 app.use('/api/execution', executionRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/onsite', onsiteRoutes);
@@ -145,11 +146,15 @@ app.use('/api/practice', practiceRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/pro', uploadLimiter, proSubscriptionRoutes);
+
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/notes', advancedNotesRoutes);
 app.use('/api/notes', notesOcrRoutes);
 app.use('/api/mentor', mentorRoutes);
+app.use('/api/quiz', quizRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/tracking', trackingRoutes);
+app.use('/api/projects', projectsRoutes);
 
 // ── Socket.IO ───────────────────────────────────────────────────────
 import { initializeSocket } from './socket/index';
@@ -169,22 +174,20 @@ server.listen(PORT, '0.0.0.0', async () => {
     console.log('  Running startup diagnostics…');
     console.log('─────────────────────────────────────────');
 
-    // Check MongoDB (synchronous state at this point)
-    const mongoose = require('mongoose');
-    if (mongoose.connection.readyState === 1) {
-        console.log('  ✅ MongoDB: Connected');
-    } else {
-        console.warn('  ⚠️  MongoDB: Connecting (check MONGO_URI)');
+    // Check PostgreSQL (Prisma)
+    try {
+        await prisma.user.findFirst();
+        console.log('  ✅ PostgreSQL: Connected (Prisma)');
+    } catch (err) {
+        console.warn('  ⚠️  PostgreSQL: Disconnected (check DATABASE_URL)');
     }
 
-    // Check Ollama (single attempt, non-critical)
-    const axios = require('axios');
-    try {
-        await axios.get(`${process.env.OLLAMA_URL || 'http://localhost:11434'}/api/tags`, { timeout: 5000 });
-        console.log('  ✅ Ollama Local: Online');
-        ServiceStatus.ollama = true;
-    } catch {
-        console.warn('  ⚠️  Ollama Local: Offline (fallback mode active)');
+    // Check NVIDIA (configuration only, non-critical)
+    const isNvidiaSet = process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY !== 'your_nvidia_api_key_here';
+    if (isNvidiaSet) {
+        console.log('  ✅ NVIDIA AI: Configured');
+    } else {
+        console.warn('  ⚠️  NVIDIA AI: Key Missing (falling back to AI Service or Hardcoded)');
     }
 
     // Wait for AI service with exponential backoff (3 retries: 3s → 6s → 12s)

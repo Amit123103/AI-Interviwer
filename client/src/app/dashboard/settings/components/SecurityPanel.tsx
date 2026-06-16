@@ -7,8 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner"
 import axios from "axios"
-import { ShieldCheck, Loader2, Lock, Fingerprint, Eye, EyeOff, KeyRound, Shield } from "lucide-react"
-import { motion } from "framer-motion"
+import { ShieldCheck, Loader2, Lock, Fingerprint, Eye, EyeOff, KeyRound, Shield, Laptop, Smartphone, Globe } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function SecurityPanel({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
@@ -39,7 +39,7 @@ export default function SecurityPanel({ user }: { user: any }) {
                 { currentPassword: passwords.current, newPassword: passwords.new },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             )
-            toast.success("Password updated successfully")
+            toast.success("Password updated")
             setPasswords({ current: "", new: "", confirm: "" })
         } catch (err: any) {
             console.error("Error changing password:", err)
@@ -57,14 +57,13 @@ export default function SecurityPanel({ user }: { user: any }) {
                 { headers: { Authorization: `Bearer ${user.token}` } }
             )
             setTwoFactor(checked)
-            toast.success(checked ? "2FA Enabled" : "2FA Disabled")
+            toast.success(checked ? "2FA enabled" : "2FA disabled")
         } catch (err) {
             console.error("Error toggling 2FA:", err)
-            toast.error("Failed to update 2FA settings")
+            toast.error("Failed to update 2FA")
         }
     }
 
-    // Password strength indicator
     const getStrength = (pw: string) => {
         let s = 0
         if (pw.length >= 6) s++
@@ -76,165 +75,127 @@ export default function SecurityPanel({ user }: { user: any }) {
     }
     const strength = getStrength(passwords.new)
     const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Excellent']
-    const strengthColors = ['', 'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-emerald-500', 'bg-cyan-500']
+    const strengthColors = ['', 'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-emerald-500', 'bg-blue-500']
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6 max-w-2xl"
-        >
-            {/* Password Card */}
-            <Card className="bg-zinc-900/40 backdrop-blur-2xl border-white/[0.06] hover:border-emerald-500/15 hover:shadow-[0_0_30px_rgba(16,185,129,0.06)] transition-all duration-500 rounded-2xl overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
-                <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/15 to-cyan-500/15 flex items-center justify-center border border-emerald-500/15 shadow-[0_0_12px_rgba(16,185,129,0.1)]">
-                            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="space-y-10 max-w-3xl">
+            <section className="space-y-6">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Change password</h3>
+                <div className="grid gap-4 max-w-md">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Current password</label>
+                        <div className="relative">
+                            <Input
+                                type={showCurrent ? "text" : "password"}
+                                value={passwords.current}
+                                onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
+                                placeholder="••••••••"
+                                className="h-11 pr-10 rounded-lg"
+                            />
+                            <button onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
                         </div>
-                        <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent font-black tracking-tight">Password & Authentication</span>
-                    </CardTitle>
-                    <CardDescription className="text-zinc-500 text-xs ml-12">Manage your login credentials and security layers.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-2">
-                    <div className="space-y-4 border-b border-white/[0.06] pb-6 mb-4">
-                        {/* Current Password */}
-                        <div className="grid gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500 flex items-center gap-2">
-                                <Lock className="w-3 h-3 text-zinc-600" /> Current Password
-                            </label>
-                            <div className="relative">
-                                <Input
-                                    type={showCurrent ? "text" : "password"}
-                                    value={passwords.current}
-                                    onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                                    placeholder="••••••••"
-                                    className="bg-black/30 border-white/[0.06] focus:border-emerald-500/30 focus:ring-emerald-500/10 rounded-xl pr-10 transition-colors"
-                                />
-                                <button
-                                    onClick={() => setShowCurrent(!showCurrent)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
-                                >
-                                    {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* New Password */}
-                        <div className="grid gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500 flex items-center gap-2">
-                                <KeyRound className="w-3 h-3 text-zinc-600" /> New Password
-                            </label>
-                            <div className="relative">
-                                <Input
-                                    type={showNew ? "text" : "password"}
-                                    value={passwords.new}
-                                    onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
-                                    placeholder="••••••••"
-                                    className="bg-black/30 border-white/[0.06] focus:border-emerald-500/30 focus:ring-emerald-500/10 rounded-xl pr-10 transition-colors"
-                                />
-                                <button
-                                    onClick={() => setShowNew(!showNew)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
-                                >
-                                    {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                            {/* Strength meter */}
-                            {passwords.new.length > 0 && (
-                                <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    className="space-y-1.5"
-                                >
-                                    <div className="flex gap-1">
-                                        {[1, 2, 3, 4, 5].map(level => (
-                                            <div
-                                                key={level}
-                                                className={`h-1 flex-1 rounded-full transition-colors duration-300 ${strength >= level ? strengthColors[strength] : 'bg-zinc-800'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <span className={`text-[9px] font-black uppercase tracking-widest ${strength <= 1 ? 'text-red-400' : strength <= 2 ? 'text-orange-400' : strength <= 3 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                                        {strengthLabels[strength]}
-                                    </span>
-                                </motion.div>
-                            )}
-                        </div>
-
-                        {/* Confirm Password */}
-                        <div className="grid gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">Confirm New Password</label>
-                            <div className="relative">
-                                <Input
-                                    type={showConfirm ? "text" : "password"}
-                                    value={passwords.confirm}
-                                    onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-                                    placeholder="••••••••"
-                                    className={`bg-black/30 border-white/[0.06] rounded-xl pr-10 transition-colors ${passwords.confirm && passwords.confirm === passwords.new
-                                        ? 'focus:border-emerald-500/30 border-emerald-500/20'
-                                        : passwords.confirm
-                                            ? 'focus:border-red-500/30 border-red-500/20'
-                                            : 'focus:border-emerald-500/30'
-                                        }`}
-                                />
-                                <button
-                                    onClick={() => setShowConfirm(!showConfirm)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
-                                >
-                                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <Button
-                            onClick={handlePasswordChange}
-                            disabled={loading || !passwords.current || !passwords.new}
-                            className="w-full bg-gradient-to-r from-emerald-600 via-cyan-600 to-violet-600 hover:from-emerald-500 hover:via-cyan-500 hover:to-violet-500 text-white font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_35px_rgba(16,185,129,0.35)] transition-all duration-300 border-0 uppercase tracking-widest text-[10px] rounded-xl h-11"
-                        >
-                            {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Update Password
-                        </Button>
                     </div>
 
-                    {/* 2FA Toggle */}
-                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 rounded-xl border border-violet-500/10 hover:border-violet-500/20 transition-all group">
-                        <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/15 group-hover:shadow-[0_0_12px_rgba(139,92,246,0.15)] transition-all">
-                                <Fingerprint className="w-4 h-4 text-violet-400" />
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">New password</label>
+                        <div className="relative">
+                            <Input
+                                type={showNew ? "text" : "password"}
+                                value={passwords.new}
+                                onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
+                                placeholder="••••••••"
+                                className="h-11 pr-10 rounded-lg"
+                            />
+                            <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                        </div>
+                        {passwords.new.length > 0 && (
+                            <div className="space-y-1 mt-2">
+                                <div className="flex gap-1">
+                                    {[1, 2, 3, 4, 5].map(l => (
+                                        <div key={l} className={`h-1 flex-1 rounded-full ${strength >= l ? strengthColors[strength] : 'bg-slate-200 dark:bg-white/10'}`} />
+                                    ))}
+                                </div>
+                                <span className="text-[10px] font-medium text-slate-500">{strengthLabels[strength]}</span>
                             </div>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-zinc-300">Confirm new password</label>
+                        <div className="relative">
+                            <Input
+                                type={showConfirm ? "text" : "password"}
+                                value={passwords.confirm}
+                                onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
+                                placeholder="••••••••"
+                                className="h-11 pr-10 rounded-lg"
+                            />
+                            <button onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <Button onClick={handlePasswordChange} disabled={loading || !passwords.current || !passwords.new} className="mt-2 h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+                        {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                        Update password
+                    </Button>
+                </div>
+            </section>
+
+            <section className="pt-10 border-t border-slate-100 dark:border-white/5 space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Two-factor authentication</h3>
+                        <p className="text-sm text-slate-500 dark:text-zinc-400">Add an extra layer of security to your account.</p>
+                    </div>
+                    <Switch checked={twoFactor} onCheckedChange={toggle2FA} />
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-start gap-4">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
+                        <Smartphone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-medium">Authenticator app</h4>
+                        <p className="text-xs text-slate-500 mt-1">Use an app like Google Authenticator or 1Password to generate one-time codes.</p>
+                        {twoFactor && (
+                            <Button variant="link" className="p-0 h-auto text-xs text-blue-600 hover:text-blue-700 mt-2">Configure authenticator</Button>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            <section className="pt-10 border-t border-slate-100 dark:border-white/5 space-y-4">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Active sessions</h3>
+                <div className="grid gap-3">
+                    <div className="p-4 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <Laptop className="w-5 h-5 text-slate-400" />
                             <div>
-                                <label className="text-sm font-bold text-white">Two-Factor Authentication</label>
-                                <p className="text-[10px] text-zinc-500 mt-0.5">Add an extra layer of security to your account.</p>
+                                <p className="text-sm font-medium">Windows PC • Chrome</p>
+                                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Current session</p>
                             </div>
                         </div>
-                        <Switch checked={twoFactor} onCheckedChange={toggle2FA} />
+                        <span className="text-xs text-slate-400">United States</span>
                     </div>
 
-                    {/* Security score */}
-                    <div className="p-4 bg-zinc-900/40 rounded-xl border border-white/[0.04]">
-                        <div className="flex justify-between items-center mb-2">
-                            <span className="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-600 flex items-center gap-2">
-                                <Shield className="w-3 h-3" /> Security Level
-                            </span>
-                            <span className={`text-[10px] font-black uppercase tracking-widest ${twoFactor ? 'text-emerald-400' : 'text-amber-400'}`}>
-                                {twoFactor ? 'Maximum' : 'Standard'}
-                            </span>
+                    <div className="p-4 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-between bg-slate-50 dark:bg-white/5 opacity-70">
+                        <div className="flex items-center gap-4">
+                            <Smartphone className="w-5 h-5 text-slate-400" />
+                            <div>
+                                <p className="text-sm font-medium">iPhone 14 Pro • Safari</p>
+                                <p className="text-xs text-slate-500">Last active 2 hours ago</p>
+                            </div>
                         </div>
-                        <div className="flex gap-1">
-                            {[1, 2, 3, 4].map(level => (
-                                <div
-                                    key={level}
-                                    className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${level <= (twoFactor ? 4 : 2)
-                                        ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 shadow-[0_0_4px_rgba(16,185,129,0.4)]'
-                                        : 'bg-zinc-800'
-                                        }`}
-                                />
-                            ))}
-                        </div>
+                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10">Log out</Button>
                     </div>
-                </CardContent>
-            </Card>
-        </motion.div>
+                </div>
+            </section>
+        </div>
     )
 }

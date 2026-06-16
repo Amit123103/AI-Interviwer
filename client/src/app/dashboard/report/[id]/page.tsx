@@ -49,7 +49,7 @@ function ScoreBar({ value, color, label }: { value: number; color: string; label
     return (
         <div className="space-y-1">
             <div className="flex justify-between text-xs">
-                <span className="text-zinc-400 font-medium">{label}</span>
+                <span className="text-slate-500 dark:text-zinc-400 font-medium">{label}</span>
                 <span className="font-bold" style={{ color }}>{value}%</span>
             </div>
             <div className="h-2 w-full bg-zinc-800 rounded-full overflow-hidden">
@@ -71,10 +71,10 @@ function AnswerQualityTimeline({ questionFeedback }: { questionFeedback: { quest
     const avg = Math.round(data.reduce((s, d) => s + d.score, 0) / data.length)
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-            <Card className="bg-zinc-900 border-zinc-800">
+            <Card className="bg-white dark:bg-zinc-900 border-zinc-800">
                 <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                        <span className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-zinc-400">
+                        <span className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                             <TrendingUp className="w-4 h-4 text-primary" /> Answer Quality Timeline
                         </span>
                         <span className="text-xs font-bold text-zinc-500">Avg <span className="text-primary">{avg}%</span></span>
@@ -151,16 +151,16 @@ function CompanyReadinessCard({ report, displayScore }: { report: any; displaySc
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="bg-zinc-900 border-zinc-800 overflow-hidden relative">
+            <Card className="bg-white dark:bg-zinc-900 border-zinc-800 overflow-hidden relative">
                 <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-violet-500 via-pink-500 to-orange-500" />
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-zinc-400">
+                    <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                         <Target className="w-4 h-4 text-pink-400" />
                         {report.targetCompany ? `${report.targetCompany} Readiness` : 'Company Readiness Score'}
                     </CardTitle>
                     {state === 'idle' && (
                         <Button size="sm" onClick={generate}
-                            className="h-8 px-4 text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white border-0">
+                            className="h-8 px-4 text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-slate-900 dark:text-white border-0">
                             <Zap className="w-3.5 h-3.5 mr-1.5" /> Analyse Fit
                         </Button>
                     )}
@@ -174,7 +174,7 @@ function CompanyReadinessCard({ report, displayScore }: { report: any; displaySc
                 <CardContent>
                     {state === 'idle' && (
                         <p className="text-sm text-zinc-500 py-4 text-center">
-                            Click <span className="text-white font-bold">Analyse Fit</span> to see how ready you are for {report.targetCompany || 'your target company'}.
+                            Click <span className="text-slate-900 dark:text-white font-bold">Analyse Fit</span> to see how ready you are for {report.targetCompany || 'your target company'}.
                         </p>
                     )}
                     {state === 'error' && (
@@ -203,14 +203,14 @@ function CompanyReadinessCard({ report, displayScore }: { report: any; displaySc
                             </div>
 
                             <div className="flex-1 space-y-4">
-                                <div className="p-3 rounded-xl bg-black/40 border border-zinc-800">
+                                <div className="p-3 rounded-xl bg-white dark:bg-black/40 border border-zinc-800">
                                     <p className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-1">Verdict</p>
-                                    <p className="text-sm text-zinc-200 font-medium">{result.verdict}</p>
+                                    <p className="text-sm text-slate-900 dark:text-zinc-200 font-medium">{result.verdict}</p>
                                 </div>
                                 {result.companyInsight && (
                                     <div className="p-3 rounded-xl bg-violet-500/5 border border-violet-500/20">
                                         <p className="text-xs font-black uppercase tracking-widest text-violet-400 mb-1">Company Insight</p>
-                                        <p className="text-xs text-zinc-300 leading-relaxed">{result.companyInsight}</p>
+                                        <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{result.companyInsight}</p>
                                     </div>
                                 )}
                                 <div>
@@ -220,8 +220,8 @@ function CompanyReadinessCard({ report, displayScore }: { report: any; displaySc
                                     <ol className="space-y-2">
                                         {result.actionPlan.map((step, i) => (
                                             <li key={i} className="flex gap-3 items-start">
-                                                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-violet-600 to-pink-600 flex items-center justify-center text-[10px] font-black text-white shrink-0 mt-0.5">{i + 1}</span>
-                                                <p className="text-xs text-zinc-300 leading-relaxed">{step}</p>
+                                                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-violet-600 to-pink-600 flex items-center justify-center text-[10px] font-black text-slate-900 dark:text-white shrink-0 mt-0.5">{i + 1}</span>
+                                                <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{step}</p>
                                             </li>
                                         ))}
                                     </ol>
@@ -310,9 +310,9 @@ function ReportPageContent() {
         }
     }
 
-    if (loading) return <div className="flex justify-center items-center h-screen bg-black text-white"><Loader2 className="animate-spin w-8 h-8" /></div>
+    if (loading) return <div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white"><Loader2 className="animate-spin w-8 h-8" /></div>
     if (!report) return (
-        <div className="flex flex-col items-center justify-center h-screen bg-black text-white gap-4">
+        <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white gap-4">
             <Lock className="w-16 h-16 text-zinc-700" />
             <h1 className="text-2xl font-bold">Report Not Found or Private</h1>
             <Link href="/"><Button>Go Home</Button></Link>
@@ -336,18 +336,18 @@ function ReportPageContent() {
     const radarData = ollamaMetrics.map(m => ({ subject: m.metric.split(' ')[0], value: m.value, fullMark: 100 }))
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 md:p-10 font-sans">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 md:p-10 font-sans">
             <div className="max-w-4xl mx-auto space-y-8">
 
                 {/* Header Nav */}
                 <div className="flex flex-wrap justify-between items-center gap-3">
                     <Link href={isOwner ? "/dashboard" : "/"}>
-                        <Button variant="outline" className="text-zinc-400 border-zinc-800 hover:text-white">
+                        <Button variant="outline" className="text-slate-500 dark:text-zinc-400 border-zinc-800 hover:text-slate-900 dark:text-white">
                             {isOwner ? "← Dashboard" : "Try AI Interviewer"}
                         </Button>
                     </Link>
                     <div className="flex flex-wrap gap-2">
-                        {isOwner && <Button onClick={handleExportGithub} variant="outline" className="gap-2 border-zinc-800 text-zinc-400 hover:text-white"><Github className="w-4 h-4" /> Export MD</Button>}
+                        {isOwner && <Button onClick={handleExportGithub} variant="outline" className="gap-2 border-zinc-800 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white"><Github className="w-4 h-4" /> Export MD</Button>}
                         {isOwner && report.videoUrl && (
                             <Link href={`/dashboard/report/${report._id}/playback`}>
                                 <Button variant="outline" className="gap-2 border-primary/20 text-primary hover:bg-primary/5"><Video className="w-4 h-4" /> Recording</Button>
@@ -367,7 +367,7 @@ function ReportPageContent() {
 
                 {/* ── HERO CARD ─────────────────────────────────────────────── */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <Card className="bg-zinc-900 border-zinc-800 overflow-hidden relative">
+                    <Card className="bg-white dark:bg-zinc-900 border-zinc-800 overflow-hidden relative">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-cyan-500 to-emerald-500" />
                         <CardContent className="flex flex-col md:flex-row items-center gap-10 py-10 px-6">
 
@@ -396,7 +396,7 @@ function ReportPageContent() {
                                     <h1 className="text-3xl md:text-4xl font-black leading-tight">
                                         {displayScore >= 80 ? "Excellent Performance!" : displayScore >= 60 ? "Good Effort!" : "Keep Practising!"}
                                     </h1>
-                                    <p className="text-zinc-400 text-sm mt-1">
+                                    <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">
                                         {new Date(report.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
                                     </p>
                                 </div>
@@ -406,12 +406,12 @@ function ReportPageContent() {
 
                                 {/* AI Summary */}
                                 {ollama?.interview_summary && (
-                                    <div className="bg-black/40 border border-zinc-800 rounded-xl p-4 text-left">
+                                    <div className="bg-white dark:bg-black/40 border border-zinc-800 rounded-xl p-4 text-left">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Sparkles className="w-3.5 h-3.5 text-primary" />
                                             <span className="text-[10px] font-black uppercase tracking-widest text-primary">AI Insights</span>
                                         </div>
-                                        <p className="text-sm text-zinc-300 leading-relaxed italic">"{ollama.interview_summary}"</p>
+                                        <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed italic">"{ollama.interview_summary}"</p>
                                     </div>
                                 )}
                             </div>
@@ -422,9 +422,9 @@ function ReportPageContent() {
                 {/* ── OLLAMA 6-METRIC BREAKDOWN ─────────────────────────────── */}
                 {ollama && ollamaMetrics.length > 0 && (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                        <Card className="bg-zinc-900 border-zinc-800">
+                        <Card className="bg-white dark:bg-zinc-900 border-zinc-800">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-zinc-400">
+                                <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                                     <BarChart3 className="w-4 h-4 text-primary" /> AI Evaluation — 6 Dimensions
                                 </CardTitle>
                             </CardHeader>
@@ -461,7 +461,7 @@ function ReportPageContent() {
                                         <h4 className="text-xs font-black uppercase tracking-widest text-green-400 mb-3 flex items-center gap-1.5"><CheckCircle2 size={12} /> Technical Strengths</h4>
                                         <ul className="space-y-2">
                                             {(ollama.technical_strengths ? [ollama.technical_strengths] : (ollama.strengths || [])).map((s: string, i: number) => (
-                                                <li key={i} className="flex gap-2 items-start text-sm text-zinc-300">
+                                                <li key={i} className="flex gap-2 items-start text-sm text-slate-600 dark:text-zinc-300">
                                                     <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" /> {s}
                                                 </li>
                                             ))}
@@ -469,7 +469,7 @@ function ReportPageContent() {
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-black uppercase tracking-widest text-purple-400 mb-3 flex items-center gap-1.5"><Brain size={12} /> Behavioral Analysis</h4>
-                                        <p className="text-xs text-zinc-400 leading-relaxed">
+                                        <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
                                             {ollama.behavioral_analysis || "Maintained consistent eye contact and technical confidence throughout the session."}
                                         </p>
                                     </div>
@@ -478,8 +478,8 @@ function ReportPageContent() {
                                 {ollama.system_design_review && ollama.system_design_review !== "No whiteboard data" && (
                                     <div className="mt-6 pt-6 border-t border-zinc-800">
                                         <h4 className="text-xs font-black uppercase tracking-widest text-cyan-400 mb-3 flex items-center gap-1.5"><Layers size={12} /> System Design Review</h4>
-                                        <div className="p-4 bg-black/40 rounded-xl border border-cyan-500/10">
-                                            <p className="text-xs text-zinc-300 leading-relaxed">{ollama.system_design_review}</p>
+                                        <div className="p-4 bg-white dark:bg-black/40 rounded-xl border border-cyan-500/10">
+                                            <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{ollama.system_design_review}</p>
                                         </div>
                                     </div>
                                 )}
@@ -491,9 +491,9 @@ function ReportPageContent() {
                 {/* ── Q-BY-Q FEEDBACK ───────────────────────────────────────── */}
                 {report.questionFeedback && report.questionFeedback.length > 0 && (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                        <Card className="bg-zinc-900 border-zinc-800">
+                        <Card className="bg-white dark:bg-zinc-900 border-zinc-800">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-zinc-400">
+                                <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                                     <Layers className="w-4 h-4 text-cyan-400" /> Question-by-Question Feedback
                                 </CardTitle>
                             </CardHeader>
@@ -502,18 +502,18 @@ function ReportPageContent() {
                                     const scoreColor = qf.score >= 80 ? 'text-green-400' : qf.score >= 60 ? 'text-amber-400' : 'text-red-400'
                                     const borderColor = qf.score >= 80 ? 'border-green-500/20' : qf.score >= 60 ? 'border-amber-500/20' : 'border-red-500/20'
                                     return (
-                                        <div key={i} className={`p-5 rounded-xl bg-black border ${borderColor} space-y-3`}>
+                                        <div key={i} className={`p-5 rounded-xl bg-slate-50 dark:bg-black border ${borderColor} space-y-3`}>
                                             <div className="flex justify-between items-start gap-4">
                                                 <div className="flex items-start gap-3">
-                                                    <span className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-black text-zinc-400 shrink-0">{i + 1}</span>
-                                                    <p className="text-sm font-medium text-zinc-200 leading-relaxed">{qf.question}</p>
+                                                    <span className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-black text-slate-500 dark:text-zinc-400 shrink-0">{i + 1}</span>
+                                                    <p className="text-sm font-medium text-slate-900 dark:text-zinc-200 leading-relaxed">{qf.question}</p>
                                                 </div>
                                                 <span className={`text-xl font-black shrink-0 ${scoreColor}`}>{qf.score}%</span>
                                             </div>
                                             {qf.feedback && (
                                                 <div className="pl-10 flex gap-2">
                                                     <Brain className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                                                    <p className="text-xs text-zinc-400 leading-relaxed">{qf.feedback}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">{qf.feedback}</p>
                                                 </div>
                                             )}
                                         </div>
@@ -526,7 +526,7 @@ function ReportPageContent() {
 
                 {/* ── BEHAVIORAL DNA ────────────────────────────────────────── */}
                 {report.behavioralDNA && report.behavioralDNA.length > 0 && (
-                    <Card className="bg-zinc-950 border-zinc-800">
+                    <Card className="bg-white dark:bg-zinc-950 border-zinc-800">
                         <CardHeader>
                             <CardTitle className="text-xs font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
                                 <Brain className="w-4 h-4 text-primary" /> Behavioral DNA (Emotional Heatmap)
@@ -549,9 +549,9 @@ function ReportPageContent() {
                                             if (active && payload && payload.length) {
                                                 const d = payload[0].payload
                                                 return (
-                                                    <div className="bg-black border border-zinc-800 p-2 rounded shadow-xl">
+                                                    <div className="bg-slate-50 dark:bg-black border border-zinc-800 p-2 rounded shadow-xl">
                                                         <p className="text-[10px] font-bold text-zinc-500 uppercase">{d.emotion}</p>
-                                                        <p className="text-xs font-black text-white">Intensity: {d.intensity}/10</p>
+                                                        <p className="text-xs font-black text-slate-900 dark:text-white">Intensity: {d.intensity}/10</p>
                                                     </div>
                                                 )
                                             }
@@ -574,7 +574,7 @@ function ReportPageContent() {
 
                 {/* ── TABS: OVERVIEW + DEEP AI ──────────────────────────────── */}
                 <Tabs defaultValue="overview" className="space-y-6">
-                    <TabsList className="bg-zinc-900 border border-zinc-800 p-1">
+                    <TabsList className="bg-white dark:bg-zinc-900 border border-zinc-800 p-1">
                         <TabsTrigger value="overview" className="data-[state=active]:bg-zinc-800">Overview</TabsTrigger>
                         <TabsTrigger value="deep-scan" className="data-[state=active]:bg-primary data-[state=active]:text-black">
                             <Brain className="w-4 h-4 mr-2" /> Deep AI Analysis
@@ -585,24 +585,24 @@ function ReportPageContent() {
                         {/* Fallback strengths/improvements when no Ollama */}
                         {!ollama && (
                             <div className="grid md:grid-cols-2 gap-6">
-                                <Card className="bg-zinc-900/50 border-zinc-800">
+                                <Card className="bg-white/60 dark:bg-zinc-900/50 border-zinc-800">
                                     <CardHeader><CardTitle className="text-green-400">Strengths</CardTitle></CardHeader>
                                     <CardContent>
                                         <ul className="space-y-2">
                                             {(report.feedback?.strengths || ["Great clarity", "Good technical depth"]).map((s: string, i: number) => (
-                                                <li key={i} className="flex gap-2 items-start text-zinc-300">
+                                                <li key={i} className="flex gap-2 items-start text-slate-600 dark:text-zinc-300">
                                                     <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" /> {s}
                                                 </li>
                                             ))}
                                         </ul>
                                     </CardContent>
                                 </Card>
-                                <Card className="bg-zinc-900/50 border-zinc-800">
+                                <Card className="bg-white/60 dark:bg-zinc-900/50 border-zinc-800">
                                     <CardHeader><CardTitle className="text-orange-400">Areas for Improvement</CardTitle></CardHeader>
                                     <CardContent>
                                         <ul className="space-y-2">
                                             {(report.feedback?.improvements || ["Be more concise", "Use STAR method"]).map((s: string, i: number) => (
-                                                <li key={i} className="flex gap-2 items-start text-zinc-300">
+                                                <li key={i} className="flex gap-2 items-start text-slate-600 dark:text-zinc-300">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 mt-2 shrink-0" /> {s}
                                                 </li>
                                             ))}
@@ -613,7 +613,7 @@ function ReportPageContent() {
                         )}
 
                         {/* Basic 3-score grid */}
-                        <Card className="bg-zinc-900/50 border-zinc-800">
+                        <Card className="bg-white/60 dark:bg-zinc-900/50 border-zinc-800">
                             <CardHeader><CardTitle>Session Metrics</CardTitle></CardHeader>
                             <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {[
@@ -622,7 +622,7 @@ function ReportPageContent() {
                                     { label: 'Engagement', value: `${report.scores?.engagement || 0}%`, color: 'text-pink-400' },
                                     { label: 'Integrity', value: `${report.scores?.integrity || 0}%`, color: 'text-emerald-400' },
                                 ].map(m => (
-                                    <div key={m.label} className="bg-black p-4 rounded-lg border border-zinc-800 text-center">
+                                    <div key={m.label} className="bg-slate-50 dark:bg-black p-4 rounded-lg border border-zinc-800 text-center">
                                         <p className={`text-2xl font-bold ${m.color}`}>{m.value}</p>
                                         <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{m.label}</p>
                                     </div>
@@ -635,7 +635,7 @@ function ReportPageContent() {
                         {report.deepAnalysis ? (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Card className="bg-zinc-900 border-zinc-800">
+                                    <Card className="bg-white dark:bg-zinc-900 border-zinc-800">
                                         <CardHeader>
                                             <CardTitle className="flex items-center gap-2"><Target className="w-5 h-5 text-primary" /> Conceptual Mastery</CardTitle>
                                         </CardHeader>
@@ -643,7 +643,7 @@ function ReportPageContent() {
                                             {report.deepAnalysis.conceptual_mastery?.map((item: any, i: number) => (
                                                 <div key={i} className="space-y-1">
                                                     <div className="flex justify-between text-xs">
-                                                        <span className="font-bold text-zinc-300">{item.skill}</span>
+                                                        <span className="font-bold text-slate-600 dark:text-zinc-300">{item.skill}</span>
                                                         <span className="text-primary">{item.score}%</span>
                                                     </div>
                                                     <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
@@ -655,15 +655,15 @@ function ReportPageContent() {
                                         </CardContent>
                                     </Card>
 
-                                    <Card className="bg-zinc-900 border-zinc-800">
+                                    <Card className="bg-white dark:bg-zinc-900 border-zinc-800">
                                         <CardHeader>
                                             <CardTitle className="flex items-center gap-2"><TrendingUp className="w-5 h-5 text-emerald-400" /> Delivery & Communication</CardTitle>
                                         </CardHeader>
                                         <CardContent className="space-y-3">
                                             {['filler_usage', 'pacing', 'confidence_progression'].map(key => (
-                                                <div key={key} className="bg-black/40 p-4 rounded-xl border border-zinc-800/50">
+                                                <div key={key} className="bg-white dark:bg-black/40 p-4 rounded-xl border border-zinc-800/50">
                                                     <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">{key.replace(/_/g, ' ')}</h4>
-                                                    <p className="text-sm text-zinc-300">{report.deepAnalysis.delivery_analysis?.[key]}</p>
+                                                    <p className="text-sm text-slate-600 dark:text-zinc-300">{report.deepAnalysis.delivery_analysis?.[key]}</p>
                                                 </div>
                                             ))}
                                         </CardContent>
@@ -678,9 +678,9 @@ function ReportPageContent() {
                                         <CardContent>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {(ollama.growth_roadmap || report.deepAnalysis.growth_plan).map((plan: string, i: number) => (
-                                                    <div key={i} className="flex gap-4 p-4 bg-zinc-900 rounded-xl border border-primary/10 items-center">
+                                                    <div key={i} className="flex gap-4 p-4 bg-white dark:bg-zinc-900 rounded-xl border border-primary/10 items-center">
                                                         <div className="w-8 h-8 rounded-full bg-primary text-black flex items-center justify-center font-bold shrink-0">{i + 1}</div>
-                                                        <p className="text-sm font-medium text-zinc-200">{plan}</p>
+                                                        <p className="text-sm font-medium text-slate-900 dark:text-zinc-200">{plan}</p>
                                                     </div>
                                                 ))}
                                             </div>
@@ -699,7 +699,7 @@ function ReportPageContent() {
                 </Tabs>
 
                 {/* ── MENTOR CRITIQUE ───────────────────────────────────────── */}
-                <Card className="bg-zinc-900 border-purple-500/20">
+                <Card className="bg-white dark:bg-zinc-900 border-purple-500/20">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-purple-400">
                             <MessageSquare className="w-5 h-5" /> Mentor Critique & Discussion
@@ -709,12 +709,12 @@ function ReportPageContent() {
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
                             {report.mentorComments?.length > 0 ? report.mentorComments.map((comment: any, i: number) => (
-                                <div key={i} className="p-4 bg-black rounded-xl border border-zinc-800 space-y-2">
+                                <div key={i} className="p-4 bg-slate-50 dark:bg-black rounded-xl border border-zinc-800 space-y-2">
                                     <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-zinc-500">
                                         <span>Mentor Reviewer</span>
                                         <span>{new Date(comment.timestamp).toLocaleString()}</span>
                                     </div>
-                                    <p className="text-sm text-zinc-300">{comment.text}</p>
+                                    <p className="text-sm text-slate-600 dark:text-zinc-300">{comment.text}</p>
                                 </div>
                             )) : (
                                 <div className="text-center py-10 text-zinc-600 italic text-sm">
@@ -724,7 +724,7 @@ function ReportPageContent() {
                         </div>
                         <div className="pt-4 border-t border-zinc-800 space-y-3">
                             <textarea
-                                className="w-full bg-black border border-zinc-800 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-purple-500 transition-all min-h-[100px] resize-none"
+                                className="w-full bg-slate-50 dark:bg-black border border-zinc-800 rounded-xl p-4 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-purple-500 transition-all min-h-[100px] resize-none"
                                 placeholder="Add a professional critique or follow-up question..."
                                 value={mentorComment}
                                 onChange={e => setMentorComment(e.target.value)}
@@ -744,7 +744,7 @@ function ReportPageContent() {
 
 export default function ReportPage() {
     return (
-        <Suspense fallback={<div className="flex justify-center items-center h-screen bg-black text-white"><Loader2 className="animate-spin" /></div>}>
+        <Suspense fallback={<div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white"><Loader2 className="animate-spin" /></div>}>
             <ReportPageContent />
         </Suspense>
     )

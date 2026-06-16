@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AmitAICoin from './AmitAICoin';
+import IntervyxaCoin from './IntervyxaCoin';
 import { useWindowSize } from '@/hooks/use-window-size';
 
 interface CoinRewardAnimationProps {
@@ -67,7 +67,7 @@ const CoinRewardAnimation: React.FC<CoinRewardAnimationProps> = ({
                             }}
                             className="relative"
                         >
-                            <AmitAICoin size={200} glow animate={phase === 'spin'} />
+                            <IntervyxaCoin size={200} glow animate={phase === 'spin'} />
 
                             {/* Particle sparks */}
                             {phase === 'spin' && (
@@ -96,11 +96,11 @@ const CoinRewardAnimation: React.FC<CoinRewardAnimationProps> = ({
                             className="mt-8 text-center"
                         >
                             <h3 className="text-4xl font-black text-white drop-shadow-lg mb-2">
-                                You earned AmitAI Coins!
+                                You earned Intervyxa Coins!
                             </h3>
                             <div className="flex items-center justify-center gap-3">
                                 <span className="text-6xl font-black text-yellow-400">+{coinsEarned}</span>
-                                <AmitAICoin size={40} glow={false} />
+                                <IntervyxaCoin size={40} glow={false} />
                             </div>
                         </motion.div>
 

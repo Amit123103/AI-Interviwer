@@ -11,7 +11,6 @@ import { protect } from '../middleware/authMiddleware';
 const router = express.Router();
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 const Tesseract = require('tesseract.js');
 
 // Multer setup
@@ -89,7 +88,7 @@ router.post('/parse', upload.single('resume'), async (req: any, res: Response) =
         let aiResponse;
         let attempts = 0;
         const maxAttempts = 2;
-        const AI_TIMEOUT = 45000; // 45 seconds (enough for cold start, reduces hang time)
+        const AI_TIMEOUT = 120000; // 120 seconds (enough for deep 397B model analysis, reduces premature fallbacks)
 
         while (attempts < maxAttempts) {
             try {
@@ -170,33 +169,6 @@ router.post('/parse', upload.single('resume'), async (req: any, res: Response) =
                 throw new Error('Could not extract sufficient text from resume');
             }
 
-            // OLLAMA FALLBACK: Use local Ollama to structure the extracted text
-            try {
-                console.log('Attempting local Ollama structure fallback...');
-                const ollamaResponse = await axios.post(`${OLLAMA_URL}/api/generate`, {
-                    model: process.env.OLLAMA_MODEL || 'llama3.1:8b',
-                    prompt: `Extract vitals from this resume text. Return ONLY JSON.
-                    Fields: name, email, skills (list), experienceLevel, suggestedRole.
-                    Text: ${extractedText.substring(0, 3000)}`,
-                    stream: false,
-                    format: 'json',
-                    options: { num_predict: 200, temperature: 0.1 }
-                }, { timeout: 30000 }).catch(() => null);
-
-                if (ollamaResponse?.data?.response) {
-                    const structured = JSON.parse(ollamaResponse.data.response);
-                    // Clean up and return
-                    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-                    return res.json({
-                        ...structured,
-                        text: extractedText.substring(0, 3000),
-                        rawText: extractedText.substring(0, 3000),
-                        summary: 'Parsed using local OCR + Ollama fallback.'
-                    });
-                }
-            } catch (ollamaErr: any) {
-                console.error('Ollama fallback error:', ollamaErr.message);
-            }
 
             // Final basic regex fallback if Ollama fails too
             const skillPatterns = /\b(python|javascript|typescript|java|react|node\.?js|angular|vue|go|rust|c\+\+|c#|aws|docker|kubernetes|sql|mongodb|git|linux|html|css)\b/gi;

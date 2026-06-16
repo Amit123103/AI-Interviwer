@@ -64,16 +64,16 @@ function ComparisonContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center space-y-4">
+            <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white flex flex-col items-center justify-center space-y-4">
                 <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                <p className="text-zinc-400 font-medium animate-pulse">Running delta analysis...</p>
+                <p className="text-slate-500 dark:text-zinc-400 font-medium animate-pulse">Running delta analysis...</p>
             </div>
         )
     }
 
     if (!id1 || !id2) {
         return (
-            <div className="min-h-screen bg-transparent text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+            <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
                 <MeshBackground />
                 <HolographicHud />
                 {/* Floating ambient orbs */}
@@ -91,7 +91,7 @@ function ComparisonContent() {
                         {reports.map((r) => (
                             <Card
                                 key={r._id}
-                                className={`bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 cursor-pointer ${id1 === r._id ? 'bg-gradient-to-b from-violet-500/5 to-transparent border-violet-500/20' : id2 === r._id ? 'bg-gradient-to-b from-cyan-500/5 to-transparent border-cyan-500/20' : ''}`}
+                                className={`bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 cursor-pointer ${id1 === r._id ? 'bg-gradient-to-b from-violet-500/5 to-transparent border-violet-500/20' : id2 === r._id ? 'bg-gradient-to-b from-cyan-500/5 to-transparent border-cyan-500/20' : ''}`}
                                 onClick={() => {
                                     if (!id1) router.push(`/dashboard/compare?id1=${r._id}`)
                                     else if (r._id !== id1 && r._id !== id2) router.push(`/dashboard/compare?id1=${id1}&id2=${r._id}`)
@@ -125,7 +125,7 @@ function ComparisonContent() {
         const isPositive = value > 0
         const isNeutral = value === 0
         return (
-            <div className="bg-zinc-900/40 border border-white/[0.06] backdrop-blur-2xl p-4 rounded-xl space-y-1 hover:border-violet-500/15 transition-all">
+            <div className="bg-white dark:bg-zinc-900/40 border border-white/[0.06] backdrop-blur-2xl p-4 rounded-xl space-y-1 hover:border-violet-500/15 transition-all">
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">{title}</p>
                 <div className="flex items-center gap-2">
                     <span className="text-2xl font-black">{isPositive ? `+${value}` : value}{unit}</span>
@@ -136,7 +136,7 @@ function ComparisonContent() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-4 sm:p-6 md:p-10 relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
             {/* Floating ambient orbs */}
@@ -168,7 +168,7 @@ function ComparisonContent() {
                     </div>
 
                     {/* Radar Chart */}
-                    <Card className="lg:col-span-2 bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl p-6">
+                    <Card className="lg:col-span-2 bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl p-6">
                         <CardHeader className="p-0 mb-6">
                             <CardTitle className="text-xl font-bold flex items-center gap-2">
                                 <Brain className="w-5 h-5 text-cyan-400" /> <span className="bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">Skill Mastery Shift</span>
@@ -199,7 +199,7 @@ function ComparisonContent() {
                         </div>
                         <div className="flex justify-center gap-6 mt-4">
                             <div className="flex items-center gap-2 text-xs font-bold text-zinc-500">
-                                <div className="w-3 h-3 bg-white/10 border border-white/20 rounded-full" /> Initial
+                                <div className="w-3 h-3 bg-white/10 border border-slate-300 dark:border-white/20 rounded-full" /> Initial
                             </div>
                             <div className="flex items-center gap-2 text-xs font-bold text-violet-400">
                                 <div className="w-3 h-3 bg-violet-500/30 border border-violet-500 rounded-full" /> Latest
@@ -210,31 +210,31 @@ function ComparisonContent() {
 
                 {/* Session Summaries */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/15 transition-all duration-500">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/15 transition-all duration-500">
                         <CardHeader>
                             <p className="text-xs font-black text-zinc-500 uppercase tracking-widest">Baseline</p>
                             <CardTitle>Session 1</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                                <span className="text-zinc-400">Total Score</span>
+                                <span className="text-slate-500 dark:text-zinc-400">Total Score</span>
                                 <span className="text-2xl font-black">{report1.scores.technical + report1.scores.communication + report1.scores.focus}/30</span>
                             </div>
-                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-0" onClick={() => router.push(`/dashboard/report/${report1.id}`)}>View Report</Button>
+                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white border-0" onClick={() => router.push(`/dashboard/report/${report1.id}`)}>View Report</Button>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/15 transition-all duration-500">
+                    <Card className="bg-white dark:bg-zinc-900/40 border-white/[0.06] backdrop-blur-2xl hover:border-violet-500/15 transition-all duration-500">
                         <CardHeader>
                             <p className="text-xs font-black bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent uppercase tracking-widest">Progress</p>
                             <CardTitle>Session 2</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between p-4 bg-violet-500/5 border border-violet-500/20 rounded-xl">
-                                <span className="text-zinc-400">Total Score</span>
+                                <span className="text-slate-500 dark:text-zinc-400">Total Score</span>
                                 <span className="text-2xl font-black bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">{report2.scores.technical + report2.scores.communication + report2.scores.focus}/30</span>
                             </div>
-                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-0" onClick={() => router.push(`/dashboard/report/${report2.id}`)}>View Report</Button>
+                            <Button className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white border-0" onClick={() => router.push(`/dashboard/report/${report2.id}`)}>View Report</Button>
                         </CardContent>
                     </Card>
                 </div>
@@ -245,7 +245,7 @@ function ComparisonContent() {
 
 export default function ComparisonPage() {
     return (
-        <Suspense fallback={<div className="flex justify-center items-center h-screen bg-black text-white"><Loader2 className="animate-spin" /></div>}>
+        <Suspense fallback={<div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white"><Loader2 className="animate-spin" /></div>}>
             <ComparisonContent />
         </Suspense>
     )

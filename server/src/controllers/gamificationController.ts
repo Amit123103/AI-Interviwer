@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../models/User';
+import prisma from '../prisma';
 import { updateUserProgress } from '../services/gamificationService';
 
 export const updateProgress = async (req: any, res: Response) => {
@@ -19,17 +19,22 @@ export const updateProgress = async (req: any, res: Response) => {
 export const getLeaderboard = async (req: any, res: Response) => {
     try {
         const { period } = req.query;
-        let sortField = 'amitaiCoins';
-        let selectField = 'username amitaiCoins level achievements weeklyCoins';
+        let sortField = 'intervyxaCoins';
 
         if (period === 'weekly') {
             sortField = 'weeklyCoins';
         }
 
-        const topUsers = await User.find({})
-            .sort({ [sortField]: -1 })
-            .limit(10)
-            .select(selectField);
+        const topUsers = await prisma.user.findMany({
+            orderBy: { [sortField]: 'desc' },
+            take: 10,
+            select: {
+                username: true,
+                intervyxaCoins: true,
+                level: true,
+                weeklyCoins: true
+            }
+        });
 
         res.json(topUsers);
     } catch (error) {
@@ -41,7 +46,7 @@ export const claimDailyReward = async (req: any, res: Response) => {
     try {
         const userId = req.user?.id;
         const result = await updateUserProgress(userId!, 100, { type: 'daily_claim' }); // 100 Coins for checking in
-        res.json({ message: 'AmitAI Coins claimed!', ...result });
+        res.json({ message: 'Intervyxa Coins claimed!', ...result });
     } catch (error) {
         res.status(500).json({ message: 'Error claiming reward', error });
     }

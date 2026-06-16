@@ -138,7 +138,7 @@ export default function QuestionBankPage() {
     )
 
     return (
-        <div className="min-h-screen bg-transparent text-white pb-20 relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white pb-20 relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
             {/* Floating ambient orbs */}
@@ -157,14 +157,14 @@ export default function QuestionBankPage() {
 
                     {/* Stats */}
                     <div className="flex gap-4">
-                        <div className="bg-zinc-900/40 backdrop-blur-3xl border border-white/5 rounded-[1.25rem] p-4 flex items-center gap-4 group hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all duration-300">
+                        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-3xl border border-slate-100 dark:border-white/5 rounded-[1.25rem] p-4 flex items-center gap-4 group hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all duration-300">
                             <div className="p-2.5 bg-violet-500/10 rounded-xl text-violet-400 group-hover:bg-violet-500/20 transition-colors"><CheckCircle2 className="w-5 h-5" /></div>
                             <div>
                                 <div className="text-xl font-bold leading-none bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">{practicedIds.length}</div>
                                 <div className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Practiced</div>
                             </div>
                         </div>
-                        <div className="bg-zinc-900/40 backdrop-blur-3xl border border-white/5 rounded-[1.25rem] p-4 flex items-center gap-4 group hover:border-cyan-500/30 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-all duration-300">
+                        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-3xl border border-slate-100 dark:border-white/5 rounded-[1.25rem] p-4 flex items-center gap-4 group hover:border-cyan-500/30 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-all duration-300">
                             <div className="p-2.5 bg-cyan-500/10 rounded-xl text-cyan-400 group-hover:bg-cyan-500/20 transition-colors"><Bookmark className="w-5 h-5" /></div>
                             <div>
                                 <div className="text-xl font-bold leading-none bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{bookmarkedIds.length}</div>
@@ -175,7 +175,7 @@ export default function QuestionBankPage() {
                 </div>
 
                 {/* Filters Bar */}
-                <div className="sticky top-0 z-30 bg-zinc-950/40 backdrop-blur-3xl border-b border-white/5 py-6 -mx-4 px-4 md:-mx-8 md:px-8 space-y-4">
+                <div className="sticky top-0 z-30 bg-white dark:bg-zinc-950/40 backdrop-blur-3xl border-b border-slate-100 dark:border-white/5 py-6 -mx-4 px-4 md:-mx-8 md:px-8 space-y-4">
                     <div className="flex flex-col lg:flex-row gap-4">
                         {/* Search */}
                         <div className="relative flex-1">
@@ -184,14 +184,14 @@ export default function QuestionBankPage() {
                                 placeholder="Search questions, topics, keywords..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 h-11 bg-zinc-900/50 border-white/10 focus-visible:ring-primary/50 text-white placeholder:text-zinc-500 rounded-xl"
+                                className="pl-9 h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 focus-visible:ring-primary/50 text-slate-900 dark:text-white placeholder:text-zinc-500 rounded-xl"
                             />
                         </div>
 
                         {/* Desktop Filters */}
                         <div className="hidden lg:flex flex-wrap gap-2">
                             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                                <SelectTrigger className="w-[180px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[180px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -203,7 +203,7 @@ export default function QuestionBankPage() {
                             </Select>
 
                             <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                                <SelectTrigger className="w-[160px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[160px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <SelectValue placeholder="Company" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -215,7 +215,7 @@ export default function QuestionBankPage() {
                             </Select>
 
                             <Select value={selectedRole} onValueChange={setSelectedRole}>
-                                <SelectTrigger className="w-[160px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[160px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <SelectValue placeholder="Role" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -227,7 +227,7 @@ export default function QuestionBankPage() {
                             </Select>
 
                             <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                                <SelectTrigger className="w-[140px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[140px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <SelectValue placeholder="Difficulty" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -240,7 +240,7 @@ export default function QuestionBankPage() {
                             </Select>
 
                             <Select value={selectedType} onValueChange={setSelectedType}>
-                                <SelectTrigger className="w-[140px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[140px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <SelectValue placeholder="Type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -254,7 +254,7 @@ export default function QuestionBankPage() {
                             </Select>
 
                             <Select value={sortBy} onValueChange={setSortBy}>
-                                <SelectTrigger className="w-[160px] h-11 bg-zinc-900/50 border-white/10 rounded-xl">
+                                <SelectTrigger className="w-[160px] h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 rounded-xl">
                                     <ArrowUpDown className="w-4 h-4 mr-2" />
                                     <SelectValue placeholder="Sort By" />
                                 </SelectTrigger>
@@ -270,12 +270,12 @@ export default function QuestionBankPage() {
                         <div className="lg:hidden">
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button variant="outline" className="h-11 bg-zinc-900/50 border-white/10">
+                                    <Button variant="outline" className="h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10">
                                         <SlidersHorizontal className="w-4 h-4 mr-2" />
                                         Filters
                                     </Button>
                                 </SheetTrigger>
-                                <SheetContent side="right" className="bg-zinc-950 border-white/10 w-full sm:w-[540px]">
+                                <SheetContent side="right" className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10 w-full sm:w-[540px]">
                                     <SheetHeader>
                                         <SheetTitle>Filter Questions</SheetTitle>
                                         <SheetDescription>Refine your search with specific criteria.</SheetDescription>
@@ -378,9 +378,9 @@ export default function QuestionBankPage() {
                         </div>
 
                         {/* Pagination */}
-                        <div className="flex items-center justify-between border-t border-white/5 pt-8">
+                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-8">
                             <div className="text-sm text-zinc-500">
-                                Showing <span className="font-bold text-white">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-bold text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredQuestions.length)}</span> of <span className="font-bold text-white">{filteredQuestions.length.toLocaleString()}</span> questions
+                                Showing <span className="font-bold text-slate-900 dark:text-white">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-900 dark:text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredQuestions.length)}</span> of <span className="font-bold text-slate-900 dark:text-white">{filteredQuestions.length.toLocaleString()}</span> questions
                             </div>
                             <div className="flex gap-2">
                                 <Button
@@ -388,7 +388,7 @@ export default function QuestionBankPage() {
                                     size="sm"
                                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                     disabled={currentPage === 1}
-                                    className="border-white/10"
+                                    className="border-slate-200 dark:border-white/10"
                                 >
                                     <ChevronLeft className="w-4 h-4 mr-2" /> Previous
                                 </Button>
@@ -397,7 +397,7 @@ export default function QuestionBankPage() {
                                     size="sm"
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="border-white/10"
+                                    className="border-slate-200 dark:border-white/10"
                                 >
                                     Next <ChevronRight className="w-4 h-4 ml-2" />
                                 </Button>
@@ -405,13 +405,13 @@ export default function QuestionBankPage() {
                         </div>
                     </>
                 ) : (
-                    <div className="text-center py-20 bg-zinc-900/20 rounded-2xl border border-white/5 border-dashed">
-                        <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="text-center py-20 bg-white dark:bg-zinc-900/20 rounded-2xl border border-slate-100 dark:border-white/5 border-dashed">
+                        <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Search className="w-8 h-8 text-zinc-500" />
                         </div>
-                        <h3 className="text-lg font-bold text-white">No questions found</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">No questions found</h3>
                         <p className="text-zinc-500 mt-2 max-w-md mx-auto">We couldn't find any questions matching your filters. Try adjusting your search or clearing some filters.</p>
-                        <Button variant="outline" className="mt-6 border-white/10" onClick={clearFilters}>Clear All Filters</Button>
+                        <Button variant="outline" className="mt-6 border-slate-200 dark:border-white/10" onClick={clearFilters}>Clear All Filters</Button>
                     </div>
                 )}
 
@@ -442,8 +442,8 @@ function QuestionCard({
 
     return (
         <TiltCard className={cn(
-            "bg-zinc-900/40 border-white/5 hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 group flex flex-col h-full backdrop-blur-2xl rounded-[2rem] overflow-hidden relative hover-shine",
-            expanded && "bg-zinc-900/80 ring-1 ring-violet-500/20"
+            "bg-white dark:bg-zinc-900/40 border-slate-100 dark:border-white/5 hover:border-violet-500/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.06)] transition-all duration-500 group flex flex-col h-full backdrop-blur-2xl rounded-[2rem] overflow-hidden relative hover-shine",
+            expanded && "bg-white dark:bg-zinc-900/80 ring-1 ring-violet-500/20"
         )}>
             {/* Scanning Line overlay */}
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent animate-pulse pointer-events-none" />
@@ -461,7 +461,7 @@ function QuestionCard({
                         </Badge>
 
                         {/* Category Badge */}
-                        <span className="text-[10px] uppercase font-bold text-zinc-500 border border-white/5 bg-white/5 px-2 py-1 rounded-md flex items-center gap-1.5">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500 border border-slate-100 dark:border-white/5 bg-white/5 px-2 py-1 rounded-md flex items-center gap-1.5">
                             <CategoryIcon className="w-3 h-3" /> {question.subcategory || question.category.split(" ")[0]}
                         </span>
 
@@ -504,7 +504,7 @@ function QuestionCard({
             <CardContent className="flex-1 flex flex-col gap-4">
                 {/* Expandable Answer Section */}
                 <div className={cn(
-                    "grid transition-all duration-300 ease-in-out bg-black/40 rounded-xl overflow-hidden border border-white/5",
+                    "grid transition-all duration-300 ease-in-out bg-white dark:bg-black/40 rounded-xl overflow-hidden border border-slate-100 dark:border-white/5",
                     expanded ? "grid-rows-[1fr] mt-2 opacity-100" : "grid-rows-[0fr] opacity-0"
                 )}>
                     <div className="overflow-hidden">
@@ -516,8 +516,8 @@ function QuestionCard({
                                     <div className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">
                                         <Code2 className="w-3 h-3 text-cyan-500" /> Code Solution
                                     </div>
-                                    <div className="bg-zinc-950 p-4 rounded-lg border border-white/10 overflow-x-auto">
-                                        <pre className="text-xs md:text-sm font-mono text-zinc-300">
+                                    <div className="bg-white dark:bg-zinc-950 p-4 rounded-lg border border-slate-200 dark:border-white/10 overflow-x-auto">
+                                        <pre className="text-xs md:text-sm font-mono text-slate-600 dark:text-zinc-300">
                                             {question.codeSnippet}
                                         </pre>
                                     </div>
@@ -533,7 +533,7 @@ function QuestionCard({
                                 </div>
                                 <div className="flex flex-wrap gap-2">
                                     {question.keyPoints.map((point, i) => (
-                                        <span key={i} className="text-xs bg-white/5 text-zinc-300 px-2 py-1 rounded border border-white/5">
+                                        <span key={i} className="text-xs bg-white/5 text-slate-600 dark:text-zinc-300 px-2 py-1 rounded border border-slate-100 dark:border-white/5">
                                             {point}
                                         </span>
                                     ))}
@@ -545,7 +545,7 @@ function QuestionCard({
                                 <div className="text-xs font-bold text-zinc-500 uppercase flex items-center gap-2">
                                     <GraduationCap className="w-3 h-3 text-primary" /> Expert Answer
                                 </div>
-                                <div className="text-sm text-zinc-300 leading-relaxed bg-zinc-900 p-3 rounded-lg border border-white/5 whitespace-pre-line">
+                                <div className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed bg-white dark:bg-zinc-900 p-3 rounded-lg border border-slate-100 dark:border-white/5 whitespace-pre-line">
                                     {question.answer}
                                 </div>
                             </div>
@@ -558,7 +558,7 @@ function QuestionCard({
                         variant="ghost"
                         size="sm"
                         onClick={() => setExpanded(!expanded)}
-                        className="text-zinc-400 hover:text-zinc-200"
+                        className="text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-zinc-200"
                     >
                         {expanded ? "Hide Answer" : "Show Answer"}
                     </Button>
@@ -571,7 +571,7 @@ function QuestionCard({
                             "flex-1 font-bold",
                             isPracticed
                                 ? "bg-transparent border-emerald-500/50 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                                : "bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-white hover:from-violet-500 hover:via-fuchsia-500 hover:to-cyan-500 shadow-[0_0_20px_rgba(139,92,246,0.3)] border-0"
+                                : "bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-slate-900 dark:text-white hover:from-violet-500 hover:via-fuchsia-500 hover:to-cyan-500 shadow-[0_0_20px_rgba(139,92,246,0.3)] border-0"
                         )}
                     >
                         {isPracticed ? (

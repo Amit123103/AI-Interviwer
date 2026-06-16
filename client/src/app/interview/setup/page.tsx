@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import {
     Upload, CheckCircle, Video, Mic, Settings, ArrowRight, ArrowLeft,
     Loader2, User, Briefcase, GraduationCap, Code2, Heart, Layers,
-    Play, Wifi, WifiOff, Sun, Moon, Brain, Sparkles, Building2, Target
+    Play, Wifi, WifiOff, Sun, Moon, Brain, Sparkles, Building2, Target,
+    AlertCircle
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import axios from "axios"
@@ -26,9 +27,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
 const STEPS = [
     { id: 1, name: "Details", icon: User },
     { id: 2, name: "Type", icon: Layers },
-    { id: 3, name: "Review", icon: Brain },
-    { id: 4, name: "Checks", icon: Video },
-    { id: 5, name: "Config", icon: Settings },
+    { id: 3, name: "Checks", icon: Video },
+    { id: 4, name: "Config", icon: Settings },
 ]
 
 const INTERVIEW_TYPES = [
@@ -129,9 +129,12 @@ function InterviewSetupContent() {
             setGeneratedQuestions(res.data.questions || [])
             localStorage.setItem("interview_questions", JSON.stringify(res.data.questions))
             localStorage.setItem("interview_context", JSON.stringify(res.data.context))
+            // Streamlined: Skip review and go straight to Device Checks (Step 3)
             setCurrentStep(3)
         } catch (err) {
             console.error("Question generation failed", err)
+            // Even if generation fails, allow proceeding — server will generate questions
+            setCurrentStep(3)
         } finally {
             setIsProcessing(false)
         }
@@ -149,40 +152,69 @@ function InterviewSetupContent() {
         localStorage.setItem("interview_type", formData.interviewType)
         localStorage.setItem("interview_target_company", formData.targetCompany)
         localStorage.setItem("interview_job_description", formData.jobDescription)
+        localStorage.setItem("interview_persona", formData.persona)
+        localStorage.setItem("interview_sector", formData.interviewType)
 
-        router.push("/interview")
+        router.push("/interview?autoStart=true")
     }
 
     const [systemStatus, setSystemStatus] = useState({ ai: true, ollama: true })
 
     const startDeviceCheck = async () => {
         setPermissionError(null)
+        let videoStream: MediaStream | null = null
+        let audioStream: MediaStream | null = null
+
         try {
+            // First attempt: Both
             const s = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             setStream(s)
             if (videoRef.current) videoRef.current.srcObject = s
             setDeviceStatus(prev => ({ ...prev, camera: true, mic: true, face: true }))
-
-            // Basic Mic Analysis
-            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
-            const source = audioCtx.createMediaStreamSource(s)
-            const analyser = audioCtx.createAnalyser()
-            analyser.fftSize = 256
-            source.connect(analyser)
-            micAnalyserRef.current = analyser
-
-            const checkMic = () => {
-                const data = new Uint8Array(analyser.frequencyBinCount)
-                analyser.getByteFrequencyData(data)
-                const avg = data.reduce((a, b) => a + b) / data.length
-                setMicLevel(avg)
-                micRafRef.current = requestAnimationFrame(checkMic)
+            setupMicAnalysis(s)
+        } catch (err: any) {
+            console.warn("Full device acquisition failed, trying partial...", err)
+            
+            // Try Audio Only
+            try {
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+                setStream(audioStream)
+                setDeviceStatus(prev => ({ ...prev, mic: true, camera: false }))
+                setupMicAnalysis(audioStream)
+                setPermissionError("Note: Camera not found or blocked. You can proceed with voice-only.")
+            } catch (audioErr) {
+                console.error("Audio acquisition failed", audioErr)
+                setDeviceStatus(prev => ({ ...prev, mic: false }))
+                setPermissionError("Microphone not found or blocked. Please ensure you have a working mic.")
             }
-            checkMic()
-        } catch (err) {
-            console.error("Device check failed", err)
-            setPermissionError("Camera/Mic access denied. Please enable permissions.")
+
+            // Try Video Only (if just to see if it works)
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true })
+                if (videoRef.current) videoRef.current.srcObject = videoStream
+                setDeviceStatus(prev => ({ ...prev, camera: true }))
+            } catch (videoErr) {
+                setDeviceStatus(prev => ({ ...prev, camera: false }))
+            }
         }
+    }
+
+    const setupMicAnalysis = (s: MediaStream) => {
+        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+        const source = audioCtx.createMediaStreamSource(s)
+        const analyser = audioCtx.createAnalyser()
+        analyser.fftSize = 256
+        source.connect(analyser)
+        micAnalyserRef.current = analyser
+
+        const checkMic = () => {
+            const data = new Uint8Array(analyser.frequencyBinCount)
+            analyser.getByteFrequencyData(data)
+            const avg = data.reduce((a, b) => a + b) / data.length
+            setMicLevel(avg)
+            micRafRef.current = requestAnimationFrame(checkMic)
+        }
+        checkMic()
     }
 
     const stopStream = () => {
@@ -438,51 +470,18 @@ function InterviewSetupContent() {
                                     <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => setCurrentStep(1)}>BACK</Button>
                                     <Button className="flex-1 h-14 bg-gradient-to-r from-fuchsia-500 via-violet-500 to-cyan-500 text-white hover:from-fuchsia-400 hover:via-violet-400 hover:to-cyan-400 font-black text-lg rounded-2xl shadow-[0_0_40px_rgba(232,121,249,0.25)] hover:shadow-[0_0_60px_rgba(139,92,246,0.35)] transition-all duration-500 hover:-translate-y-0.5"
                                         onClick={generateQuestions}>
-                                        GENERATE QUESTIONS <Brain className="ml-2 w-5 h-5" />
+                                        GENERATE & CONTINUE <Brain className="ml-2 w-5 h-5" />
                                     </Button>
                                 </CardFooter>
                             </Card>
                         </TiltCard>
                     )}
 
-                    {/* ── SCREEN 3: GENERATED QUESTIONS REVIEW ────────────── */}
+                    {/* Step 3 (Review) removed — questions are generated in background
+                       and sent directly to the interview via join-interview socket event */}
+
+                    {/* ── SCREEN 3: DEVICE & ENVIRONMENT CHECK ───────────── */}
                     {currentStep === 3 && (
-                        <TiltCard>
-                            <Card className="bg-zinc-900/50 border-white/10 backdrop-blur-2xl overflow-hidden rounded-[2rem] relative group hover:border-emerald-500/20 transition-all duration-500 hover:shadow-[0_0_60px_rgba(16,185,129,0.08)]">
-                                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
-                                    <Brain size={120} />
-                                </div>
-                                <CardHeader className="pb-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 text-[10px] font-black rounded-full uppercase tracking-tighter border border-emerald-500/20">AI GENERATED READY</span>
-                                        <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">{formData.interviewType} • {formData.difficulty}</span>
-                                    </div>
-                                    <CardTitle className="text-2xl font-black"><span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Review</span> Your Questions</CardTitle>
-                                    <CardDescription className="text-zinc-400">Read through the questions carefully. These will be asked in order.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="px-6 space-y-3 max-h-[400px] overflow-y-auto scrollbar-hide py-4">
-                                    {generatedQuestions.map((q, i) => (
-                                        <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }} className="group p-5 bg-white/5 border border-white/5 rounded-2xl hover:border-violet-500/30 hover:bg-violet-500/5 transition-all duration-300 flex gap-4 items-start hover-shine">
-                                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500/20 to-cyan-500/20 flex-shrink-0 flex items-center justify-center text-[10px] font-black text-violet-400 border border-violet-500/20">
-                                                {i + 1}
-                                            </div>
-                                            <p className="text-sm font-medium leading-relaxed text-zinc-200">{q}</p>
-                                        </motion.div>
-                                    ))}
-                                </CardContent>
-                                <CardFooter className="p-8 border-t border-white/5 bg-white/[0.02] flex gap-4">
-                                    <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => setCurrentStep(2)}>REGENERATE</Button>
-                                    <Button className="flex-1 h-14 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-400 hover:to-cyan-400 font-black text-lg rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)] transition-all duration-500 hover:-translate-y-0.5"
-                                        onClick={() => setCurrentStep(4)}>
-                                        PROCEED TO CHECK <ArrowRight className="ml-2 w-5 h-5" />
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        </TiltCard>
-                    )}
-
-                    {/* ── SCREEN 4: DEVICE & ENVIRONMENT CHECK ───────────── */}
-                    {currentStep === 4 && (
                         <TiltCard>
                             <Card className="bg-zinc-900/50 border-white/10 backdrop-blur-2xl overflow-hidden rounded-[2rem] relative group hover:border-blue-500/20 transition-all duration-500 hover:shadow-[0_0_60px_rgba(59,130,246,0.08)]">
                                 <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
@@ -526,6 +525,13 @@ function InterviewSetupContent() {
                                         )}
                                     </div>
 
+                                    {permissionError && (
+                                        <div className={`p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-500 ${permissionError.includes('Note') ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
+                                            <AlertCircle className="w-5 h-5 shrink-0" />
+                                            <p className="text-xs font-bold leading-tight">{permissionError}</p>
+                                        </div>
+                                    )}
+
                                     <div className="grid grid-cols-2 gap-4">
                                         {[
                                             { key: 'camera', icon: Video, label: 'Camera', ok: 'Active', fail: 'Check Device' },
@@ -552,10 +558,10 @@ function InterviewSetupContent() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="px-8 pb-10 flex gap-4">
-                                    <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => { stopStream(); setCurrentStep(3) }}>BACK</Button>
+                                    <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => { stopStream(); setCurrentStep(2) }}>BACK</Button>
                                     <Button className="flex-1 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-400 hover:to-cyan-400 font-black text-lg rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.2)] hover:shadow-[0_0_50px_rgba(59,130,246,0.3)] transition-all duration-500 hover:-translate-y-0.5"
-                                        disabled={!deviceStatus.camera || !deviceStatus.mic}
-                                        onClick={() => { stopStream(); setCurrentStep(5) }}>
+                                        disabled={!deviceStatus.mic}
+                                        onClick={() => { stopStream(); setCurrentStep(4) }}>
                                         CONTINUE TO CONFIG <ArrowRight className="ml-2 w-5 h-5" />
                                     </Button>
                                 </CardFooter>
@@ -563,8 +569,8 @@ function InterviewSetupContent() {
                         </TiltCard>
                     )}
 
-                    {/* ── SCREEN 5: CONFIGURATION ─────────────────────────── */}
-                    {currentStep === 5 && (
+                    {/* ── SCREEN 4: CONFIGURATION ─────────────────────────── */}
+                    {currentStep === 4 && (
                         <TiltCard>
                             <Card className="bg-zinc-900/50 border-white/10 backdrop-blur-2xl overflow-hidden rounded-[2rem] relative group hover:border-amber-500/20 transition-all duration-500 hover:shadow-[0_0_60px_rgba(245,158,11,0.08)]">
                                 <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
@@ -614,7 +620,7 @@ function InterviewSetupContent() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="px-8 pb-10 flex gap-4">
-                                    <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => setCurrentStep(4)}>BACK</Button>
+                                    <Button variant="ghost" className="h-14 px-8 font-bold text-zinc-500 hover:text-white" onClick={() => setCurrentStep(3)}>BACK</Button>
                                     <Button className="flex-1 h-16 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-white hover:from-violet-400 hover:via-fuchsia-400 hover:to-cyan-400 font-black text-lg rounded-2xl shadow-[0_0_50px_rgba(139,92,246,0.3),0_0_100px_rgba(6,182,212,0.15)] hover:shadow-[0_0_70px_rgba(139,92,246,0.4),0_0_120px_rgba(6,182,212,0.2)] transition-all duration-500 hover:-translate-y-1 rainbow-border"
                                         onClick={startInterview}>
                                         🎙️ START INTERVIEW <Play className="ml-2 w-5 h-5 fill-current" />

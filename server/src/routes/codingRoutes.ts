@@ -1,10 +1,5 @@
-
 import express from 'express';
-import Problem from '../models/Problem';
-import Submission from '../models/Submission';
-import Contest from '../models/Contest';
-import mongoose from 'mongoose';
-import User from '../models/User';
+import prisma from '../prisma';
 import { executionService } from '../services/executionService';
 
 const router = express.Router();
@@ -14,27 +9,41 @@ const router = express.Router();
 router.get('/problems', async (req, res) => {
     try {
         const { difficulty, category, company, search, page = 1, limit = 20 } = req.query;
-        const query: any = {};
+        const skip = (Number(page) - 1) * Number(limit);
+        const take = Number(limit);
 
-        if (difficulty) query.difficulty = difficulty;
-        if (category) query.category = category;
-        if (company) query.companies = company;
+        const where: any = {};
+        if (difficulty) where.difficulty = difficulty;
+        if (category) where.category = category;
+        if (company) where.companies = { has: company as string };
         if (search) {
-            query.$or = [
-                { title: { $regex: search, $options: 'i' } },
-                { tags: { $regex: search, $options: 'i' } }
+            where.OR = [
+                { title: { contains: search as string, mode: 'insensitive' } },
+                { tags: { has: search as string } }
             ];
         }
 
-        const problems = await Problem.find(query)
-            .select('title slug difficulty category tags companies stats') // Exclude heavy fields like description/testCases
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit))
-            .sort({ 'stats.submissions': -1 }); // Popular first
+        const [problems, total] = await Promise.all([
+            prisma.problem.findMany({
+                where,
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    difficulty: true,
+                    category: true,
+                    tags: true,
+                    companies: true,
+                    stats: true
+                },
+                skip,
+                take,
+                orderBy: { stats: 'desc' } // Note: JSON sorting in Prisma depends on support, may need raw query or simplified sort
+            }),
+            prisma.problem.count({ where })
+        ]);
 
-        const total = await Problem.countDocuments(query);
-
-        res.json({ problems, total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
+        res.json({ problems, total, page: Number(page), pages: Math.ceil(total / take) });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
@@ -44,14 +53,16 @@ router.get('/problems', async (req, res) => {
 // Fetch single problem details
 router.get('/problems/:slug', async (req, res) => {
     try {
-        const problem = await Problem.findOne({ slug: req.params.slug });
+        const problem = await prisma.problem.findUnique({
+            where: { slug: req.params.slug }
+        });
         if (!problem) return res.status(404).json({ error: "Problem not found" });
 
         // Hide hidden test cases from client
-        const safeProblem = problem.toObject();
-        safeProblem.testCases = safeProblem.testCases.filter((tc: any) => !tc.isHidden);
+        const testCases = (problem.testCases as any[]) || [];
+        const safeTestCases = testCases.filter((tc: any) => !tc.isHidden);
 
-        res.json(safeProblem);
+        res.json({ ...problem, testCases: safeTestCases });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
@@ -85,10 +96,10 @@ router.post('/run', async (req, res) => {
             });
         }
 
-        const problem = await Problem.findById(problemId);
+        const problem = await prisma.problem.findUnique({ where: { id: problemId } });
         if (!problem) return res.status(404).json({ error: "Problem not found" });
 
-        const result = await executionService.execute(code, language, problem);
+        const result = await executionService.execute(code, language, problem as any);
 
         const statusMap: Record<string, string> = {
             compilation_error: 'Compilation Error',
@@ -119,33 +130,31 @@ router.post('/submit', async (req, res) => {
     try {
         const { userId, problemId, code, language } = req.body;
 
-        const problem = await Problem.findById(problemId);
+        const problem = await prisma.problem.findUnique({ where: { id: problemId } });
         if (!problem) return res.status(404).json({ error: "Problem not found" });
 
         // 1. Create Pending Submission
-        const submission = new Submission({
-            userId,
-            problemId,
-            code,
-            language,
-            status: 'Pending'
+        let submission = await prisma.submission.create({
+            data: {
+                userId,
+                problemId,
+                code,
+                language,
+                status: 'Pending'
+            }
         });
-        await submission.save();
 
         // 2. Execute Code
-        const result = await executionService.execute(code, language, problem);
+        const result = await executionService.execute(code, language, problem as any);
 
         // 3. Update Submission
-        submission.status = result.passed ? 'Accepted' : result.error ? 'Runtime Error' : 'Wrong Answer';
-        submission.runtime = result.stats.runtime;
-        submission.memory = result.stats.memory;
-        submission.testCasesPassed = result.results.filter(r => r.passed).length;
-        submission.totalTestCases = result.results.length;
-
+        const status = result.passed ? 'Accepted' : result.error ? 'Runtime Error' : 'Wrong Answer';
+        
+        let failureDetail: any = null;
         if (!result.passed && result.results.length > 0) {
             const firstFail = result.results.find(r => !r.passed);
             if (firstFail) {
-                submission.failureDetail = {
+                failureDetail = {
                     input: firstFail.input,
                     expectedOutput: firstFail.expected,
                     actualOutput: firstFail.actual,
@@ -154,8 +163,8 @@ router.post('/submit', async (req, res) => {
             }
         }
 
-        if (result.error) {
-            submission.failureDetail = {
+        if (result.error && !failureDetail) {
+            failureDetail = {
                 input: '-',
                 expectedOutput: '-',
                 actualOutput: '-',
@@ -163,55 +172,90 @@ router.post('/submit', async (req, res) => {
             };
         }
 
-        await submission.save();
+        submission = await prisma.submission.update({
+            where: { id: submission.id },
+            data: {
+                status,
+                runtime: result.stats.runtime,
+                memory: result.stats.memory,
+                testCasesPassed: result.results.filter(r => r.passed).length,
+                totalTestCases: result.results.length,
+                failureDetail: failureDetail || undefined
+            }
+        });
 
-        // 4. Update User Stats if Accepted
+        // 4. Update User & Problem Stats if Accepted
         if (result.passed) {
-            await Problem.findByIdAndUpdate(problemId, {
-                $inc: { 'stats.accepted': 1, 'stats.submissions': 1 }
+            // Update Problem Stats (using raw update or fetching if increment not easy for Json)
+            const stats = (problem.stats as any) || { accepted: 0, submissions: 0 };
+            stats.accepted = (stats.accepted || 0) + 1;
+            stats.submissions = (stats.submissions || 0) + 1;
+
+            await prisma.problem.update({
+                where: { id: problemId },
+                data: { stats }
             });
-            // Update User XP (Gamification hook)
-            await User.findByIdAndUpdate(userId, {
-                $inc: { xp: 50, 'stats.totalCodeLines': code.split('\n').length }
+
+            // Update User XP
+            await (prisma.user as any).update({
+                where: { id: userId },
+                data: {
+                    xp: { increment: 50 }
+                }
             });
+            
+            // Also update Profile totalCodeLines
+            await prisma.profile.update({
+                where: { userId },
+                data: {
+                    totalCodeLines: { increment: code.split('\n').length }
+                }
+            }).catch(() => {}); // Profile might not exist? (should have been created on signup)
+
         } else {
-            await Problem.findByIdAndUpdate(problemId, {
-                $inc: { 'stats.submissions': 1 }
+            const stats = (problem.stats as any) || { accepted: 0, submissions: 0 };
+            stats.submissions = (stats.submissions || 0) + 1;
+            await prisma.problem.update({
+                where: { id: problemId },
+                data: { stats }
             });
         }
 
         // Check if this is a Contest Submission
-        // Ideally we pass contestId in the body, or check if problem belongs to active contest
-        // For MVP, if `req.body.contestId` exists
         if (req.body.contestId && submission.status === 'Accepted') {
-            const contest = await Contest.findById(req.body.contestId);
+            const contest = await prisma.contest.findUnique({ where: { id: req.body.contestId } });
             if (contest && contest.status === 'Live') {
-                const existingEntry = contest.leaderboard.find(e => e.userId.toString() === userId);
+                const leaderboard = (contest.leaderboard as any[]) || [];
+                const existingIdx = leaderboard.findIndex(e => e.userId === userId);
 
-                // Simple scoring: 100 points per problem
                 const points = 100;
+                const minutesSinceStart = Math.floor((new Date().getTime() - new Date(contest.startTime).getTime()) / 60000);
 
-                if (existingEntry) {
-                    existingEntry.score += points;
-                    // Update finish time (minutes since start)
-                    const minutesSinceStart = Math.floor((new Date().getTime() - new Date(contest.startTime).getTime()) / 60000);
-                    existingEntry.finishTime = Math.max(existingEntry.finishTime, minutesSinceStart);
+                if (existingIdx !== -1) {
+                    leaderboard[existingIdx].score += points;
+                    leaderboard[existingIdx].finishTime = Math.max(leaderboard[existingIdx].finishTime, minutesSinceStart);
                 } else {
-                    const user = await User.findById(userId);
-                    contest.leaderboard.push({
-                        userId: new mongoose.Types.ObjectId(userId),
+                    const user = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } });
+                    leaderboard.push({
+                        userId: userId,
                         username: user?.username || 'Anonymous',
                         score: points,
-                        finishTime: Math.floor((new Date().getTime() - new Date(contest.startTime).getTime()) / 60000)
+                        finishTime: minutesSinceStart
                     });
                 }
 
-                await contest.save();
+                await prisma.contest.update({
+                    where: { id: contest.id },
+                    data: { leaderboard: leaderboard as any }
+                });
 
-                // Broadcast Update
-                // Need IO instance here. Middleware or singleton import.
-                const { io } = require('../index'); // Circular dependency cafe? Use app.get('io') or singleton
-                io.to(`contest_${contest._id}`).emit('leaderboard-update', contest.leaderboard);
+                // Broadcast Update (via global helper if exists)
+                if ((global as any).broadcastAdminEvent) {
+                    (global as any).broadcastAdminEvent('contest:leaderboard-update', {
+                        contestId: contest.id,
+                        leaderboard
+                    });
+                }
             }
         }
 
@@ -229,11 +273,18 @@ router.get('/user/:userId/stats', async (req, res) => {
         const { userId } = req.params;
 
         // 1. Fetch all accepted submissions for this user
-        // Distinct by problemId to count "Solved" problems, not just submissions
-        const solvedProblems = await Submission.find({ userId, status: 'Accepted' }).distinct('problemId');
+        const submissions = await prisma.submission.findMany({
+            where: { userId, status: 'Accepted' },
+            select: { problemId: true }
+        });
+        
+        const solvedProblemIds = Array.from(new Set(submissions.map(s => s.problemId)));
 
         // 2. Fetch details of solved problems to group by difficulty
-        const problems = await Problem.find({ _id: { $in: solvedProblems } }).select('difficulty');
+        const problems = await prisma.problem.findMany({
+            where: { id: { in: solvedProblemIds } },
+            select: { difficulty: true }
+        });
 
         const solvedStats = {
             Easy: problems.filter(p => p.difficulty === 'Easy').length,
@@ -243,37 +294,42 @@ router.get('/user/:userId/stats', async (req, res) => {
         };
 
         // 3. Calculate Total Submissions & Acceptance Rate
-        const totalSubmissions = await Submission.countDocuments({ userId });
-        const acceptedSubmissions = await Submission.countDocuments({ userId, status: 'Accepted' });
+        const totalSubmissions = await prisma.submission.count({ where: { userId } });
+        const acceptedSubmissions = await prisma.submission.count({ where: { userId, status: 'Accepted' } });
         const acceptanceRate = totalSubmissions > 0 ? ((acceptedSubmissions / totalSubmissions) * 100).toFixed(1) : 0;
 
         // 4. Generate Activity Heatmap (Last 365 days)
-        // Aggregate submissions by date
         const oneYearAgo = new Date();
         oneYearAgo.setDate(oneYearAgo.getDate() - 365);
 
-        const activity = await Submission.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(userId), createdAt: { $gte: oneYearAgo } } },
-            {
-                $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                    count: { $sum: 1 }
-                }
-            },
-            { $sort: { _id: 1 } }
-        ]);
+        // SQL raw query for date formatting and grouping is often easier in Postgres
+        const activity: any[] = await prisma.$queryRawUnsafe(`
+            SELECT 
+                TO_CHAR(DATE_TRUNC('day', "createdAt"), 'YYYY-MM-DD') as date,
+                COUNT(*)::int as count
+            FROM "submissions"
+            WHERE "userId" = $1 AND "createdAt" >= $2
+            GROUP BY 1
+            ORDER BY 1 ASC
+        `, userId, oneYearAgo);
 
         // 5. Recent Activity (Last 5)
-        const recentActivity = await Submission.find({ userId })
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate('problemId', 'title slug difficulty');
+        const recentActivity = await prisma.submission.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            take: 5,
+            include: {
+                problem: {
+                    select: { title: true, slug: true, difficulty: true }
+                }
+            }
+        });
 
         res.json({
             solved: solvedStats,
             totalSubmissions,
             acceptanceRate,
-            activity: activity.map(a => ({ date: a._id, count: a.count })),
+            activity: activity,
             recent: recentActivity
         });
 

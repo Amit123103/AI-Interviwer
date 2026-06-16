@@ -27,7 +27,7 @@ export default function CareerGrowthHub() {
 
                 {/* 1. AI Career Mentor */}
                 <TiltCard>
-                    <Card className="group relative overflow-hidden rounded-3xl bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-blue-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
+                    <Card className="group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-blue-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                         <div className="relative z-10 flex-1 flex flex-col">
@@ -41,8 +41,8 @@ export default function CareerGrowthHub() {
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold mb-2 text-white">AI Career Mentor</h3>
-                            <p className="text-sm text-zinc-400 leading-relaxed mb-6 flex-1">
+                            <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">AI Career Mentor</h3>
+                            <p className="text-sm text-slate-900 dark:text-zinc-400 leading-relaxed mb-6 flex-1">
                                 Receive personalized guidance, resume feedback, and daily tasks tailored to your goals. Step-by-step motivation.
                             </p>
 
@@ -55,7 +55,7 @@ export default function CareerGrowthHub() {
 
                 {/* 2. Industry Expert Webinars */}
                 <TiltCard>
-                    <Card className="group relative overflow-hidden rounded-3xl bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-rose-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
+                    <Card className="group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-rose-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
                         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                         <div className="relative z-10 flex-1 flex flex-col">
@@ -69,8 +69,8 @@ export default function CareerGrowthHub() {
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold mb-2 text-white">Expert Webinars</h3>
-                            <p className="text-sm text-zinc-400 leading-relaxed mb-6 flex-1">
+                            <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Expert Webinars</h3>
+                            <p className="text-sm text-slate-900 dark:text-zinc-400 leading-relaxed mb-6 flex-1">
                                 Join live and recorded sessions from FAANG engineers. Master interviews and learn real-world industry trends.
                             </p>
 
@@ -79,7 +79,7 @@ export default function CareerGrowthHub() {
                                     Browse Library <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                 </Link>
                                 <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-rose-500/20 transition-colors delay-100">
-                                    <Play className="w-3.5 h-3.5 text-zinc-400 group-hover:text-rose-400 fill-current ml-0.5" />
+                                    <Play className="w-3.5 h-3.5 text-slate-900 dark:text-zinc-400 group-hover:text-rose-400 fill-current ml-0.5" />
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,7 @@ export default function CareerGrowthHub() {
 
                 {/* 3. Alumni Mentorship Network */}
                 <TiltCard>
-                    <Card className="group relative overflow-hidden rounded-3xl bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-amber-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
+                    <Card className="group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-amber-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                         <div className="relative z-10 flex-1 flex flex-col">
@@ -108,8 +108,8 @@ export default function CareerGrowthHub() {
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold mb-2 text-white">Alumni Mentorship</h3>
-                            <p className="text-sm text-zinc-400 leading-relaxed mb-6 flex-1">
+                            <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Alumni Mentorship</h3>
+                            <p className="text-sm text-slate-900 dark:text-zinc-400 leading-relaxed mb-6 flex-1">
                                 Connect with alumni in top tech roles. Schedule 1-on-1s, ask questions, and overcome workplace challenges.
                             </p>
 
@@ -122,7 +122,7 @@ export default function CareerGrowthHub() {
 
                 {/* 4. Real Project Collaboration */}
                 <TiltCard>
-                    <Card className="group relative overflow-hidden rounded-3xl bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-emerald-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
+                    <Card className="group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900/30 backdrop-blur-xl border border-white/[0.06] p-8 hover:bg-white/[0.04] hover:border-emerald-400/30 transition-all duration-500 h-[280px] flex flex-col hover-shine">
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                         <div className="relative z-10 flex-1 flex flex-col">
@@ -141,14 +141,14 @@ export default function CareerGrowthHub() {
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold mb-2 text-white">Project Collaboration</h3>
-                            <p className="text-sm text-zinc-400 leading-relaxed mb-4 flex-1">
+                            <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Project Collaboration</h3>
+                            <p className="text-sm text-slate-900 dark:text-zinc-400 leading-relaxed mb-4 flex-1">
                                 Team up to build real-world, portfolio-ready applications. Share tasks, peer review code, and deploy.
                             </p>
 
                             <div className="flex flex-wrap gap-2 mb-6">
-                                <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-md">Frontend</span>
-                                <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-zinc-400 bg-white/5 border border-white/10 rounded-md">Fullstack</span>
+                                <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-400 bg-white/5 border border-white/10 rounded-md">Frontend</span>
+                                <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-slate-900 dark:text-zinc-400 bg-white/5 border border-white/10 rounded-md">Fullstack</span>
                                 <span className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Actively Hiring Teams</span>
                             </div>
 

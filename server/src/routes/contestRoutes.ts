@@ -1,8 +1,5 @@
-
 import express from 'express';
-import Contest from '../models/Contest';
-import User from '../models/User';
-import Submission from '../models/Submission';
+import prisma from '../prisma';
 
 const router = express.Router();
 
@@ -11,12 +8,25 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
         const { status } = req.query;
-        const query: any = {};
-        if (status) query.status = status;
+        const where: any = {};
+        if (status) where.status = status;
 
-        const contests = await Contest.find(query)
-            .sort({ startTime: 1 }) // Closest first
-            .select('-leaderboard'); // Exclude heavy leaderboard data for list view
+        const contests = await prisma.contest.findMany({
+            where,
+            orderBy: { startTime: 'asc' },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                startTime: true,
+                endTime: true,
+                status: true,
+                prizes: true,
+                createdAt: true,
+                updatedAt: true
+                // Exclude leaderboard which is heavy
+            }
+        });
 
         res.json(contests);
     } catch (err: any) {
@@ -28,18 +38,31 @@ router.get('/', async (req, res) => {
 // Fetch single contest details (and problems if Live/Ended)
 router.get('/:id', async (req, res) => {
     try {
-        const contest = await Contest.findById(req.params.id)
-            .populate('problems', 'title slug difficulty category'); // Only show basic info
+        const contest = await prisma.contest.findUnique({
+            where: { id: req.params.id },
+            include: {
+                problems: {
+                    select: {
+                        id: true,
+                        title: true,
+                        slug: true,
+                        difficulty: true,
+                        category: true
+                    }
+                }
+            }
+        });
 
         if (!contest) return res.status(404).json({ error: "Contest not found" });
 
         // Security: Don't show problems if contest is Upcoming
         const now = new Date();
+        const contestWithSafeProblems = { ...contest };
         if (contest.startTime > now) {
-            contest.problems = [];
+            contestWithSafeProblems.problems = [];
         }
 
-        res.json(contest);
+        res.json(contestWithSafeProblems);
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
@@ -50,17 +73,31 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/register', async (req, res) => {
     try {
         const { userId } = req.body;
-        const contest = await Contest.findById(req.params.id);
+        const contestId = req.params.id;
+
+        const contest = await prisma.contest.findUnique({
+            where: { id: contestId },
+            include: { participants: { select: { id: true } } }
+        });
 
         if (!contest) return res.status(404).json({ error: "Contest not found" });
-        if (contest.participants.includes(userId)) {
+        
+        const isRegistered = contest.participants.some(p => p.id === userId);
+        if (isRegistered) {
             return res.status(400).json({ error: "Already registered" });
         }
 
-        contest.participants.push(userId);
-        await contest.save();
+        const updated = await prisma.contest.update({
+            where: { id: contestId },
+            data: {
+                participants: {
+                    connect: { id: userId }
+                }
+            },
+            include: { _count: { select: { participants: true } } }
+        });
 
-        res.json({ message: "Registered successfully", participants: contest.participants.length });
+        res.json({ message: "Registered successfully", participants: updated._count.participants });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
@@ -70,11 +107,16 @@ router.post('/:id/register', async (req, res) => {
 // Fetch scheduling/realtime leaderboard
 router.get('/:id/leaderboard', async (req, res) => {
     try {
-        const contest = await Contest.findById(req.params.id).select('leaderboard');
+        const contest = await prisma.contest.findUnique({
+            where: { id: req.params.id },
+            select: { leaderboard: true }
+        });
         if (!contest) return res.status(404).json({ error: "Contest not found" });
 
+        const leaderboard = (contest.leaderboard as any[]) || [];
+
         // Sort leaderboard by Score (Desc), then Time (Asc)
-        const sortedBoard = contest.leaderboard.sort((a, b) => {
+        const sortedBoard = leaderboard.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.finishTime - b.finishTime;
         });

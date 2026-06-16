@@ -27,7 +27,7 @@ const PORTFOLIO_TEMPLATES = [
         name: "Creative Professional",
         description: "Vibrant and expressive, designed for frontend devs and designers.",
         previewColor: "from-rose-400 to-orange-400",
-        textColor: "text-white"
+        textColor: "text-slate-900 dark:text-white"
     }
 ]
 
@@ -44,11 +44,11 @@ export default function SelectTemplatePage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white p-6 md:p-10 max-w-6xl mx-auto">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white p-6 md:p-10 max-w-6xl mx-auto">
             <Button
                 variant="ghost"
                 onClick={() => router.back()}
-                className="mb-8 text-zinc-400 hover:text-white"
+                className="mb-8 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white"
             >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
@@ -60,7 +60,7 @@ export default function SelectTemplatePage() {
                 className="mb-12 text-center"
             >
                 <h1 className="text-3xl font-bold tracking-tight mb-4">Choose a <span className="text-indigo-400">Template</span></h1>
-                <p className="text-zinc-400 max-w-2xl mx-auto">Select a starting point for your portfolio. You can always change this later in the editor.</p>
+                <p className="text-slate-500 dark:text-zinc-400 max-w-2xl mx-auto">Select a starting point for your portfolio. You can always change this later in the editor.</p>
             </motion.div>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -73,7 +73,7 @@ export default function SelectTemplatePage() {
                         onClick={() => setSelectedTemplate(template.id)}
                         className="cursor-pointer"
                     >
-                        <Card className={`group relative overflow-hidden rounded-2xl bg-zinc-900/40 backdrop-blur-xl border-2 transition-all duration-300 ${selectedTemplate === template.id ? 'border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/[0.06] hover:border-zinc-500'}`}>
+                        <Card className={`group relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-900/40 backdrop-blur-xl border-2 transition-all duration-300 ${selectedTemplate === template.id ? 'border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/[0.06] hover:border-zinc-500'}`}>
 
                             {/* Template Preview Mockup */}
                             <div className={`h-48 w-full bg-gradient-to-br ${template.previewColor} flex flex-col items-center justify-center p-4 relative`}>
@@ -86,14 +86,14 @@ export default function SelectTemplatePage() {
 
                                 {selectedTemplate === template.id && (
                                     <div className="absolute top-4 right-4 bg-indigo-500 rounded-full p-1 shadow-lg">
-                                        <CheckCircle2 className="w-5 h-5 text-white" />
+                                        <CheckCircle2 className="w-5 h-5 text-slate-900 dark:text-white" />
                                     </div>
                                 )}
                             </div>
 
                             <div className="p-6">
                                 <h3 className="text-lg font-bold mb-2">{template.name}</h3>
-                                <p className="text-sm text-zinc-400 line-clamp-2">{template.description}</p>
+                                <p className="text-sm text-slate-500 dark:text-zinc-400 line-clamp-2">{template.description}</p>
                             </div>
                         </Card>
                     </motion.div>
@@ -109,7 +109,7 @@ export default function SelectTemplatePage() {
                     onClick={handleContinue}
                     disabled={!selectedTemplate}
                     size="lg"
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white min-w-[200px]"
+                    className="bg-indigo-600 hover:bg-indigo-500 text-slate-900 dark:text-white min-w-[200px]"
                 >
                     Continue to Editor
                 </Button>

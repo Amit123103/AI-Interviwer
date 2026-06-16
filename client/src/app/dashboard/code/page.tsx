@@ -8,7 +8,7 @@ import {
     Brain, Target, X, ChevronRight,
     User, GraduationCap, Building2, Loader2, Sparkles, BarChart2, Play, BookOpen, Trophy, Layers
 } from "lucide-react"
-import AmitAICoin from "@/components/reward-system/AmitAICoin"
+import IntervyxaCoin from "@/components/reward-system/IntervyxaCoin"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -40,15 +40,15 @@ function PracticeProfileSetup({ onComplete }: { onComplete: (profile: any) => vo
     }
 
     return (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white dark:bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                className="bg-zinc-900/80 border border-white/10 rounded-3xl p-8 max-w-md w-full space-y-6 backdrop-blur-2xl shadow-[0_0_60px_rgba(139,92,246,0.1)]">
+                className="bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-white/10 rounded-3xl p-8 max-w-md w-full space-y-6 backdrop-blur-2xl shadow-[0_0_60px_rgba(139,92,246,0.1)]">
                 <div className="text-center">
                     <div className="w-14 h-14 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/10">
                         <Brain className="w-7 h-7 text-violet-400" />
                     </div>
                     <h2 className="text-2xl font-bold"><span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Welcome</span> to Code Practice</h2>
-                    <p className="text-zinc-400 text-sm mt-1">Set up your profile for personalized recommendations.</p>
+                    <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">Set up your profile for personalized recommendations.</p>
                 </div>
 
                 <div className="space-y-4">
@@ -63,7 +63,7 @@ function PracticeProfileSetup({ onComplete }: { onComplete: (profile: any) => vo
                             </label>
                             <Input value={(form as any)[key]} onChange={e => setForm({ ...form, [key]: e.target.value })}
                                 placeholder={placeholder}
-                                className="bg-black/50 border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-violet-500/50 h-11 rounded-xl" />
+                                className="bg-white dark:bg-black/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-zinc-600 focus-visible:ring-violet-500/50 h-11 rounded-xl" />
                         </div>
                     ))}
                     <div>
@@ -73,7 +73,7 @@ function PracticeProfileSetup({ onComplete }: { onComplete: (profile: any) => vo
                         <div className="grid grid-cols-3 gap-2">
                             {['Beginner', 'Intermediate', 'Advanced'].map(l => (
                                 <button key={l} onClick={() => setForm({ ...form, level: l })}
-                                    className={`h-10 rounded-xl border text-xs font-bold transition-all duration-300 ${form.level === l ? 'bg-gradient-to-r from-violet-500 to-cyan-500 border-violet-500/30 text-white shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-black/40 border-white/10 text-zinc-400 hover:border-violet-500/20'}`}>
+                                    className={`h-10 rounded-xl border text-xs font-bold transition-all duration-300 ${form.level === l ? 'bg-gradient-to-r from-violet-500 to-cyan-500 border-violet-500/30 text-slate-900 dark:text-white shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-white dark:bg-black/40 border-slate-200 dark:border-white/10 text-slate-500 dark:text-zinc-400 hover:border-violet-500/20'}`}>
                                     {l}
                                 </button>
                             ))}
@@ -82,7 +82,7 @@ function PracticeProfileSetup({ onComplete }: { onComplete: (profile: any) => vo
                 </div>
 
                 <Button onClick={handleSave} disabled={!form.name}
-                    className="w-full h-12 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 hover:from-violet-400 hover:via-fuchsia-400 hover:to-cyan-400 text-white font-bold rounded-2xl gap-2 shadow-[0_0_25px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.3)] transition-all duration-500">
+                    className="w-full h-12 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 hover:from-violet-400 hover:via-fuchsia-400 hover:to-cyan-400 text-slate-900 dark:text-white font-bold rounded-2xl gap-2 shadow-[0_0_25px_rgba(139,92,246,0.2)] hover:shadow-[0_0_40px_rgba(139,92,246,0.3)] transition-all duration-500">
                     <Sparkles className="w-4 h-4" />Start Practicing
                 </Button>
             </motion.div>
@@ -97,15 +97,15 @@ function ProblemCard({ problem, solved }: { problem: Problem; solved: boolean })
 
     return (
         <div onClick={() => router.push(`/dashboard/code/${problem.slug}`)}
-            className="group flex items-center gap-4 p-4 bg-zinc-900/50 border border-white/5 rounded-2xl hover:bg-zinc-900/80 hover:border-violet-500/15 hover:shadow-[0_0_25px_rgba(139,92,246,0.04)] transition-all duration-300 cursor-pointer hover-shine">
+            className="group flex items-center gap-4 p-4 bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 rounded-2xl hover:bg-white dark:bg-zinc-900/80 hover:border-violet-500/15 hover:shadow-[0_0_25px_rgba(139,92,246,0.04)] transition-all duration-300 cursor-pointer hover-shine">
             <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${solved ? 'bg-green-500/10' : 'bg-zinc-800'}`}>
                 {solved ? <CheckCircle2 className="w-4 h-4 text-green-400" /> : <Code2 className="w-4 h-4 text-zinc-500" />}
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-sm text-white group-hover:text-violet-300 transition-colors truncate">{problem.title}</h3>
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-violet-300 transition-colors truncate">{problem.title}</h3>
                     {problem.companies?.slice(0, 2).map((c: string) => (
-                        <span key={c} className="text-[10px] text-zinc-600 border border-white/5 px-1.5 py-0.5 rounded hidden sm:inline">{c}</span>
+                        <span key={c} className="text-[10px] text-zinc-600 border border-slate-100 dark:border-white/5 px-1.5 py-0.5 rounded hidden sm:inline">{c}</span>
                     ))}
                 </div>
                 <div className="flex items-center gap-3 mt-1">
@@ -150,7 +150,7 @@ export default function CodingPracticePage() {
             const data = await codingApi.getProblems({ limit: 100 })
             setProblems(data.problems)
             const user = JSON.parse(localStorage.getItem('user') || '{}')
-            setUserStats({ totalSolved: user.stats?.accepted || 0, coins: user.amitaiCoins || 0 })
+            setUserStats({ totalSolved: user.stats?.accepted || 0, coins: user.intervyxaCoins || 0 })
         } catch {
             // fallback empty
         } finally {
@@ -182,7 +182,7 @@ export default function CodingPracticePage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white aurora-glow relative overflow-hidden">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white aurora-glow relative overflow-hidden">
             <MeshBackground />
             <HolographicHud />
 
@@ -201,10 +201,10 @@ export default function CodingPracticePage() {
                             <Code2 className="w-9 h-9 text-violet-400" />
                             <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">Smart Code</span> Practice
                         </h1>
-                        <p className="text-zinc-400 mt-1">AI-personalized challenges. {problems.length}+ problems available.</p>
+                        <p className="text-slate-500 dark:text-zinc-400 mt-1">AI-personalized challenges. {problems.length}+ problems available.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button asChild variant="outline" className="border-white/10 hover:bg-white/5 gap-2">
+                        <Button asChild variant="outline" className="border-slate-200 dark:border-white/10 hover:bg-white/5 gap-2">
                             <Link href="/coding-round/setup">
                                 <Trophy className="w-4 h-4 text-violet-400" /> Start Coding Round
                             </Link>
@@ -217,10 +217,10 @@ export default function CodingPracticePage() {
                     {[
                         { label: 'Solved', value: userStats.totalSolved, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
                         { label: 'Level', value: `LVL ${user?.level || 1}`, icon: Trophy, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-                        { label: 'Coins', value: userStats.coins.toLocaleString(), icon: () => <AmitAICoin size={18} animate={false} glow={false} />, color: 'text-yellow-400', bg: 'bg-yellow-500/5' },
+                        { label: 'Coins', value: userStats.coins.toLocaleString(), icon: () => <IntervyxaCoin size={18} animate={false} glow={false} />, color: 'text-yellow-400', bg: 'bg-yellow-500/5' },
                         { label: 'Directory', value: problems.length, icon: BarChart2, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
                     ].map(({ icon: Icon, label, value, color, bg }) => (
-                        <Card key={label} className="bg-zinc-900/60 border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:border-violet-500/10 hover:shadow-[0_0_20px_rgba(139,92,246,0.04)] transition-all duration-300">
+                        <Card key={label} className="bg-white dark:bg-zinc-900/60 border-slate-100 dark:border-white/5 rounded-2xl p-4 flex items-center gap-3 hover:border-violet-500/10 hover:shadow-[0_0_20px_rgba(139,92,246,0.04)] transition-all duration-300">
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${bg}`}>
                                 <Icon className={`w-5 h-5 ${color}`} />
                             </div>
@@ -233,14 +233,14 @@ export default function CodingPracticePage() {
                 </div>
 
                 <Tabs defaultValue="recommended" className="space-y-6">
-                    <TabsList className="bg-zinc-900/50 border border-white/5 p-1 rounded-xl h-12 inline-flex">
-                        <TabsTrigger value="recommended" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-zinc-400 font-bold text-sm gap-2">
+                    <TabsList className="bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 p-1 rounded-xl h-12 inline-flex">
+                        <TabsTrigger value="recommended" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-slate-500 dark:text-zinc-400 font-bold text-sm gap-2">
                             <Sparkles className="w-4 h-4" />Recommended
                         </TabsTrigger>
-                        <TabsTrigger value="all" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-zinc-400 font-bold text-sm gap-2">
+                        <TabsTrigger value="all" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-slate-500 dark:text-zinc-400 font-bold text-sm gap-2">
                             <BookOpen className="w-4 h-4" />All Problems
                         </TabsTrigger>
-                        <TabsTrigger value="progress" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-zinc-400 font-bold text-sm gap-2">
+                        <TabsTrigger value="progress" className="h-9 px-5 rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-slate-500 dark:text-zinc-400 font-bold text-sm gap-2">
                             <TrendingUp className="w-4 h-4" />Progress
                         </TabsTrigger>
                     </TabsList>
@@ -248,14 +248,14 @@ export default function CodingPracticePage() {
                     <TabsContent value="recommended" className="space-y-5">
                         <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 rounded-2xl">
                             <Sparkles className="w-4 h-4 text-violet-400 shrink-0" />
-                            <p className="text-sm text-zinc-300">
+                            <p className="text-sm text-slate-600 dark:text-zinc-300">
                                 Showing <span className="text-violet-300 font-bold">{profile?.level || 'Intermediate'}-level</span> problems tailored for you.
                                 <button onClick={() => setShowSetup(true)} className="ml-2 text-violet-400 hover:underline text-xs">Update profile</button>
                             </p>
                         </div>
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-16 bg-zinc-900/50 rounded-2xl animate-pulse" />)}
+                                {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-16 bg-white/60 dark:bg-zinc-900/50 rounded-2xl animate-pulse" />)}
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -272,14 +272,14 @@ export default function CodingPracticePage() {
                             <div className="relative flex-1">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                                 <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search problems..."
-                                    className="pl-9 bg-zinc-900/50 border-white/10 text-white placeholder:text-zinc-500 h-11 rounded-xl focus-visible:ring-purple-500/50" />
-                                {search && <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>}
+                                    className="pl-9 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-zinc-500 h-11 rounded-xl focus-visible:ring-purple-500/50" />
+                                {search && <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-slate-900 dark:text-white"><X className="w-4 h-4" /></button>}
                             </div>
                             <div className="flex gap-2 overflow-x-auto">
                                 {DIFFICULTIES.map(d => (
                                     <button key={d} onClick={() => setDifficulty(d)}
                                         className={`shrink-0 px-3 py-2 rounded-xl border text-xs font-bold h-11 transition-all duration-300
-                                            ${difficulty === d ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-zinc-900/50 border-white/10 text-zinc-400 hover:border-violet-500/20'}`}>
+                                            ${difficulty === d ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-slate-900 dark:text-white border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 text-slate-500 dark:text-zinc-400 hover:border-violet-500/20'}`}>
                                         {d}
                                     </button>
                                 ))}
@@ -289,21 +289,21 @@ export default function CodingPracticePage() {
                             {CATEGORIES.map(c => (
                                 <button key={c} onClick={() => setCategory(c)}
                                     className={`shrink-0 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all duration-300
-                                        ${category === c ? 'bg-gradient-to-r from-violet-500 to-cyan-500 border-violet-500/30 text-white shadow-[0_0_12px_rgba(139,92,246,0.12)]' : 'bg-zinc-900/50 border-white/10 text-zinc-500 hover:border-violet-500/20 hover:text-white'}`}>
+                                        ${category === c ? 'bg-gradient-to-r from-violet-500 to-cyan-500 border-violet-500/30 text-slate-900 dark:text-white shadow-[0_0_12px_rgba(139,92,246,0.12)]' : 'bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 text-zinc-500 hover:border-violet-500/20 hover:text-slate-900 dark:text-white'}`}>
                                     {c}
                                 </button>
                             ))}
                         </div>
                         <div className="space-y-2">
                             {loading ? (
-                                Array.from({ length: 8 }).map((_, i) => <div key={i} className="h-16 bg-zinc-900/50 rounded-2xl animate-pulse" />)
+                                Array.from({ length: 8 }).map((_, i) => <div key={i} className="h-16 bg-white/60 dark:bg-zinc-900/50 rounded-2xl animate-pulse" />)
                             ) : filtered.length > 0 ? (
                                 filtered.map(p => <ProblemCard key={p._id} problem={p} solved={solvedIds.has(p._id)} />)
                             ) : (
-                                <div className="text-center py-16 bg-zinc-900/30 rounded-2xl border border-white/5 border-dashed">
+                                <div className="text-center py-16 bg-white dark:bg-zinc-900/30 rounded-2xl border border-slate-100 dark:border-white/5 border-dashed">
                                     <Code2 className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
                                     <p className="text-zinc-500">No problems found.</p>
-                                    <Button variant="outline" onClick={() => { setSearch(''); setCategory('All'); setDifficulty('All') }} className="mt-4 border-white/10">Clear Filters</Button>
+                                    <Button variant="outline" onClick={() => { setSearch(''); setCategory('All'); setDifficulty('All') }} className="mt-4 border-slate-200 dark:border-white/10">Clear Filters</Button>
                                 </div>
                             )}
                         </div>
@@ -321,7 +321,7 @@ export default function CodingPracticePage() {
                                 const slv = 0
                                 const pct = tot > 0 ? Math.round((slv / tot) * 100) : 0
                                 return (
-                                    <Card key={label} className="bg-zinc-900/60 border-white/5 rounded-2xl p-5 text-center">
+                                    <Card key={label} className="bg-white dark:bg-zinc-900/60 border-slate-100 dark:border-white/5 rounded-2xl p-5 text-center">
                                         <p className={`text-2xl font-black ${textColor}`}>{slv}</p>
                                         <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest">{label}</p>
                                         <div className="mt-3 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
@@ -333,10 +333,10 @@ export default function CodingPracticePage() {
                                 )
                             })}
                         </div>
-                        <Card className="bg-zinc-900/60 border-white/5 rounded-2xl p-6 text-center">
+                        <Card className="bg-white dark:bg-zinc-900/60 border-slate-100 dark:border-white/5 rounded-2xl p-6 text-center">
                             <Code2 className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
                             <p className="text-sm text-zinc-500 mb-4">Submit solutions to see your activity history here.</p>
-                            <Button variant="outline" className="border-white/10 gap-2" onClick={() => { }}>
+                            <Button variant="outline" className="border-slate-200 dark:border-white/10 gap-2" onClick={() => { }}>
                                 <Play className="w-4 h-4" /> Start Practicing
                             </Button>
                         </Card>

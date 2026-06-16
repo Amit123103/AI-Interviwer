@@ -142,7 +142,7 @@ export default function QuestionDetailPage() {
     if (!question) return null
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 md:p-10">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white p-4 sm:p-6 md:p-10">
             <div className="max-w-4xl mx-auto space-y-6">
                 <BackToDashboard currentPage="Question Detail" parents={[{ label: 'Questions', href: '/dashboard/questions' }]} />
 
@@ -155,7 +155,7 @@ export default function QuestionDetailPage() {
                                     <Badge className={`${DIFFICULTY_COLORS[question.difficulty as keyof typeof DIFFICULTY_COLORS]} border`}>
                                         {question.difficulty}
                                     </Badge>
-                                    <Badge variant="outline" className="border-white/10">
+                                    <Badge variant="outline" className="border-slate-200 dark:border-white/10">
                                         {question.type.replace('_', ' ')}
                                     </Badge>
                                     {isPracticed && (
@@ -168,7 +168,7 @@ export default function QuestionDetailPage() {
                                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
                                     {question.title}
                                 </h1>
-                                <div className="flex items-center gap-2 flex-wrap text-sm text-zinc-400">
+                                <div className="flex items-center gap-2 flex-wrap text-sm text-slate-500 dark:text-zinc-400">
                                     {question.subject.map((s: string, idx: number) => (
                                         <span key={idx}>
                                             {s}
@@ -197,7 +197,7 @@ export default function QuestionDetailPage() {
                             </Button>
                             <Button
                                 variant="outline"
-                                className="border-white/10 hover:bg-white/5"
+                                className="border-slate-200 dark:border-white/10 hover:bg-white/5"
                                 onClick={() => toast.success("Link copied to clipboard")}
                             >
                                 <Share2 className="w-4 h-4 mr-2" />
@@ -209,7 +209,7 @@ export default function QuestionDetailPage() {
 
                 {/* Practice Mode */}
                 {showPracticeMode && (
-                    <Card className="bg-zinc-950 border-primary/20">
+                    <Card className="bg-white dark:bg-zinc-950 border-primary/20">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Mic className="w-5 h-5 text-primary" />
@@ -217,10 +217,10 @@ export default function QuestionDetailPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-sm text-zinc-400">
+                            <p className="text-sm text-slate-500 dark:text-zinc-400">
                                 Click the microphone to record your answer. You'll receive AI feedback on your response.
                             </p>
-                            <div className="flex flex-col items-center gap-4 py-6 bg-zinc-900/50 rounded-lg">
+                            <div className="flex flex-col items-center gap-4 py-6 bg-white/60 dark:bg-zinc-900/50 rounded-lg">
                                 <button className="w-20 h-20 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center transition-all">
                                     <Mic className="w-10 h-10 text-black" />
                                 </button>
@@ -229,7 +229,7 @@ export default function QuestionDetailPage() {
                             <Button
                                 onClick={() => setShowPracticeMode(false)}
                                 variant="outline"
-                                className="w-full border-white/10 hover:bg-white/5"
+                                className="w-full border-slate-200 dark:border-white/10 hover:bg-white/5"
                             >
                                 Close Practice Mode
                             </Button>
@@ -238,7 +238,7 @@ export default function QuestionDetailPage() {
                 )}
 
                 {/* Explanation */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Lightbulb className="w-5 h-5 text-primary" />
@@ -246,12 +246,12 @@ export default function QuestionDetailPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-zinc-300 leading-relaxed">{question.explanation}</p>
+                        <p className="text-slate-600 dark:text-zinc-300 leading-relaxed">{question.explanation}</p>
                     </CardContent>
                 </Card>
 
                 {/* Sample Answer */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -259,8 +259,8 @@ export default function QuestionDetailPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="bg-zinc-900/50 rounded-lg p-4 border border-white/5">
-                            <p className="text-zinc-300 leading-relaxed italic">
+                        <div className="bg-white/60 dark:bg-zinc-900/50 rounded-lg p-4 border border-slate-100 dark:border-white/5">
+                            <p className="text-slate-600 dark:text-zinc-300 leading-relaxed italic">
                                 "{question.sampleAnswer}"
                             </p>
                         </div>
@@ -268,7 +268,7 @@ export default function QuestionDetailPage() {
                 </Card>
 
                 {/* Key Points */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Target className="w-5 h-5 text-blue-500" />
@@ -280,7 +280,7 @@ export default function QuestionDetailPage() {
                             {question.keyPoints.map((point: string, idx: number) => (
                                 <li key={idx} className="flex items-start gap-3">
                                     <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                                    <span className="text-zinc-300">{point}</span>
+                                    <span className="text-slate-600 dark:text-zinc-300">{point}</span>
                                 </li>
                             ))}
                         </ul>
@@ -288,7 +288,7 @@ export default function QuestionDetailPage() {
                 </Card>
 
                 {/* What Interviewers Expect */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle>What Interviewers Expect</CardTitle>
                     </CardHeader>
@@ -299,7 +299,7 @@ export default function QuestionDetailPage() {
                                     <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                                         <span className="text-xs font-bold text-primary">{idx + 1}</span>
                                     </div>
-                                    <span className="text-zinc-300">{exp}</span>
+                                    <span className="text-slate-600 dark:text-zinc-300">{exp}</span>
                                 </li>
                             ))}
                         </ul>
@@ -307,7 +307,7 @@ export default function QuestionDetailPage() {
                 </Card>
 
                 {/* Common Mistakes */}
-                <Card className="bg-zinc-950 border-white/10">
+                <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5 text-orange-500" />
@@ -319,7 +319,7 @@ export default function QuestionDetailPage() {
                             {question.mistakes.map((mistake: string, idx: number) => (
                                 <li key={idx} className="flex items-start gap-3">
                                     <AlertTriangle className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
-                                    <span className="text-zinc-300">{mistake}</span>
+                                    <span className="text-slate-600 dark:text-zinc-300">{mistake}</span>
                                 </li>
                             ))}
                         </ul>
@@ -328,7 +328,7 @@ export default function QuestionDetailPage() {
 
                 {/* Related Questions */}
                 {question.relatedQuestions && question.relatedQuestions.length > 0 && (
-                    <Card className="bg-zinc-950 border-white/10">
+                    <Card className="bg-white dark:bg-zinc-950 border-slate-200 dark:border-white/10">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <LinkIcon className="w-5 h-5 text-primary" />
@@ -345,7 +345,7 @@ export default function QuestionDetailPage() {
                                         <button
                                             key={relatedId}
                                             onClick={() => router.push(`/dashboard/questions/${relatedId}`)}
-                                            className="w-full p-3 bg-zinc-900/50 hover:bg-zinc-900 rounded-lg text-left transition-all border border-white/5 hover:border-primary/50"
+                                            className="w-full p-3 bg-white/60 dark:bg-zinc-900/50 hover:bg-white dark:bg-zinc-900 rounded-lg text-left transition-all border border-slate-100 dark:border-white/5 hover:border-primary/50"
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm font-medium">{related.title}</span>
@@ -373,7 +373,7 @@ export default function QuestionDetailPage() {
                     <Button
                         onClick={() => router.push("/dashboard/questions")}
                         variant="outline"
-                        className="h-14 border-white/10 hover:bg-white/5"
+                        className="h-14 border-slate-200 dark:border-white/10 hover:bg-white/5"
                     >
                         Browse More Questions
                     </Button>

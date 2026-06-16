@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check, Target, Code2, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AmitAICoin from '../reward-system/AmitAICoin';
+import IntervyxaCoin from '../reward-system/IntervyxaCoin';
 
 interface Mission {
     id: string;
@@ -65,7 +65,7 @@ const DailyMissions: React.FC<DailyMissionsProps> = ({ missions }) => {
                                 {mission.completed && (
                                     <div className="flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/10">
                                         <span className="text-[10px] font-black text-emerald-400">+50</span>
-                                        <AmitAICoin size={10} animate={false} glow={false} />
+                                        <IntervyxaCoin size={10} animate={false} glow={false} />
                                     </div>
                                 )}
                             </div>

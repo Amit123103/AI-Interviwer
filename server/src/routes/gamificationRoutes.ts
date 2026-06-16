@@ -1,7 +1,5 @@
-
 import express from 'express';
-import User from '../models/User';
-import mongoose from 'mongoose';
+import prisma from '../prisma';
 
 const router = express.Router();
 
@@ -19,45 +17,54 @@ router.post('/sync', async (req, res) => {
         const { userId, action, value } = req.body;
         console.log('Gamification Sync Request:', { userId, action, value });
 
-        if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: "Valid userId is required" });
+        if (!userId) {
+            return res.status(400).json({ message: "userId is required" });
         }
 
-        const user = await User.findById(userId);
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { profile: true }
+        });
 
         if (!user) {
             console.warn(`Gamification Sync: User not found for ID ${userId}`);
             return res.status(404).json({ message: "User not found" });
         }
 
+        let currentCoins = user.intervyxaCoins || 0;
+        let currentWeeklyCoins = user.weeklyCoins || 0;
+        let currentLevel = user.level || 1;
+        let lastPracticeDate = user.lastPracticeDate;
+        
+        const profile = user.profile;
+        let dailyMissions = (profile?.dailyMissions as any[]) || [];
+        let achievements = (profile?.achievements as any) || [];
+
         // A. Handle Coin Update
         if (action === 'ADD_COINS' && typeof value === 'number' && value > 0) {
-            user.amitaiCoins = (user.amitaiCoins || 0) + value;
-            user.weeklyCoins = (user.weeklyCoins || 0) + value;
+            currentCoins += value;
+            currentWeeklyCoins += value;
 
             // Level Up Logic (Coins threshold)
-            const requiredCoins = user.level * 1000 * 2;
-            if (user.amitaiCoins >= requiredCoins) {
-                user.level += 1;
+            const requiredCoins = currentLevel * 1000 * 2;
+            if (currentCoins >= requiredCoins) {
+                currentLevel += 1;
             }
         }
 
-        // B. Handle Session Activity (Replacing legacy streak logic)
+        // B. Handle Session Activity
         if (action === 'PRACTICE_COMPLETE') {
-            const today = new Date();
-            user.lastPracticeDate = today;
-            // No more streak increments, but we could add bonus coins here
-            user.amitaiCoins += 50;
-            user.weeklyCoins += 50;
+            lastPracticeDate = new Date();
+            currentCoins += 50;
+            currentWeeklyCoins += 50;
         }
 
         // C. Daily Missions Check
-        if (!user.dailyMissions) user.dailyMissions = [];
         const todayStr = new Date().toDateString();
-        const hasTodayMissions = user.dailyMissions.some(m => new Date(m.date).toDateString() === todayStr);
+        const hasTodayMissions = dailyMissions.some(m => new Date(m.date).toDateString() === todayStr);
 
         if (!hasTodayMissions) {
-            user.dailyMissions = [
+            dailyMissions = [
                 { id: 'm1', type: 'practice', target: 1, progress: 0, completed: false, date: new Date() },
                 { id: 'm2', type: 'questions', target: 5, progress: 0, completed: false, date: new Date() },
                 { id: 'm3', type: 'code', target: 100, progress: 0, completed: false, date: new Date() }
@@ -67,40 +74,52 @@ router.post('/sync', async (req, res) => {
         // Update Mission Progress
         if (action === 'UPDATE_MISSION') {
             const { missionType, progressDelta } = req.body;
-            user.dailyMissions.forEach(m => {
+            dailyMissions.forEach(m => {
                 if (m.type === missionType && !m.completed && isToday(new Date(m.date))) {
                     m.progress += progressDelta;
                     if (m.progress >= m.target) {
                         m.completed = true;
-                        user.amitaiCoins += 50; // Bonus for completion
-                        user.weeklyCoins += 50;
+                        currentCoins += 50; 
+                        currentWeeklyCoins += 50;
                     }
                 }
             });
         }
 
-        try {
-            await user.save();
-        } catch (saveErr: any) {
-            if (saveErr.name === 'VersionError') {
-                const latestUser = await User.findById(userId);
-                if (latestUser) {
-                    return res.json({
-                        amitaiCoins: latestUser.amitaiCoins || 0,
-                        level: latestUser.level || 1,
-                        dailyMissions: latestUser.dailyMissions || [],
-                        achievements: latestUser.achievements || []
-                    });
+        // Save Updates
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                intervyxaCoins: currentCoins,
+                weeklyCoins: currentWeeklyCoins,
+                level: currentLevel,
+                lastPracticeDate,
+                profile: {
+                    upsert: {
+                        create: {
+                            dailyMissions: dailyMissions as any,
+                            achievements: achievements as any
+                        },
+                        update: {
+                            dailyMissions: dailyMissions as any,
+                            achievements: achievements as any
+                        }
+                    }
                 }
-            }
-            throw saveErr;
+            },
+            include: { profile: true }
+        });
+
+        // Broadcast live performance update
+        if ((global as any).broadcastStudentPerformance) {
+            (global as any).broadcastStudentPerformance(userId).catch(() => {});
         }
 
         res.json({
-            amitaiCoins: user.amitaiCoins || 0,
-            level: user.level || 1,
-            dailyMissions: user.dailyMissions || [],
-            achievements: user.achievements || []
+            intervyxaCoins: updatedUser.intervyxaCoins || 0,
+            level: updatedUser.level || 1,
+            dailyMissions: (updatedUser.profile?.dailyMissions as any) || [],
+            achievements: (updatedUser.profile?.achievements as any) || []
         });
 
     } catch (err: any) {
@@ -112,12 +131,29 @@ router.post('/sync', async (req, res) => {
 // 2. Get Leaderboard
 router.get('/leaderboard', async (req, res) => {
     try {
-        const topUsers = await User.find({})
-            .sort({ amitaiCoins: -1 })
-            .limit(10)
-            .select('username amitaiCoins level avatar achievements');
+        const topUsers = await (prisma.user as any).findMany({
+            orderBy: { intervyxaCoins: 'desc' },
+            take: 10,
+            select: {
+                username: true,
+                intervyxaCoins: true,
+                level: true,
+                profile: {
+                    select: {
+                        profilePhoto: true,
+                        achievements: true
+                    }
+                }
+            }
+        });
 
-        res.json(topUsers);
+        res.json((topUsers as any[]).map(u => ({
+            username: u.username,
+            intervyxaCoins: u.intervyxaCoins,
+            level: u.level,
+            avatar: u.profile?.profilePhoto,
+            achievements: u.profile?.achievements
+        })));
     } catch (err) {
         res.status(500).json({ message: "Server error" });
     }

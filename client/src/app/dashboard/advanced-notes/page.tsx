@@ -12,12 +12,12 @@ export default function AdvancedNotesPage() {
     const [currentNoteId, setCurrentNoteId] = useState<string | null>(null);
 
     return (
-        <div className="flex flex-col h-screen bg-slate-950 text-white overflow-hidden font-sans selection:bg-indigo-500/30">
+        <div className="flex flex-col h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white overflow-hidden font-sans selection:bg-indigo-500/30">
             {/* Minimal Header */}
-            <header className="h-14 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md flex items-center px-6 shrink-0 justify-between">
+            <header className="h-14 border-b border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-950/80 backdrop-blur-md flex items-center px-6 shrink-0 justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/dashboard">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-white">
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
                     </Link>
@@ -27,16 +27,16 @@ export default function AdvancedNotesPage() {
                     </h1>
                 </div>
 
-                <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
+                <div className="flex bg-white/5 p-1 rounded-lg border border-slate-100 dark:border-white/5">
                     <button
                         onClick={() => { setView('saved'); setCurrentNoteId(null); }}
-                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${view === 'saved' ? 'bg-white/10 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'} `}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${view === 'saved' ? 'bg-white/10 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-zinc-200'} `}
                     >
                         Saved Notes
                     </button>
                     <button
                         onClick={() => { setView('write'); setCurrentNoteId(null); }}
-                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${view === 'write' ? 'bg-white/10 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'} `}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${view === 'write' ? 'bg-white/10 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:text-zinc-200'} `}
                     >
                         Write Notes
                     </button>
@@ -44,7 +44,7 @@ export default function AdvancedNotesPage() {
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 relative overflow-hidden bg-slate-950/50">
+            <main className="flex-1 relative overflow-hidden bg-white dark:bg-slate-950/50">
                 {view === 'saved' ? (
                     <SavedNotes
                         onOpenNote={(id) => {

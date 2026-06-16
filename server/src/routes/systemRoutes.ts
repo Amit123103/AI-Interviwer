@@ -7,8 +7,8 @@ const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 router.get('/status', async (req: Request, res: Response) => {
     let aiStatus = 'offline';
-    let ollamaStatus = 'offline';
-    let mongoStatus = 'offline';
+    let nvidiaStatus = (process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY !== 'your_nvidia_api_key_here') ? 'configured' : 'missing_key';
+
 
     // Check AI Service
     try {
@@ -16,23 +16,14 @@ router.get('/status', async (req: Request, res: Response) => {
         if (response.status === 200) aiStatus = 'online';
     } catch (error) { }
 
-    // Check Ollama
-    try {
-        const response = await axios.get(`${process.env.OLLAMA_URL || 'http://localhost:11434'}/api/tags`, { timeout: 3000 });
-        if (response.status === 200) ollamaStatus = 'online';
-    } catch (error) { }
 
-    // Check MongoDB
-    try {
-        const mongoose = require('mongoose');
-        mongoStatus = mongoose.connection.readyState === 1 ? 'online' : 'reconnecting';
-    } catch (error) { }
 
     res.json({
         backend: 'online',
         ai_service: aiStatus,
-        ollama: ollamaStatus,
-        mongodb: mongoStatus,
+        nvidia: nvidiaStatus,
+
+        model: process.env.NVIDIA_MODEL || 'qwen/qwen3.5-397b-a17b',
         timestamp: new Date().toISOString(),
         config: {
             ai_service_timeout: "180s",

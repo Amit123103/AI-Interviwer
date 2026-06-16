@@ -14,5 +14,10 @@ const dummySocket = {
 
 export const socket = typeof window !== 'undefined' ? io(SOCKET_URL, {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionAttempts: 10,
+    reconnectionDelay: 2000,
+    reconnectionDelayMax: 10000,
+    timeout: 15000,
 }) : dummySocket as any;

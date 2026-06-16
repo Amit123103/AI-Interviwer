@@ -107,14 +107,14 @@ export default function HiringPartners() {
         <section className="space-y-4 mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-900/40 border border-white/10 flex flex-shrink-0 items-center justify-center shadow-2xl backdrop-blur-xl">
+                    <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900/40 border border-white/10 flex flex-shrink-0 items-center justify-center shadow-2xl backdrop-blur-xl">
                         <Building2 className="w-6 h-6 text-blue-500" />
                     </div>
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                             Hiring <span className="text-blue-500">Network</span>
                         </h2>
-                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium uppercase tracking-wider">
+                        <p className="text-[10px] sm:text-[11px] text-slate-900 dark:text-slate-400 font-medium uppercase tracking-wider">
                             Direct opportunities with top companies
                         </p>
                     </div>
@@ -127,8 +127,8 @@ export default function HiringPartners() {
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
                             className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${activeCategory === cat
-                                ? 'bg-blue-600 border-blue-500 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]'
-                                : 'bg-slate-900/40 border-white/5 text-slate-400 hover:text-white hover:border-white/10'
+                                ? 'bg-blue-600 border-blue-500 text-slate-900 dark:text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]'
+                                : 'bg-white dark:bg-slate-900/40 border-white/5 text-slate-900 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:border-white/10'
                                 }`}
                         >
                             {cat}
@@ -154,21 +154,21 @@ export default function HiringPartners() {
                         {(filteredPartners.length > 3 ? [...filteredPartners, ...filteredPartners] : filteredPartners).map((partner, i) => (
                             <div
                                 key={i}
-                                className="flex-shrink-0 w-[280px] sm:w-[320px] rounded-[1.5rem] bg-slate-900/40 backdrop-blur-2xl border border-white/5 p-6 relative overflow-hidden group/card hover:bg-slate-900/60 hover:border-blue-500/30 transition-all duration-500 shadow-xl"
+                                className="flex-shrink-0 w-[280px] sm:w-[320px] rounded-[1.5rem] bg-white dark:bg-slate-900/40 backdrop-blur-2xl border border-white/5 p-6 relative overflow-hidden group/card hover:bg-white dark:bg-slate-900/60 hover:border-blue-500/30 transition-all duration-500 shadow-xl"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.02] to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
 
                                 <div className="relative z-10 flex flex-col h-full">
                                     <div className="flex justify-between items-start mb-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-slate-950 border border-white/5 flex items-center justify-center font-bold text-xl text-white group-hover/card:border-blue-500/30 group-hover/card:text-blue-400 transition-all duration-300 shadow-inner">
+                                            <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-950 border border-white/5 flex items-center justify-center font-bold text-xl text-slate-900 dark:text-white group-hover/card:border-blue-500/30 group-hover/card:text-blue-400 transition-all duration-300 shadow-inner">
                                                 {partner.logo}
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-base text-white tracking-tight group-hover/card:text-blue-50 transition-colors">
+                                                <h3 className="font-bold text-base text-slate-900 dark:text-white tracking-tight group-hover/card:text-blue-50 transition-colors">
                                                     {partner.name}
                                                 </h3>
-                                                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
+                                                <div className="text-[10px] text-slate-900 dark:text-slate-400 font-bold uppercase tracking-wider mt-0.5">
                                                     {partner.role}
                                                 </div>
                                             </div>
@@ -187,7 +187,7 @@ export default function HiringPartners() {
                                                 partner.status === 'Reviewing Profiles' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
                                                     'bg-indigo-500'
                                                 }`} />
-                                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                            <span className="text-[10px] text-slate-900 dark:text-slate-400 font-bold uppercase tracking-wider">
                                                 {partner.status}
                                             </span>
                                         </div>
@@ -204,7 +204,7 @@ export default function HiringPartners() {
                                             </button>
                                             <button
                                                 onClick={() => setSelectedPartner(partner)}
-                                                className="text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-white flex items-center gap-1.5 group/btn transition-colors"
+                                                className="text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-slate-900 dark:text-white flex items-center gap-1.5 group/btn transition-colors"
                                             >
                                                 Details
                                                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
@@ -226,14 +226,14 @@ export default function HiringPartners() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedPartner(null)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                            className="fixed inset-0 bg-white dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                         >
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="bg-slate-900 border border-white/10 w-full max-w-lg rounded-[2rem] overflow-hidden relative shadow-2xl backdrop-blur-3xl"
+                                className="bg-white dark:bg-slate-900 border border-white/10 w-full max-w-lg rounded-[2rem] overflow-hidden relative shadow-2xl backdrop-blur-3xl"
                             >
                                 {/* Header Background Gradient */}
                                 <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none" />
@@ -244,14 +244,14 @@ export default function HiringPartners() {
                                         onClick={() => toggleSaveJob(selectedPartner.id)}
                                         className={`w-8 h-8 flex items-center justify-center rounded-full border transition-colors ${savedJobs.includes(selectedPartner.id)
                                             ? 'bg-blue-500/20 border-blue-500/50 text-blue-400'
-                                            : 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-400'
+                                            : 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-900 dark:text-slate-400'
                                             }`}
                                     >
                                         {savedJobs.includes(selectedPartner.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                                     </button>
                                     <button
                                         onClick={() => setSelectedPartner(null)}
-                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-400 transition-colors"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-slate-900 dark:text-zinc-400 transition-colors"
                                     >
                                         <X className="w-4 h-4" />
                                     </button>
@@ -259,14 +259,14 @@ export default function HiringPartners() {
 
                                 <div className="p-8 relative z-10">
                                     <div className="flex items-center gap-5 mb-6">
-                                        <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center text-3xl font-black text-white shadow-lg">
+                                        <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900 border border-white/10 flex items-center justify-center text-3xl font-black text-slate-900 dark:text-white shadow-lg">
                                             {selectedPartner.logo}
                                         </div>
                                         <div>
-                                            <h3 className="text-2xl font-bold text-white tracking-tight">{selectedPartner.name}</h3>
+                                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{selectedPartner.name}</h3>
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Briefcase className="w-4 h-4 text-slate-500" />
-                                                <span className="text-sm font-medium text-slate-400">{selectedPartner.role}</span>
+                                                <span className="text-sm font-medium text-slate-900 dark:text-slate-400">{selectedPartner.role}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -282,29 +282,29 @@ export default function HiringPartners() {
                                         <div className="w-px h-10 bg-white/10" />
                                         <div className="flex flex-col">
                                             <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-1">Location</span>
-                                            <span className="text-sm font-medium text-zinc-300">{selectedPartner.locations}</span>
+                                            <span className="text-sm font-medium text-slate-900 dark:text-zinc-300">{selectedPartner.locations}</span>
                                         </div>
                                     </div>
 
                                     <div className="space-y-6">
                                         <div>
-                                            <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
                                                 <Users className="w-4 h-4 text-blue-400" />
                                                 About the Role
                                             </h4>
-                                            <p className="text-sm text-zinc-400 leading-relaxed">
+                                            <p className="text-sm text-slate-900 dark:text-zinc-400 leading-relaxed">
                                                 {selectedPartner.description}
                                             </p>
                                         </div>
 
                                         <div>
-                                            <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                                                 <Sparkles className="w-4 h-4 text-blue-400" />
                                                 Key Requirements
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {selectedPartner.requirements.map((req: string, i: number) => (
-                                                    <span key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-medium text-zinc-300">
+                                                    <span key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-medium text-slate-900 dark:text-zinc-300">
                                                         {req}
                                                     </span>
                                                 ))}
@@ -313,7 +313,7 @@ export default function HiringPartners() {
 
                                         {/* AI Match Analysis */}
                                         <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-5">
-                                            <h4 className="text-sm font-bold text-white mb-4 flex items-center justify-between">
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between">
                                                 <span className="flex items-center gap-2">
                                                     <Target className="w-4 h-4 text-emerald-400" />
                                                     AI Skill Match Analysis
@@ -324,7 +324,7 @@ export default function HiringPartners() {
                                                 {selectedPartner.skillMatch?.map((skill: any, idx: number) => (
                                                     <div key={idx}>
                                                         <div className="flex justify-between items-end mb-1.5">
-                                                            <span className="text-xs font-semibold text-zinc-300">{skill.name}</span>
+                                                            <span className="text-xs font-semibold text-slate-900 dark:text-zinc-300">{skill.name}</span>
                                                             <span className="text-xs font-black text-emerald-400">{skill.score}%</span>
                                                         </div>
                                                         <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -345,7 +345,7 @@ export default function HiringPartners() {
                                         <Button
                                             onClick={handleApply}
                                             disabled={isApplying || applied}
-                                            className="w-full h-12 rounded-xl font-bold bg-blue-600 hover:bg-blue-500 text-white overflow-hidden relative group border-0 shadow-lg shadow-blue-900/20"
+                                            className="w-full h-12 rounded-xl font-bold bg-blue-600 hover:bg-blue-500 text-slate-900 dark:text-white overflow-hidden relative group border-0 shadow-lg shadow-blue-900/20"
                                         >
                                             <AnimatePresence mode="wait">
                                                 {applied ? (

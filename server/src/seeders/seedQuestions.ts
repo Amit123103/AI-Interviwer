@@ -1,6 +1,5 @@
-import mongoose from 'mongoose'
+import prisma from '../prisma'
 import dotenv from 'dotenv'
-import Question from '../models/Question'
 
 dotenv.config()
 
@@ -198,7 +197,7 @@ function generateQuestions() {
     for (let i = 0; i < 200; i++) {
         const topic = topics.technical[i % topics.technical.length]
         const difficultyIndex = i % 3
-        const difficulty = ["easy", "medium", "hard"][difficultyIndex]
+        const difficulty = ["Easy", "Medium", "Hard"][difficultyIndex] // Prisma schema uses capitalized enums/strings for some fields
 
         generatedQuestions.push({
             title: `${topic}: Question ${i + 1}`,
@@ -237,7 +236,7 @@ function generateQuestions() {
         generatedQuestions.push({
             title: `Describe a time when you demonstrated ${topic}`,
             type: "behavioral",
-            difficulty: "medium",
+            difficulty: "Medium",
             role: ["All Roles"],
             subject: [topic, "Soft Skills"],
             explanation: `This behavioral question assesses your ${topic} skills through past experiences.`,
@@ -273,7 +272,7 @@ function generateQuestions() {
         generatedQuestions.push({
             title: `Design a ${topic} system`,
             type: "system-design",
-            difficulty: ["medium", "hard"][i % 2],
+            difficulty: ["Medium", "Hard"][i % 2],
             role: ["Senior Engineer", "System Architect", "Backend Developer"],
             subject: ["System Design", "Scalability", topic],
             explanation: `Design a scalable ${topic} system. Consider requirements, constraints, and trade-offs.`,
@@ -307,7 +306,7 @@ function generateQuestions() {
     for (let i = 0; i < 150; i++) {
         const topic = topics.technical[i % topics.technical.length]
         const difficultyIndex = i % 3
-        const difficulty = ["easy", "medium", "hard"][difficultyIndex]
+        const difficulty = ["Easy", "Medium", "Hard"][difficultyIndex]
 
         generatedQuestions.push({
             title: `Coding Problem: ${topic} - Problem ${i + 1}`,
@@ -346,35 +345,34 @@ function generateQuestions() {
 
 async function seedQuestions() {
     try {
-        console.log('🔌 Connecting to MongoDB...')
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/ai-interviewer')
-        console.log('✅ Connected to MongoDB')
-
-        // Clear existing questions
         console.log('🗑️  Clearing existing questions...')
-        await Question.deleteMany({})
+        await prisma.question.deleteMany({})
         console.log('✅ Cleared existing questions')
 
         // Insert base questions
         console.log('📝 Inserting base questions...')
-        await Question.insertMany(baseQuestions)
+        await prisma.question.createMany({
+            data: baseQuestions as any
+        })
         console.log(`✅ Inserted ${baseQuestions.length} base questions`)
 
         // Generate and insert additional questions
         console.log('🔄 Generating additional questions...')
         const generatedQuestions = generateQuestions()
         console.log(`📝 Inserting ${generatedQuestions.length} generated questions...`)
-        await Question.insertMany(generatedQuestions)
+        await prisma.question.createMany({
+            data: generatedQuestions as any
+        })
         console.log(`✅ Inserted ${generatedQuestions.length} generated questions`)
 
         // Verify total count
-        const total = await Question.countDocuments()
+        const total = await prisma.question.count()
         console.log(`\n🎉 SUCCESS! Total questions in database: ${total}`)
         console.log(`\n📊 Breakdown:`)
-        console.log(`   - Technical: ${await Question.countDocuments({ type: 'technical' })}`)
-        console.log(`   - Behavioral: ${await Question.countDocuments({ type: 'behavioral' })}`)
-        console.log(`   - System Design: ${await Question.countDocuments({ type: 'system-design' })}`)
-        console.log(`   - Coding: ${await Question.countDocuments({ type: 'coding' })}`)
+        console.log(`   - Technical: ${await prisma.question.count({ where: { type: 'technical' } })}`)
+        console.log(`   - Behavioral: ${await prisma.question.count({ where: { type: 'behavioral' } })}`)
+        console.log(`   - System Design: ${await prisma.question.count({ where: { type: 'system-design' } })}`)
+        console.log(`   - Coding: ${await prisma.question.count({ where: { type: 'coding' } })}`)
 
         process.exit(0)
     } catch (error) {

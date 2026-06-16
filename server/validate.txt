@@ -1,0 +1,18 @@
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+[1;91merror[0m: [1mError validating field `user` in model `PracticeSession`: The relation field `user` on model `PracticeSession` is missing an opposite relation field on the model `User`. Either run `prisma format` or add it manually.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:688[0m
+[1;94m   | [0m
+[1;94m687 | [0m  userId        String
+[1;94m688 | [0m  [1;91muser          User     @relation(fields: [userId], references: [id])[0m
+[1;94m689 | [0m  configuration Json     @default("{}")
+[1;94m   | [0m
+
+Validation Error Count: 1
+[Context: validate]
+
+Prisma CLI Version : 7.4.1

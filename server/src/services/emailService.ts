@@ -109,7 +109,7 @@ const sendEmail = async (
         console.log(`[EMAIL] ${context}: Sending to ${to}...`);
 
         const info = await transporter.sendMail({
-            from: `"AI Interviewer" <${SMTP_FROM}>`,
+            from: `"Intervyxa AI" <${SMTP_FROM}>`,
             to,
             subject,
             html,
@@ -152,7 +152,7 @@ const sendEmail = async (
 export const sendTestEmail = async (toEmail: string): Promise<boolean> => {
     return sendEmail(
         toEmail,
-        'Test Email — AI Interviewer Platform',
+        'Test Email — Intervyxa AI',
         `
         <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; padding: 30px; background: #0a0a0a; color: white; border-radius: 16px;">
             <h2 style="margin: 0 0 16px 0;">✅ Email Delivery Test</h2>
@@ -205,7 +205,7 @@ export const sendReportEmail = async (toEmail: string, reportData: any, scoreDat
                     </p>
                 </div>
                 <div style="text-align: center; padding: 20px; font-size: 12px; color: #888;">
-                    &copy; 2026 AI Interviewer Platform
+                    &copy; 2026 Intervyxa AI Platform
                 </div>
             </div>
         `;
@@ -249,14 +249,14 @@ export const sendWelcomeEmail = async (toEmail: string, username: string) => {
                 </div>
             </div>
             <div style="text-align: center; padding: 20px 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 11px; color: #52525b;">
-                &copy; 2026 AI Interviewer Platform &bull; Secured by AI
+                &copy; 2026 Intervyxa AI &bull; Secured by AI
             </div>
         </div>
     `;
 
     // Welcome email is non-critical — don't throw
     try {
-        await sendEmail(toEmail, `Welcome to AI Interviewer, ${username}! 🎉`, htmlContent, 'WELCOME');
+        await sendEmail(toEmail, `Welcome to Intervyxa AI, ${username}! 🎉`, htmlContent, 'WELCOME');
     } catch (error: any) {
         console.error('[EMAIL] Welcome email failed (non-fatal):', error.message);
     }
@@ -293,62 +293,12 @@ export const sendPasswordResetEmail = async (toEmail: string, resetUrl: string, 
                 </p>
             </div>
             <div style="text-align: center; padding: 20px 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 11px; color: #52525b;">
-                &copy; 2026 AI Interviewer Platform &bull; Secured by AI
+                &copy; 2026 Intervyxa AI &bull; Secured by AI
             </div>
         </div>
     `;
 
     // Password reset IS critical — let errors propagate to the controller
-    await sendEmail(toEmail, 'Password Reset Request — AI Interviewer', htmlContent, 'PASSWORD_RESET');
+    await sendEmail(toEmail, 'Password Reset Request — Intervyxa AI', htmlContent, 'PASSWORD_RESET');
 };
 
-// ── Pro Subscription Approved Email ──
-export const sendProApprovedEmail = async (toEmail: string, plan: string, expiryDate: Date) => {
-    const planNames: Record<string, string> = { monthly: 'Monthly', '6month': '6-Month', yearly: 'Yearly' };
-    const htmlContent = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #e4e4e7; background: #0a0a0a; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
-            <div style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); padding: 36px 30px; text-align: center;">
-                <h1 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 900; color: white;">🎉 Pro Access Activated!</h1>
-                <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.8); letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Welcome to the Elite</p>
-            </div>
-            <div style="padding: 32px 30px;">
-                <p style="font-size: 14px; line-height: 1.7; color: #d4d4d8;">
-                    Your payment has been <strong style="color: #10b981;">verified and approved</strong>! You now have full access to all Pro features.
-                </p>
-                <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.12); border-radius: 12px; padding: 16px; margin: 20px 0;">
-                    <p style="margin: 0 0 8px 0; font-size: 12px; color: #71717a;"><strong style="color: #d4d4d8;">Plan:</strong> ${planNames[plan] || plan}</p>
-                    <p style="margin: 0; font-size: 12px; color: #71717a;"><strong style="color: #d4d4d8;">Valid Until:</strong> ${expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                </div>
-            </div>
-            <div style="text-align: center; padding: 20px 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 11px; color: #52525b;">
-                &copy; 2026 AI Interviewer Platform &bull; Pro Member
-            </div>
-        </div>
-    `;
-    await sendEmail(toEmail, '🎉 Pro Access Activated — AI Interviewer', htmlContent, 'PRO_APPROVED');
-};
-
-// ── Pro Subscription Rejected Email ──
-export const sendProRejectedEmail = async (toEmail: string, reason: string) => {
-    const htmlContent = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #e4e4e7; background: #0a0a0a; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
-            <div style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); padding: 36px 30px; text-align: center;">
-                <h1 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 900; color: white;">Payment Not Verified</h1>
-                <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.8); letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Action Required</p>
-            </div>
-            <div style="padding: 32px 30px;">
-                <p style="font-size: 14px; line-height: 1.7; color: #d4d4d8;">
-                    Unfortunately, your payment submission could not be verified.
-                </p>
-                <div style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 12px; padding: 16px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 12px; color: #a1a1aa;"><strong style="color: #d4d4d8;">Reason:</strong> ${reason}</p>
-                </div>
-                <p style="font-size: 13px; color: #71717a;">You can submit a new payment from the Pricing page. Please ensure you provide a valid payment screenshot and transaction ID.</p>
-            </div>
-            <div style="text-align: center; padding: 20px 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 11px; color: #52525b;">
-                &copy; 2026 AI Interviewer Platform
-            </div>
-        </div>
-    `;
-    await sendEmail(toEmail, 'Payment Not Verified — AI Interviewer', htmlContent, 'PRO_REJECTED');
-};

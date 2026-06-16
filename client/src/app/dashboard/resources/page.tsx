@@ -22,18 +22,18 @@ export default function ResourcesPage() {
     }, [])
 
     return (
-        <main className="min-h-screen bg-black text-white selection:bg-emerald-500/30 overflow-x-hidden">
+        <main className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white selection:bg-emerald-500/30 overflow-x-hidden">
             <MeshBackground />
 
             {/* Nav Header */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/5">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-black/20 backdrop-blur-xl border-b border-slate-100 dark:border-white/5">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-8">
                         <Link href="/dashboard" className="flex items-center gap-2 group">
-                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-emerald-500/40 transition-all">
-                                <ArrowLeft className="w-5 h-5 text-zinc-400 group-hover:text-emerald-400" />
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-slate-200 dark:border-white/10 group-hover:border-emerald-500/40 transition-all">
+                                <ArrowLeft className="w-5 h-5 text-slate-500 dark:text-zinc-400 group-hover:text-emerald-400" />
                             </div>
-                            <span className="text-xs font-black uppercase tracking-widest text-zinc-500 group-hover:text-white transition-colors">Return to Bridge</span>
+                            <span className="text-xs font-black uppercase tracking-widest text-zinc-500 group-hover:text-slate-900 dark:text-white transition-colors">Return to Bridge</span>
                         </Link>
 
                         <div className="h-6 w-[1px] bg-white/10" />
@@ -47,7 +47,7 @@ export default function ResourcesPage() {
                     <div className="flex items-center gap-4">
                         <NotificationCenter />
                         <div className="h-4 w-[1px] bg-white/10" />
-                        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-slate-100 dark:border-white/5">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Library Sync Active</span>
                         </div>
@@ -62,7 +62,7 @@ export default function ResourcesPage() {
                     className="space-y-12"
                 >
                     {/* Hero Section */}
-                    <div className="relative p-12 rounded-[48px] bg-zinc-900/40 border border-white/5 overflow-hidden">
+                    <div className="relative p-12 rounded-[48px] bg-white dark:bg-zinc-900/40 border border-slate-100 dark:border-white/5 overflow-hidden">
                         <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                             <BookOpen className="w-64 h-64 rotate-12" />
                         </div>
@@ -76,13 +76,13 @@ export default function ResourcesPage() {
                                 NEURAL <br />
                                 <span className="text-emerald-400">ASSETS.</span>
                             </h2>
-                            <p className="text-lg text-zinc-400 font-medium leading-relaxed">
-                                Access the platform's curated selection of technical documentation, video training sessions, and high-tier prep materials approved by the AMITAI board.
+                            <p className="text-lg text-slate-500 dark:text-zinc-400 font-medium leading-relaxed">
+                                Access the platform's curated selection of technical documentation, video training sessions, and high-tier prep materials approved by the Intervyxa board.
                             </p>
                         </div>
                     </div>
 
-                    <ResourcesVault isPro={user?.subscriptionStatus === 'pro'} />
+                    <ResourcesVault />
                 </motion.div>
             </div>
         </main>

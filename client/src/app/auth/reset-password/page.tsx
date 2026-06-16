@@ -13,12 +13,12 @@ import MeshBackground from "../../dashboard/components/MeshBackground"
 import axios from "axios"
 
 /* ── Particle ── */
-function FloatingParticle({ delay, size, color, x, y }: { delay: number; size: number; color: string; x: string; y: string }) {
+function FloatingParticle({ delay, size, color, x, y, duration = 4 }: { delay: number; size: number; color: string; x: string; y: string, duration?: number }) {
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: [0, 0.6, 0], scale: [0, 1, 0] }}
-            transition={{ delay, duration: 4 + Math.random() * 3, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ delay, duration, repeat: Infinity, ease: "easeInOut" }}
             className="absolute pointer-events-none" style={{ left: x, top: y }}
         >
             <div className="rounded-full blur-[1px]" style={{ width: size, height: size, background: color }} />
@@ -96,13 +96,17 @@ function ResetPasswordForm() {
 
     // Redirect countdown
     useEffect(() => {
-        if (redirectCountdown <= 0) return
-        const t = setInterval(() => setRedirectCountdown(c => {
-            if (c <= 1) { router.push("/auth/login"); return 0 }
-            return c - 1
-        }), 1000)
-        return () => clearInterval(t)
-    }, [redirectCountdown, router])
+        if (redirectCountdown <= 0) {
+            if (success) {
+                router.push("/auth/login")
+            }
+            return
+        }
+        const t = setTimeout(() => {
+            setRedirectCountdown(c => c - 1)
+        }, 1000)
+        return () => clearTimeout(t)
+    }, [redirectCountdown, success, router])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -124,8 +128,12 @@ function ResetPasswordForm() {
             })
             setSuccess(true)
             setRedirectCountdown(5)
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Something went wrong. Please try again.")
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || "Something went wrong. Please try again.")
+            } else {
+                setError("Something went wrong. Please try again.")
+            }
         } finally {
             setLoading(false)
         }

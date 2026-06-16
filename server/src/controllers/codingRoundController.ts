@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import CodingRoundSession from '../models/CodingRoundSession';
-import Problem from '../models/Problem';
+import prisma from '../prisma';
 import { executionService } from '../services/executionService';
 import OpenAI from 'openai';
+import { updateUserProgress } from '../services/gamificationService';
 
 const openai = new OpenAI({
-    baseURL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1',
-    apiKey: process.env.OPENAI_API_KEY || 'ollama',
+    baseURL: 'https://integrate.api.nvidia.com/v1',
+    apiKey: process.env.NVIDIA_API_KEY || 'missing_key_check_env',
 });
 
-const MODEL = process.env.LLM_MODEL || 'llama3.1';
+const MODEL = process.env.NVIDIA_MODEL || 'openai/gpt-oss-120b';
 
 // ─── CV Parsing ──────────────────────────────────────────────────────────────
 
@@ -37,7 +36,6 @@ function parseCVText(cvText: string): Partial<{
     const frameworks = FRAMEWORK_KEYWORDS.filter(k => lower.includes(k));
     const domains = DOMAIN_KEYWORDS.filter(k => lower.includes(k));
 
-    // Infer experience level
     let expLevel: 'Entry' | 'Mid' | 'Senior' = 'Entry';
     if (lower.includes('senior') || lower.includes('lead') || lower.includes('architect') || lower.includes('principal')) {
         expLevel = 'Senior';
@@ -45,7 +43,6 @@ function parseCVText(cvText: string): Partial<{
         expLevel = 'Mid';
     }
 
-    // Map skills to DSA topics
     const topicSet = new Set<string>();
     [...languages, ...domains].forEach(k => {
         (TOPIC_MAP[k] || []).forEach(t => topicSet.add(t));
@@ -70,40 +67,37 @@ async function selectProblems(
     cvData?: { languages?: string[]; domains?: string[]; suggestedTopics?: string[] },
     topicPreference?: string
 ): Promise<any[]> {
-    const query: any = {};
+    const where: any = {};
 
-    // Difficulty
     if (difficulty !== 'Auto') {
-        query.difficulty = difficulty;
+        where.difficulty = difficulty as any;
     } else {
-        // Auto: pick a mix based on CV experience
-        query.difficulty = { $in: ['Easy', 'Medium'] };
+        where.difficulty = { in: ['Easy', 'Medium'] };
     }
 
-    // Topic preference from CV or user selection
     const topics = topicPreference
         ? [topicPreference]
         : (cvData?.suggestedTopics || []);
 
     if (topics.length > 0) {
-        query.$or = [
-            { category: { $in: topics } },
-            { tags: { $in: topics } }
+        where.OR = [
+            { category: { in: topics } },
+            { tags: { hasSome: topics } }
         ];
     }
 
-    let problems = await Problem.find(query)
-        .select('_id slug title difficulty category tags examples testCases starterCode constraints description timeLimit memoryLimit')
-        .limit(numQuestions * 3); // Fetch extra for randomization
+    let problems = await prisma.problem.findMany({
+        where,
+        take: numQuestions * 3
+    });
 
-    // Shuffle and pick
     problems = problems.sort(() => Math.random() - 0.5).slice(0, numQuestions);
 
-    // If not enough, fall back to any problems
     if (problems.length < numQuestions) {
-        const fallback = await Problem.find({ _id: { $nin: problems.map(p => p._id) } })
-            .select('_id slug title difficulty category tags examples testCases starterCode constraints description timeLimit memoryLimit')
-            .limit(numQuestions - problems.length);
+        const fallback = await prisma.problem.findMany({
+            where: { id: { notIn: problems.map(p => p.id) } },
+            take: numQuestions - problems.length
+        });
         problems = [...problems, ...fallback];
     }
 
@@ -122,7 +116,6 @@ async function evaluateSession(session: any): Promise<any> {
     const totalTimeSeconds = questions.reduce((sum: number, q: any) => sum + (q.timeTakenSeconds || 0), 0);
     const avgTimePerQuestion = total > 0 ? totalTimeSeconds / total : 0;
 
-    // Score metrics based on heuristics
     const technicalAccuracy = Math.min(10, Math.round((solved / Math.max(total, 1)) * 10));
     const timeManagement = avgTimePerQuestion < 300 ? 9 : avgTimePerQuestion < 600 ? 7 : 5;
     const debuggingAbility = questions.filter((q: any) => q.status === 'accepted' && (q.submissionResult?.runtime || 0) < 500).length * 2;
@@ -139,25 +132,13 @@ async function evaluateSession(session: any): Promise<any> {
     else if (overallScore >= 65) readinessLevel = 'Job Ready';
     else if (overallScore >= 45) readinessLevel = 'Developing';
 
-    // AI feedback per question
     let aiSummary = '';
     try {
         const questionSummaries = questions.map((q: any, i: number) =>
             `Q${i + 1}: "${q.title}" (${q.difficulty}) - Status: ${q.status}, Time: ${q.timeTakenSeconds || 0}s`
         ).join('\n');
 
-        const prompt = `You are an expert coding interview evaluator. A student completed a coding round with these results:
-
-${questionSummaries}
-
-Overall: ${solved}/${total} solved, Accuracy: ${accuracyPercent}%, Total time: ${Math.round(totalTimeSeconds / 60)} minutes.
-Student level: ${session.studentDetails?.level || 'Unknown'}.
-
-In 3-4 sentences, give a constructive, encouraging performance summary. Then list 3 specific improvement tips. Format as JSON:
-{
-  "summary": "...",
-  "tips": ["tip1", "tip2", "tip3"]
-}`;
+        const prompt = `You are an expert coding interview evaluator. A student completed a coding round with these results:\n\n${questionSummaries}\n\nOverall: ${solved}/${total} solved, Accuracy: ${accuracyPercent}%, Total time: ${Math.round(totalTimeSeconds / 60)} minutes.\nStudent level: ${session.studentDetails?.level || 'Unknown'}.\n\nIn 3-4 sentences, give a constructive, encouraging performance summary. Then list 3 specific improvement tips. Format as JSON:\n{\n  "summary": "...",\n  "tips": ["tip1", "tip2", "tip3"]\n}`;
 
         const response = await openai.chat.completions.create({
             model: MODEL,
@@ -195,8 +176,6 @@ In 3-4 sentences, give a constructive, encouraging performance summary. Then lis
 
 // ─── Controllers ─────────────────────────────────────────────────────────────
 
-// POST /api/coding-round/start
-// Creates session, optionally parses CV text
 export const startSession = async (req: Request, res: Response) => {
     try {
         const { userId, studentDetails, cvText, config } = req.body;
@@ -207,95 +186,95 @@ export const startSession = async (req: Request, res: Response) => {
 
         let cvData: any = {};
         if (cvText) {
-            const parsed = parseCVText(cvText);
+            const parsed = parseCVText(cvText as string);
             cvData = {
                 ...parsed,
-                rawText: cvText.slice(0, 5000),
+                rawText: (cvText as string).slice(0, 5000),
             };
         }
 
-        const session = new CodingRoundSession({
-            userId,
-            studentDetails,
-            cvData: Object.keys(cvData).length ? cvData : undefined,
-            config: {
-                numQuestions: config?.numQuestions || 5,
-                difficulty: config?.difficulty || 'Auto',
-                language: config?.language || 'python',
-                topic: config?.topic,
-            },
-            status: 'config',
+        const session = await prisma.codingRoundSession.create({
+            data: {
+                userId,
+                studentDetails: studentDetails as any,
+                cvData: Object.keys(cvData).length ? cvData as any : undefined,
+                config: {
+                    numQuestions: config?.numQuestions || 5,
+                    difficulty: config?.difficulty || 'Auto',
+                    language: config?.language || 'python',
+                    topic: config?.topic,
+                } as any,
+                questions: [] as any,
+                status: 'config',
+            }
         });
 
-        await session.save();
-        res.status(201).json({ sessionId: session._id, cvData, session });
+        res.status(201).json({ sessionId: session.id, cvData, session });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
 };
 
-// POST /api/coding-round/:sessionId/configure
-// Finalize config and generate questions
 export const configureSession = async (req: Request, res: Response) => {
     try {
         const { sessionId } = req.params;
         const { numQuestions, difficulty, language, topic } = req.body;
 
-        const session = await CodingRoundSession.findById(sessionId);
+        const session = await prisma.codingRoundSession.findUnique({ where: { id: sessionId as string } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
-        // Update config
-        session.config = {
-            numQuestions: numQuestions || session.config.numQuestions,
-            difficulty: difficulty || session.config.difficulty,
-            language: language || session.config.language,
-            topic: topic || session.config.topic,
+        const config = (session.config as any) || {};
+        const newConfig = {
+            numQuestions: numQuestions || config.numQuestions,
+            difficulty: difficulty || config.difficulty,
+            language: language || config.language,
+            topic: topic || config.topic,
         };
 
-        // Generate questions
         const problems = await selectProblems(
-            session.config.numQuestions,
-            session.config.difficulty,
-            session.config.language,
+            newConfig.numQuestions,
+            newConfig.difficulty,
+            newConfig.language,
             session.cvData as any,
-            session.config.topic
+            newConfig.topic
         );
 
-        session.questions = problems.map((p: any) => ({
-            problemId: p._id,
+        const questions = problems.map((p: any) => ({
+            problemId: p.id,
             slug: p.slug,
             title: p.title,
             difficulty: p.difficulty,
             status: 'pending',
         }));
 
-        session.status = 'active';
-        session.startedAt = new Date();
-        await session.save();
+        const updatedSession = await prisma.codingRoundSession.update({
+            where: { id: sessionId as string },
+            data: {
+                config: newConfig as any,
+                questions: questions as any,
+                status: 'active',
+                startedAt: new Date()
+            }
+        });
 
-        res.json({ session, problemSlugs: problems.map((p: any) => p.slug) });
+        res.json({ session: updatedSession, problemSlugs: problems.map((p: any) => p.slug) });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
 };
 
-// GET /api/coding-round/:sessionId
-// Fetch session (with problem details populated on the fly)
 export const getSession = async (req: Request, res: Response) => {
     try {
-        const session = await CodingRoundSession.findById(req.params.sessionId);
+        const session = await prisma.codingRoundSession.findUnique({ where: { id: req.params.sessionId as string } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
-        // Fetch current question's full problem data
-        const currentQ = session.questions[session.currentQuestionIndex];
-        let currentProblem = null;
+        const questions = session.questions as any[];
+        const currentQ = questions[session.currentQuestionIndex];
+        let currentProblem: any = null;
         if (currentQ?.problemId) {
-            currentProblem = await Problem.findById(currentQ.problemId);
+            currentProblem = await prisma.problem.findUnique({ where: { id: currentQ.problemId as string } });
             if (currentProblem) {
-                // Hide hidden test cases
-                const obj = (currentProblem as any).toObject();
-                obj.testCases = obj.testCases.filter((tc: any) => !tc.isHidden);
-                currentProblem = obj;
+                (currentProblem as any).testCases = (currentProblem.testCases as any[]).filter((tc: any) => !tc.isHidden);
             }
         }
 
@@ -305,13 +284,10 @@ export const getSession = async (req: Request, res: Response) => {
     }
 };
 
-// POST /api/coding-round/:sessionId/run
-// Run code for the current question
 export const runCode = async (req: Request, res: Response) => {
     try {
         const { code, language, problemId, customInput } = req.body;
 
-        // If customInput is provided, run as script (playground mode)
         if (customInput !== undefined && customInput !== '') {
             const scriptResult = await executionService.runScript(code, language, customInput);
             const statusMap: Record<string, string> = {
@@ -333,10 +309,8 @@ export const runCode = async (req: Request, res: Response) => {
             });
         }
 
-        // Otherwise, run against test cases
-        const problem = await Problem.findById(problemId);
+        const problem = await prisma.problem.findUnique({ where: { id: problemId as string } });
         if (!problem) {
-            // No problem found — run as plain script
             const scriptResult = await executionService.runScript(code, language, '');
             return res.json({
                 status: scriptResult.errorType ? 'Error' : 'Accepted',
@@ -351,7 +325,7 @@ export const runCode = async (req: Request, res: Response) => {
             });
         }
 
-        const result = await executionService.execute(code, language, problem);
+        const result = await executionService.execute(code, language, problem as any);
 
         const statusMap: Record<string, string> = {
             compilation_error: 'Compilation Error',
@@ -375,25 +349,23 @@ export const runCode = async (req: Request, res: Response) => {
     }
 };
 
-// POST /api/coding-round/:sessionId/submit-question
-// Submit an answer for the current question and advance
 export const submitQuestion = async (req: Request, res: Response) => {
     try {
         const { sessionId } = req.params;
         const { code, language, timeTakenSeconds, skipToIndex } = req.body;
 
-        const session = await CodingRoundSession.findById(sessionId);
+        const session = await prisma.codingRoundSession.findUnique({ where: { id: sessionId as string } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
+        const questions = session.questions as any[];
         const idx = session.currentQuestionIndex;
-        const currentQ = session.questions[idx];
+        const currentQ = questions[idx];
         if (!currentQ) return res.status(400).json({ error: 'No current question' });
 
         if (code && language) {
-            // Run code against test cases
-            const problem = await Problem.findById(currentQ.problemId);
+            const problem = await prisma.problem.findUnique({ where: { id: (currentQ.problemId as string) } });
             if (problem) {
-                const result = await executionService.execute(code, language, problem);
+                const result = await executionService.execute(code, language, problem as any);
                 currentQ.code = code;
                 currentQ.language = language;
                 currentQ.timeTakenSeconds = timeTakenSeconds || 0;
@@ -408,18 +380,21 @@ export const submitQuestion = async (req: Request, res: Response) => {
                 };
             }
         } else {
-            // Skipped
             currentQ.status = 'skipped';
             currentQ.timeTakenSeconds = timeTakenSeconds || 0;
         }
 
-        // Advance question
         const nextIndex = skipToIndex !== undefined ? skipToIndex : idx + 1;
-        session.currentQuestionIndex = nextIndex;
+        
+        const updatedSession = await prisma.codingRoundSession.update({
+            where: { id: sessionId as string },
+            data: {
+                questions: questions as any,
+                currentQuestionIndex: nextIndex
+            }
+        });
 
-        await session.save();
-
-        const hasMore = nextIndex < session.questions.length;
+        const hasMore = nextIndex < questions.length;
         res.json({
             questionResult: currentQ,
             hasMore,
@@ -431,40 +406,52 @@ export const submitQuestion = async (req: Request, res: Response) => {
     }
 };
 
-// POST /api/coding-round/:sessionId/finish
-// Finalize session and generate AI report
 export const finishSession = async (req: Request, res: Response) => {
     try {
         const { sessionId } = req.params;
 
-        const session = await CodingRoundSession.findById(sessionId);
+        const session = await prisma.codingRoundSession.findUnique({ where: { id: sessionId as string } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
         if (session.status === 'completed') {
             return res.json({ session });
         }
 
-        session.status = 'completed';
-        session.finishedAt = new Date();
-        session.totalTimeTakenSeconds = session.questions.reduce(
+        const questions = session.questions as any[];
+        const finishedAt = new Date();
+        const totalTimeTakenSeconds = questions.reduce(
             (sum, q) => sum + (q.timeTakenSeconds || 0), 0
         );
 
-        // Generate evaluation
-        const evaluation = await evaluateSession(session);
-        session.evaluation = evaluation;
+        const evaluation = await evaluateSession({ ...session, questions });
+        
+        const updatedSession = await prisma.codingRoundSession.update({
+            where: { id: sessionId as string },
+            data: {
+                status: 'completed',
+                finishedAt,
+                totalTimeTakenSeconds,
+                evaluation: evaluation as any
+            }
+        });
 
-        await session.save();
-        res.json({ session });
+        // Award Progress
+        const xpGained = 50 + (evaluation.overallScore || 0);
+        await updateUserProgress(session.userId, xpGained, {
+            type: 'CODING_COMPLETE',
+            codingScore: evaluation.overallScore,
+            solved: evaluation.questionsSolved
+        });
+
+        res.json({ session: updatedSession });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
 };
 
-// GET /api/coding-round/report/:sessionId
 export const getReport = async (req: Request, res: Response) => {
     try {
-        const session = await CodingRoundSession.findById(req.params.sessionId);
+        const session = await prisma.codingRoundSession.findUnique({ where: { id: req.params.sessionId as string } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
         res.json(session);
     } catch (err: any) {
@@ -472,15 +459,25 @@ export const getReport = async (req: Request, res: Response) => {
     }
 };
 
-// GET /api/coding-round/user/:userId
 export const getUserSessions = async (req: Request, res: Response) => {
     try {
-        const sessions = await CodingRoundSession.find({ userId: req.params.userId })
-            .select('studentDetails config status evaluation createdAt startedAt')
-            .sort({ createdAt: -1 })
-            .limit(20);
+        const sessions = await prisma.codingRoundSession.findMany({
+            where: { userId: req.params.userId as string },
+            select: {
+                id: true,
+                studentDetails: true,
+                config: true,
+                status: true,
+                evaluation: true,
+                createdAt: true,
+                startedAt: true
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 20
+        });
         res.json(sessions);
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }
 };
+

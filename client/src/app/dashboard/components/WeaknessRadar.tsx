@@ -27,7 +27,7 @@ export default function WeaknessRadar() {
     }
 
     return (
-        <div className="relative overflow-hidden rounded-2xl bg-zinc-950/40 backdrop-blur-3xl border border-white/10 p-8 group">
+        <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-zinc-950/40 backdrop-blur-3xl border border-white/10 p-8 group">
             {/* Rainbow accent bar */}
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-amber-400 via-blue-500 to-violet-500" />
             {/* Scanning radar animation */}
@@ -56,7 +56,7 @@ export default function WeaknessRadar() {
                     <Crosshair className="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-white">Areas to Improve</h3>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Areas to Improve</h3>
                     <p className="text-xs text-zinc-500">Skills that need a little more practice</p>
                 </div>
             </div>
@@ -86,7 +86,7 @@ export default function WeaknessRadar() {
                                         <AlertTriangle className="w-4 h-4 relative z-10" />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-semibold text-white">{w.name}</h4>
+                                        <h4 className="text-sm font-semibold text-slate-900 dark:text-white">{w.name}</h4>
                                         <span className={`text-[10px] font-medium ${config.color}`}>{w.severity} priority</span>
                                     </div>
                                 </div>
@@ -105,7 +105,7 @@ export default function WeaknessRadar() {
                                 />
                             </div>
 
-                            <div className="flex items-center gap-2 text-[10px] text-zinc-400 group-hover/item:text-zinc-300 transition-colors">
+                            <div className="flex items-center gap-2 text-[10px] text-slate-900 dark:text-zinc-400 group-hover/item:text-slate-900 dark:text-zinc-300 transition-colors">
                                 <Brain className="w-3 h-3 text-primary shrink-0" />
                                 <span className="italic">{w.recommendation}</span>
                             </div>
@@ -121,7 +121,7 @@ export default function WeaknessRadar() {
                 transition={{ delay: 0.6 }}
                 className="mt-6 relative z-10"
             >
-                <button className="w-full h-11 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/20 transition-all text-xs font-semibold text-zinc-400 hover:text-white flex items-center justify-center gap-2 group/btn">
+                <button className="w-full h-11 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/20 transition-all text-xs font-semibold text-slate-900 dark:text-zinc-400 hover:text-slate-900 dark:text-white flex items-center justify-center gap-2 group/btn">
                     <Shield className="w-3.5 h-3.5 group-hover/btn:text-primary transition-colors" />
                     <span>View Full Analysis</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />

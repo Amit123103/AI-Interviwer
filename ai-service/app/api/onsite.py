@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import ollama
+from app.services.llm_service import llm_service
 import json
 import base64
 import io
+import os
 import edge_tts
 
 router = APIRouter(prefix="/onsite", tags=["Onsite"])
-MODEL_NAME = "llama3.1:8b"
+MODEL_NAME = os.getenv("NVIDIA_MODEL") or os.getenv("OLLAMA_MODEL") or "llama3.1:8b"
 
 class OnsiteInteractionRequest(BaseModel):
     user_id: str
@@ -31,7 +32,7 @@ async def onsite_chat(request: OnsiteInteractionRequest):
         system_prompt = f"You are a {persona} at {request.company}. Conduct a {request.round_type} interview. Be concise one question at a time."
         
         messages = [{"role": "system", "content": system_prompt}] + request.history + [{"role": "user", "content": request.user_input}]
-        response = ollama.chat(model=MODEL_NAME, messages=messages)
+        response = llm_service.chat(model=MODEL_NAME, messages=messages)
         ai_text = response['message']['content']
         
         voice = "en-US-EmmaNeural"
@@ -59,7 +60,7 @@ async def generate_onsite_decision(request: OnsiteDecisionRequest):
     try:
         context_str = json.dumps(request.reports)
         prompt = f"Act as Hiring Committee at {request.company}. Decisions based on reports: {context_str}"
-        response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], format='json')
+        response = llm_service.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}], format='json')
         return json.loads(response['message']['content'])
     except Exception as e:
         print(f"Error in onsite-decision: {e}")

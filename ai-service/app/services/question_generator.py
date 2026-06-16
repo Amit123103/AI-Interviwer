@@ -1,4 +1,4 @@
-import ollama
+from app.services.llm_service import llm_service
 import json
 import logging
 
@@ -48,7 +48,7 @@ def generate_coding_questions(resume_text: str, count: int = 3, difficulty: str 
     """
     
     try:
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a Coding Interview Question Generator. Output valid JSON array only. No Markdown formatting around the JSON."},
             {"role": "user", "content": prompt}
         ], format='json')

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import ollama
+from app.services.llm_service import llm_service
 import json
 from app.services.evaluator import evaluator
 
@@ -24,7 +24,7 @@ async def evaluate_technical(request: TechnicalEvaluationRequest):
         if request.is_initial:
             # Generate first technical question
             prompt = f"Generate a {request.coding_level} level technical interview question for {request.department} department."
-            response = ollama.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}])
+            response = llm_service.chat(model=MODEL_NAME, messages=[{"role": "user", "content": prompt}])
             return {"question": response['message']['content'], "difficulty_score": 5}
         
         # Evaluate code

@@ -1,6 +1,6 @@
-# AI Interviewer Platform
+# Intervyxa AI Platform
 
-An end-to-end, production-ready AI Interviewer Platform that automates the technical and behavioral interview process. The platform features a real-time AI interviewer capable of speech interaction, vision-based behavior analysis, and dynamic question generation.
+An end-to-end, production-ready Intervyxa AI Platform that automates the technical and behavioral interview process. The platform features a real-time AI interviewer capable of speech interaction, vision-based behavior analysis, and dynamic question generation.
 
 ## 🌟 Key Features
 

@@ -68,7 +68,7 @@ export default function OnsiteDetailPage() {
     }
 
     if (loading) return (
-        <div className="flex justify-center items-center h-screen bg-[#050505] relative overflow-hidden aurora-glow">
+        <div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-[#050505] relative overflow-hidden aurora-glow">
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/20 flex items-center justify-center shadow-[0_0_40px_rgba(139,92,246,0.15)]">
@@ -80,7 +80,7 @@ export default function OnsiteDetailPage() {
     )
 
     if (!loop) return (
-        <div className="text-white text-center py-20 font-black italic uppercase tracking-widest bg-[#050505] min-h-screen flex items-center justify-center aurora-glow">
+        <div className="text-slate-900 dark:text-white text-center py-20 font-black italic uppercase tracking-widest bg-slate-50 dark:bg-[#050505] min-h-screen flex items-center justify-center aurora-glow">
             <span className="bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">404 // SESSION_NOT_FOUND</span>
         </div>
     )
@@ -90,7 +90,7 @@ export default function OnsiteDetailPage() {
     const isHired = ['Strong Hire', 'Hire', 'Leaning Hire'].includes(recommendation)
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white p-6 md:p-16 selection:bg-violet-500 selection:text-white font-sans relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white p-6 md:p-16 selection:bg-violet-500 selection:text-slate-900 dark:text-white font-sans relative overflow-hidden aurora-glow">
             {showConfetti && <Confetti width={windowSize.width} height={windowSize.height} numberOfPieces={300} recycle={false} gravity={0.15} colors={['#8b5cf6', '#06b6d4', '#d946ef', '#10b981', '#FFFFFF']} />}
 
             {/* Floating ambient orbs */}
@@ -101,7 +101,7 @@ export default function OnsiteDetailPage() {
             <div className="max-w-5xl mx-auto space-y-16 relative z-10">
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                     <Link href="/dashboard/onsite">
-                        <Button variant="ghost" className="text-zinc-600 hover:text-violet-400 gap-3 mb-8 font-black uppercase tracking-widest text-[10px] bg-zinc-900/40 backdrop-blur-xl px-6 rounded-full border border-white/[0.06] hover:border-violet-500/20 transition-all">
+                        <Button variant="ghost" className="text-zinc-600 hover:text-violet-400 gap-3 mb-8 font-black uppercase tracking-widest text-[10px] bg-white dark:bg-zinc-900/40 backdrop-blur-xl px-6 rounded-full border border-white/[0.06] hover:border-violet-500/20 transition-all">
                             <ArrowLeft className="w-3 h-3" /> System Lobby
                         </Button>
                     </Link>
@@ -120,7 +120,7 @@ export default function OnsiteDetailPage() {
                                     <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent animate-gradient-x">
                                         {loop.company}
                                     </span>
-                                    <span className="text-white">.Loop</span>
+                                    <span className="text-slate-900 dark:text-white">.Loop</span>
                                 </h1>
                                 <div className="flex items-center gap-4 mt-2">
                                     <p className="text-zinc-500 text-xl font-bold uppercase tracking-tight">{loop.role}</p>
@@ -140,7 +140,7 @@ export default function OnsiteDetailPage() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             transition={{ type: 'spring', damping: 20 }}
                         >
-                            <Card className={`bg-zinc-900/40 backdrop-blur-2xl overflow-hidden relative border ${isHired ? 'border-emerald-500/20 shadow-[0_0_60px_rgba(16,185,129,0.1)]' : 'border-red-500/20 shadow-[0_0_60px_rgba(239,68,68,0.08)]'} rounded-[3rem]`}>
+                            <Card className={`bg-white dark:bg-zinc-900/40 backdrop-blur-2xl overflow-hidden relative border ${isHired ? 'border-emerald-500/20 shadow-[0_0_60px_rgba(16,185,129,0.1)]' : 'border-red-500/20 shadow-[0_0_60px_rgba(239,68,68,0.08)]'} rounded-[3rem]`}>
                                 <div className={`absolute top-0 left-0 w-full h-[1px] ${isHired ? 'bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent' : 'bg-gradient-to-r from-transparent via-red-500/40 to-transparent'}`} />
 
                                 <CardHeader className="p-12 pb-6">
@@ -159,7 +159,7 @@ export default function OnsiteDetailPage() {
 
                                         {isHired && (
                                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                                <Button onClick={startNegotiation} className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-black px-12 h-20 rounded-2xl gap-4 shadow-[0_0_40px_rgba(16,185,129,0.25)] hover:shadow-[0_0_55px_rgba(16,185,129,0.4)] text-xl uppercase tracking-widest border-0 transition-all hover:scale-[1.02]">
+                                                <Button onClick={startNegotiation} className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-slate-900 dark:text-white font-black px-12 h-20 rounded-2xl gap-4 shadow-[0_0_40px_rgba(16,185,129,0.25)] hover:shadow-[0_0_55px_rgba(16,185,129,0.4)] text-xl uppercase tracking-widest border-0 transition-all hover:scale-[1.02]">
                                                     <DollarSign className="w-8 h-8" /> Negotiate Offer
                                                 </Button>
                                             </motion.div>
@@ -170,7 +170,7 @@ export default function OnsiteDetailPage() {
                                 <CardContent className="p-12 pt-0 space-y-10">
                                     <div className="p-8 bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 border border-violet-500/10 rounded-[2rem] relative backdrop-blur-xl">
                                         <Quote className="absolute -top-4 -left-4 w-12 h-12 text-violet-500/10" />
-                                        <p className="text-zinc-300 leading-relaxed text-2xl font-medium italic">
+                                        <p className="text-slate-600 dark:text-zinc-300 leading-relaxed text-2xl font-medium italic">
                                             &ldquo;{loop.finalDecision.justification}&rdquo;
                                         </p>
                                     </div>
@@ -182,12 +182,12 @@ export default function OnsiteDetailPage() {
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 transition={{ delay: i * 0.1 }}
-                                                className="flex gap-5 items-center p-5 bg-zinc-900/40 backdrop-blur-xl rounded-2xl border border-white/[0.06] group hover:border-violet-500/15 transition-all"
+                                                className="flex gap-5 items-center p-5 bg-white dark:bg-zinc-900/40 backdrop-blur-xl rounded-2xl border border-white/[0.06] group hover:border-violet-500/15 transition-all"
                                             >
                                                 <div className="w-10 h-10 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 rounded-xl flex items-center justify-center shrink-0 border border-violet-500/10 group-hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all">
                                                     <MessageSquare className="w-5 h-5 text-violet-400" />
                                                 </div>
-                                                <span className="text-sm text-zinc-400 font-bold tracking-tight">{f}</span>
+                                                <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold tracking-tight">{f}</span>
                                             </motion.div>
                                         ))}
                                     </div>
@@ -220,7 +220,7 @@ export default function OnsiteDetailPage() {
 
                     <div className="relative pl-12 space-y-8">
                         {/* Vertical Progress Line */}
-                        <div className="absolute left-6 top-4 bottom-4 w-[2px] bg-zinc-900/60">
+                        <div className="absolute left-6 top-4 bottom-4 w-[2px] bg-white dark:bg-zinc-900/60">
                             <motion.div
                                 initial={{ height: 0 }}
                                 animate={{ height: `${(loop.rounds.filter((r: any) => r.status === 'Completed').length / loop.rounds.length) * 100}%` }}
@@ -244,7 +244,7 @@ export default function OnsiteDetailPage() {
                                         ? 'bg-emerald-500/[0.03] border-emerald-500/15 shadow-[0_0_25px_rgba(16,185,129,0.05)]'
                                         : isActive
                                             ? 'bg-violet-500/[0.03] border-violet-500/20 shadow-[0_0_30px_rgba(139,92,246,0.08)]'
-                                            : 'bg-zinc-900/20 border-white/[0.04] opacity-50'
+                                            : 'bg-white dark:bg-zinc-900/20 border-white/[0.04] opacity-50'
                                         }`}
                                 >
                                     {/* Gradient top line */}
@@ -253,7 +253,7 @@ export default function OnsiteDetailPage() {
                                     )}
 
                                     {/* Connection Point */}
-                                    <div className={`absolute -left-[30px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-4 border-[#050505] z-10 ${isCompleted ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : isActive ? 'bg-violet-500 animate-pulse shadow-[0_0_15px_rgba(139,92,246,0.5)]' : 'bg-zinc-800'}`} />
+                                    <div className={`absolute -left-[30px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-4 border-slate-300 dark:border-[#050505] z-10 ${isCompleted ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : isActive ? 'bg-violet-500 animate-pulse shadow-[0_0_15px_rgba(139,92,246,0.5)]' : 'bg-zinc-800'}`} />
 
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                                         <div className="flex items-center gap-6">
@@ -261,7 +261,7 @@ export default function OnsiteDetailPage() {
                                                 ? 'bg-gradient-to-br from-emerald-500/15 to-cyan-500/15 text-emerald-400 border border-emerald-500/15 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
                                                 : isActive
                                                     ? 'bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 text-violet-400 border border-violet-500/15 shadow-[0_0_15px_rgba(139,92,246,0.1)]'
-                                                    : 'bg-zinc-900/60 text-zinc-700 border border-white/[0.04]'
+                                                    : 'bg-white dark:bg-zinc-900/60 text-zinc-700 border border-white/[0.04]'
                                                 }`}>
                                                 <RoundIcon className="w-8 h-8" />
                                             </div>
@@ -277,7 +277,7 @@ export default function OnsiteDetailPage() {
                                                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                                                     )}
                                                 </div>
-                                                <h4 className={`text-2xl font-black uppercase tracking-tight ${isCompleted ? 'text-zinc-400' : isActive ? 'text-white' : 'text-zinc-600'}`}>
+                                                <h4 className={`text-2xl font-black uppercase tracking-tight ${isCompleted ? 'text-slate-500 dark:text-zinc-400' : isActive ? 'text-slate-900 dark:text-white' : 'text-zinc-600'}`}>
                                                     {round.roundName}
                                                 </h4>
                                                 <p className="text-zinc-600 font-bold uppercase text-[10px] tracking-widest mt-1">
@@ -288,7 +288,7 @@ export default function OnsiteDetailPage() {
 
                                         {isCompleted ? (
                                             <Link href={`/dashboard/report/${round.reportId?._id || round.reportId}`}>
-                                                <Button className="h-12 px-6 rounded-xl bg-zinc-900/40 backdrop-blur-xl hover:bg-zinc-800/60 text-white font-black uppercase tracking-widest text-[9px] border border-white/[0.06] hover:border-emerald-500/20 flex items-center gap-3 transition-all shadow-[0_0_15px_rgba(16,185,129,0.08)] hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                                                <Button className="h-12 px-6 rounded-xl bg-white dark:bg-zinc-900/40 backdrop-blur-xl hover:bg-zinc-800/60 text-slate-900 dark:text-white font-black uppercase tracking-widest text-[9px] border border-white/[0.06] hover:border-emerald-500/20 flex items-center gap-3 transition-all shadow-[0_0_15px_rgba(16,185,129,0.08)] hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]">
                                                     <FileText className="w-4 h-4 text-emerald-400" /> Analysis Report
                                                 </Button>
                                             </Link>
@@ -296,8 +296,8 @@ export default function OnsiteDetailPage() {
                                             <Button
                                                 onClick={() => router.push(`/dashboard/onsite/${loop._id}/round/${i}`)}
                                                 className={`h-14 px-10 rounded-2xl font-black gap-4 text-[10px] tracking-widest transition-all border-0 ${isActive
-                                                    ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:scale-105 shadow-[0_0_30px_rgba(139,92,246,0.25)] hover:shadow-[0_0_40px_rgba(139,92,246,0.4)]'
-                                                    : 'bg-zinc-900/40 text-white/20 border border-white/[0.04]'
+                                                    ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white hover:scale-105 shadow-[0_0_30px_rgba(139,92,246,0.25)] hover:shadow-[0_0_40px_rgba(139,92,246,0.4)]'
+                                                    : 'bg-white dark:bg-zinc-900/40 text-slate-900 dark:text-white/20 border border-white/[0.04]'
                                                     }`}
                                                 disabled={loop.status === 'Completed' || !isActive}
                                             >
@@ -328,7 +328,7 @@ export default function OnsiteDetailPage() {
                         <Button
                             onClick={handleFinalize}
                             disabled={finalizing}
-                            className="h-20 px-16 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-white font-black uppercase tracking-[0.2em] text-lg hover:scale-105 transition-all shadow-[0_0_50px_rgba(139,92,246,0.3)] hover:shadow-[0_0_65px_rgba(139,92,246,0.5)] border-0"
+                            className="h-20 px-16 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-slate-900 dark:text-white font-black uppercase tracking-[0.2em] text-lg hover:scale-105 transition-all shadow-[0_0_50px_rgba(139,92,246,0.3)] hover:shadow-[0_0_65px_rgba(139,92,246,0.5)] border-0"
                         >
                             {finalizing ? <Loader2 className="animate-spin w-8 h-8" /> : "Request Hiring Decision"}
                         </Button>

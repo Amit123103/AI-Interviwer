@@ -98,9 +98,20 @@ class InterviewFlowManager:
         else:
             profile_context += "\n(No full resume text available, rely on extracted summary)"
 
-        senior_guidelines = ""
+        student_guidelines = ""
         experience_level = self.profile.get('experienceLevel', 'Entry')
-        if "Senior" in experience_level or "Lead" in experience_level or "Staff" in experience_level:
+        if any(x in experience_level for x in ["Entry", "Fresher", "Junior", "Student", "Intern"]):
+            student_guidelines = """
+            STUDENT/JUNIOR INTERVIEW MODE:
+            - **Focus on Fundamentals**: Ask about Data Structures, Complexity (Big O), and basic Algorithms.
+            - **Project Execution**: Ask "How did you implement X?" or "What was the hardest bug in this library?".
+            - **Concept over Config**: If they use a tool (e.g., Docker), ask "Why is it better than a VM?" rather than specific commands.
+            - **Growth Mindset**: If they don't know, ask "How would you find out?".
+            - Be encouraging but rigorously test for solid CS foundations.
+            """
+
+        senior_guidelines = ""
+        if any(x in experience_level for x in ["Senior", "Lead", "Staff", "Architect", "VP", "Manager"]):
             senior_guidelines = """
             SENIOR/STAFF INTERVIEW MODE:
             - **Challenge Assumptions**: If they choose a tech stack, ask "Why not X instead?".
@@ -117,20 +128,20 @@ class InterviewFlowManager:
         CANDIDATE PROFILE:
         {profile_context}
         
-        Current Education: {self.profile.get('course', 'N/A')}
+        Current Education/Course: {self.profile.get('course', 'Computer Science')}
         Experience Level: {experience_level}
         
         CURRENT STAGE: {self.current_stage} (Question {self.current_question_index} of {self.total_questions})
         
         YOUR GOAL: {self.get_stage_instructions()}
         
+        {student_guidelines}
         {senior_guidelines}
         
         INTERVIEW GUIDELINES:
-        1. **USE THE RESUME**: Ask about specific details found in the resume text (e.g., "I see you used Redux in your e-commerce project...").
-        2. BE SPECIFIC: Do not ask generic questions.
-        3. SHORT & CONVERSATIONAL: Max 2-3 sentences.
-        4. FOLLOW UP: Dig deeper into their previous answer.
-        5. TONE: {persona}.
+        1. **RESUME DRIVEN**: Refer to their specific projects and skills by name.
+        2. SMART FOLLOW-UP: If they answer concisely, dig deeper into "How" and "Why".
+        3. SHORT & CONVERSATIONAL: Max 2-3 sentences per turn.
+        4. TONE: {persona}.
         """
 

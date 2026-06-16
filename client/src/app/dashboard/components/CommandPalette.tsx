@@ -21,8 +21,8 @@ interface PaletteItem {
 
 const ITEMS: PaletteItem[] = [
     { id: "dashboard", label: "Dashboard", description: "Go to home", icon: <User className="w-4 h-4" />, href: "/dashboard", category: "Navigation", keywords: ["home", "main"] },
-    { id: "interview", label: "Start Interview", description: "Begin a mock interview", icon: <Play className="w-4 h-4 text-primary" />, href: "/interview/setup", category: "Actions", keywords: ["start", "begin", "mock", "practice"] },
-    { id: "instant", label: "Instant Interview", description: "Jump into voice interview", icon: <Video className="w-4 h-4 text-amber-400" />, href: "/instant-interview", category: "Actions", keywords: ["quick", "voice", "fast"] },
+    { id: "interview", label: "Start Interview", description: "Begin a mock interview", icon: <Play className="w-4 h-4 text-primary" />, href: "/dashboard/interview/setup", category: "Actions", keywords: ["start", "begin", "mock", "practice"] },
+    { id: "instant", label: "Instant Interview", description: "Jump into voice interview", icon: <Video className="w-4 h-4 text-amber-400" />, href: "/dashboard/interview/setup", category: "Actions", keywords: ["quick", "voice", "fast"] },
     { id: "code", label: "Coding Practice", description: "DSA & Algorithms", icon: <Code2 className="w-4 h-4 text-purple-400" />, href: "/dashboard/code", category: "Practice", keywords: ["coding", "dsa", "algorithm", "leetcode"] },
     { id: "technical", label: "Technical Round", description: "AI-proctored coding", icon: <Terminal className="w-4 h-4 text-blue-400" />, href: "/dashboard/technical/details", category: "Practice", keywords: ["tech", "coding", "round"] },
     { id: "resume", label: "Resume Review", description: "AI resume analysis", icon: <FileText className="w-4 h-4 text-emerald-400" />, href: "/dashboard/resume", category: "Tools", keywords: ["resume", "cv", "review"] },
@@ -34,7 +34,7 @@ const ITEMS: PaletteItem[] = [
     { id: "templates", label: "Templates", description: "Job-role templates", icon: <Search className="w-4 h-4 text-emerald-400" />, href: "/dashboard/templates", category: "Tools", keywords: ["template", "role", "job"] },
     { id: "collab", label: "Collaboration", description: "Create or join rooms", icon: <Users className="w-4 h-4 text-indigo-400" />, href: "/dashboard/collaboration/new", category: "Actions", keywords: ["collab", "peer", "room", "video"] },
     { id: "roadmap", label: "Roadmap", description: "Learning path", icon: <Brain className="w-4 h-4 text-pink-400" />, href: "/dashboard/roadmap", category: "Tools", keywords: ["roadmap", "path", "learn"] },
-    { id: "settings", label: "Settings", description: "Account preferences", icon: <Settings className="w-4 h-4 text-zinc-400" />, href: "/dashboard/settings", category: "Navigation", keywords: ["settings", "account", "profile", "preferences"] },
+    { id: "settings", label: "Settings", description: "Account preferences", icon: <Settings className="w-4 h-4 text-slate-900 dark:text-zinc-400" />, href: "/dashboard/settings", category: "Navigation", keywords: ["settings", "account", "profile", "preferences"] },
 ]
 
 export default function CommandPalette() {
@@ -107,7 +107,7 @@ export default function CommandPalette() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                        className="fixed inset-0 bg-white dark:bg-black/60 backdrop-blur-sm z-[100]"
                         onClick={() => setOpen(false)}
                     />
 
@@ -117,11 +117,11 @@ export default function CommandPalette() {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 400 }}
-                        className="fixed top-[15%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[600px] bg-zinc-950/95 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 z-[101] overflow-hidden"
+                        className="fixed top-[15%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[600px] bg-white dark:bg-zinc-950/95 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 z-[101] overflow-hidden"
                     >
                         {/* Search Input */}
                         <div className="flex items-center gap-3 px-6 py-5 border-b border-white/5">
-                            <Search className="w-5 h-5 text-zinc-400 shrink-0" />
+                            <Search className="w-5 h-5 text-slate-900 dark:text-zinc-400 shrink-0" />
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -129,10 +129,10 @@ export default function CommandPalette() {
                                 onChange={e => { setQuery(e.target.value); setSelectedIndex(0) }}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Search commands, pages, actions..."
-                                className="flex-1 bg-transparent text-white text-sm font-medium outline-none placeholder:text-zinc-500"
+                                className="flex-1 bg-transparent text-slate-900 dark:text-white text-sm font-medium outline-none placeholder:text-zinc-500"
                             />
                             <div className="flex items-center gap-1">
-                                <kbd className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-black text-zinc-400 uppercase">ESC</kbd>
+                                <kbd className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-black text-slate-900 dark:text-zinc-400 uppercase">ESC</kbd>
                             </div>
                         </div>
 
@@ -163,7 +163,7 @@ export default function CommandPalette() {
                                                         {item.icon}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-sm font-bold text-white truncate">{item.label}</div>
+                                                        <div className="text-sm font-bold text-slate-900 dark:text-white truncate">{item.label}</div>
                                                         <div className="text-[11px] text-zinc-500 truncate">{item.description}</div>
                                                     </div>
                                                     {idx === selectedIndex && (
@@ -183,7 +183,7 @@ export default function CommandPalette() {
                                 <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px]">↑↓</kbd> Navigate</span>
                                 <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px]">↵</kbd> Select</span>
                             </div>
-                            <span className="text-primary italic">AMITAI Command</span>
+                            <span className="text-primary italic">Intervyxa Command</span>
                         </div>
                     </motion.div>
                 </>

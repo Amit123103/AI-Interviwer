@@ -55,7 +55,7 @@ export default function QuickTips() {
     const currentTip = tips[index]
 
     return (
-        <div className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col shadow-2xl">
+        <div className="bg-white dark:bg-slate-900/40 backdrop-blur-2xl border border-white/5 p-8 rounded-2xl relative overflow-hidden group h-full flex flex-col shadow-2xl">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-blue-500/50 via-indigo-500/50 to-transparent" />
             <div className="absolute top-0 left-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -z-10" />
 
@@ -65,7 +65,7 @@ export default function QuickTips() {
                         <Sparkles className="w-5 h-5 text-blue-400" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white tracking-tight">Quick Tips</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Quick Tips</h3>
                         <p className="text-xs text-slate-500">Sharpen your technique</p>
                     </div>
                 </div>
@@ -95,8 +95,8 @@ export default function QuickTips() {
                         </div>
 
                         <div className="relative">
-                            <Quote className="absolute -top-4 -left-4 w-10 h-10 text-white/5 -z-10" />
-                            <p className="text-lg font-medium leading-relaxed text-slate-200 indent-2">
+                            <Quote className="absolute -top-4 -left-4 w-10 h-10 text-slate-900 dark:text-white/5 -z-10" />
+                            <p className="text-lg font-medium leading-relaxed text-slate-900 dark:text-slate-200 indent-2">
                                 {currentTip.content}
                             </p>
                         </div>
@@ -108,13 +108,13 @@ export default function QuickTips() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setIndex((prev) => (prev - 1 + tips.length) % tips.length)}
-                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-white transition-all hover:bg-white/10"
+                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-slate-900 dark:text-white transition-all hover:bg-white/10"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => setIndex((prev) => (prev + 1) % tips.length)}
-                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-white transition-all hover:bg-white/10"
+                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-slate-900 dark:text-white transition-all hover:bg-white/10"
                     >
                         <ChevronRight className="w-5 h-5" />
                     </button>

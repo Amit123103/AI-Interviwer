@@ -6,10 +6,11 @@ targeted questions based on skills, projects, education, and experience.
 """
 
 import re
+import os
 import json
-import ollama
+from app.services.llm_service import llm_service
 
-MODEL_NAME = "llama3.1:8b"
+MODEL_NAME = os.getenv("NVIDIA_MODEL") or os.getenv("OLLAMA_MODEL") or "llama3.1:8b"
 
 
 from app.services.vector_store import vector_manager
@@ -137,9 +138,9 @@ class ResumeIntelligence:
         
         return projects[:5]  # Cap at 5 projects
 
-    def analyze_resume_deep(self, resume_text: str, job_role: str = "", target_company: str = "") -> dict:
+    def analyze_resume_deep(self, resume_text: str, job_role: str = "", target_company: str = "", api_key: str = None) -> dict:
         """
-        Deep resume analysis using Ollama LLM.
+        Deep resume analysis using LLM.
         Returns structured profile with skills, projects, education, experience.
         """
         if not resume_text or len(resume_text.strip()) < 20:
@@ -167,28 +168,33 @@ RESUME EXCERPT:
 ROLE: {job_role or 'Engineer'}
 COMPANY: {target_company or 'General'}
 
+INSTRUCTIONS FOR STUDENTS:
+- If this is a student, highlight University Projects, Hackathons, and GPA.
+- Prioritize technical core competencies over professional history if experience is limited.
+
 Return JSON:
 {{
     "technical_pillars": ["Top 3 specialties"],
     "key_skills": ["Top 8 skills"],
     "projects": [
-        {{"name": "Project Name", "tech_stack": ["techs"], "impact": "Brief impact"}}
+        {{"name": "Project Name", "tech_stack": ["techs"], "impact": "Brief impact", "complexity": "E/M/H"}}
     ],
-    "experience_summary": "1 sentence summary",
-    "education": "Degree",
+    "experience_summary": "1 sentence narrative",
+    "education": "University & Degree",
+    "gpa": "If found",
     "strengths": ["3 strengths"],
-    "level": "Junior/Mid/Senior",
+    "level": "Fresher/Junior/Mid/Senior",
     "question_focus_areas": ["5 interview topics"]
 }}"""
 
-            response = ollama.chat(
-                model=MODEL_NAME,
+            response = llm_service.chat(
                 messages=[
                     {"role": "system", "content": "You are a fast Resume Parser. Output JSON only."},
                     {"role": "user", "content": prompt}
                 ],
                 format='json',
-                options={"num_predict": 400, "temperature": 0.1}
+                options={"num_predict": 400, "temperature": 0.1},
+                override_api_key=api_key
             )
 
             llm_analysis = self._clean_json(response['message']['content'])
@@ -244,7 +250,8 @@ Return JSON:
         persona: str = "Friendly Mentor",
         job_description: str = "",
         target_company: str = "",
-        interview_type: str = "Mixed"
+        interview_type: str = "Mixed",
+        api_key: str = None
     ) -> dict:
         """
         Generate personalized interview questions with metadata.
@@ -293,15 +300,21 @@ OUTPUT FORMAT:
 
 PROFILE:
 - Level: {level}
+- Education: {resume_analysis.get('education', 'N/A')}
 - Pillars: {', '.join(pillars)}
 - Skills: {', '.join(skills[:8])}
 - Projects: {json.dumps(projects[:2], indent=1)}
 - Focus: {', '.join(focus_areas[:5])}
 
 CONTEXT:
-- Company: {target_company or 'Tech Company'}
+- Company/Goal: {target_company or 'Tech Recruiter'}
 - Type: {interview_type}
 - Difficulty: {difficulty}
+
+SPECIAL INSTRUCTIONS FOR STUDENT INTERVIEW:
+- If level is Fresher or Junior, ask deep conceptual questions about their core skills.
+- Ask at least one question specifically referencing a project mentioned above.
+- Be encouraging but rigorous.
 
 RULES:
 1. Return exactly {total_questions} questions.
@@ -322,14 +335,14 @@ OUTPUT FORMAT:
 }}"""
 
         try:
-            response = ollama.chat(
-                model=MODEL_NAME,
+            response = llm_service.chat(
                 messages=[
                     {"role": "system", "content": "You are a professional interviewer. Output JSON only."},
                     {"role": "user", "content": prompt}
                 ],
                 format='json',
-                options={"num_predict": 800, "temperature": 0.2}
+                options={"num_predict": 800, "temperature": 0.2},
+                override_api_key=api_key
             )
 
 

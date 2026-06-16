@@ -62,7 +62,7 @@ export default function TemplatesPage() {
 
     const handleStartInterview = (template: InterviewTemplate) => {
         localStorage.setItem("selected_template", JSON.stringify(template))
-        router.push("/interview/setup")
+        router.push("/dashboard/interview/setup")
     }
 
     const getDifficultyColor = (difficulty: string) => {
@@ -93,7 +93,7 @@ export default function TemplatesPage() {
         const Icon = template.icon
         return (
             <TiltCard
-                className="group relative overflow-hidden rounded-2xl bg-zinc-900/50 border border-white/5 hover:bg-zinc-900/80 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)] transition-all duration-500 backdrop-blur-2xl hover-shine"
+                className="group relative overflow-hidden rounded-2xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 hover:bg-white dark:bg-zinc-900/80 hover:border-violet-500/20 hover:shadow-[0_0_35px_rgba(139,92,246,0.06)] transition-all duration-500 backdrop-blur-2xl hover-shine"
             >
                 <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
 
@@ -120,7 +120,7 @@ export default function TemplatesPage() {
 
                     {/* Icon & Title */}
                     <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-zinc-950 border border-white/5 flex items-center justify-center ${template.color} shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-xl relative overflow-hidden`}>
+                        <div className={`w-12 h-12 rounded-xl bg-white dark:bg-zinc-950 border border-slate-100 dark:border-white/5 flex items-center justify-center ${template.color} shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-xl relative overflow-hidden`}>
                             <div className="absolute inset-0 bg-white/5 animate-pulse" />
                             {Icon ? <Icon className="w-6 h-6 relative z-10" /> : <Clock className="w-6 h-6 relative z-10" />}
                         </div>
@@ -131,7 +131,7 @@ export default function TemplatesPage() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-xs text-zinc-400 line-clamp-2 min-h-[32px] font-medium leading-relaxed">
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 line-clamp-2 min-h-[32px] font-medium leading-relaxed">
                         {template.description}
                     </p>
 
@@ -146,7 +146,7 @@ export default function TemplatesPage() {
                     </div>
 
                     {/* Stats */}
-                    <div className="flex items-center gap-4 text-[10px] text-zinc-500 border-t border-white/5 pt-3 mt-2 font-black uppercase tracking-widest">
+                    <div className="flex items-center gap-4 text-[10px] text-zinc-500 border-t border-slate-100 dark:border-white/5 pt-3 mt-2 font-black uppercase tracking-widest">
                         <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-violet-400/60" /> {template.duration}M</span>
                         <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500/60" /> {template.questionCount} Q</span>
                     </div>
@@ -157,7 +157,7 @@ export default function TemplatesPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setPreviewTemplate(template)}
-                            className="flex-1 h-9 rounded-xl border-white/10 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest"
+                            className="flex-1 h-9 rounded-xl border-slate-200 dark:border-white/10 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest"
                         >
                             <Eye className="w-3 h-3 mr-2" />
                             Scanner
@@ -165,7 +165,7 @@ export default function TemplatesPage() {
                         <Button
                             size="sm"
                             onClick={() => handleStartInterview(template)}
-                            className="flex-1 h-9 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white hover:from-violet-400 hover:to-fuchsia-400 font-black text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] transition-all duration-300"
+                            className="flex-1 h-9 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-slate-900 dark:text-white hover:from-violet-400 hover:to-fuchsia-400 font-black text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] transition-all duration-300"
                         >
                             <Play className="w-3 h-3 mr-2 fill-current" />
                             Uplink
@@ -177,7 +177,7 @@ export default function TemplatesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-transparent text-white relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-transparent text-slate-900 dark:text-white relative overflow-hidden aurora-glow">
             <MeshBackground />
             <HolographicHud />
 
@@ -202,16 +202,16 @@ export default function TemplatesPage() {
                             placeholder="Search roles (Direct filtering)..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 h-11 bg-zinc-900/50 border-white/10 text-white placeholder:text-zinc-500 rounded-xl text-sm focus-visible:ring-primary/50"
+                            className="pl-10 h-11 bg-white/60 dark:bg-zinc-900/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-zinc-500 rounded-xl text-sm focus-visible:ring-primary/50"
                         />
                     </div>
                 </div>
 
                 {/* Filters Bar */}
                 <div className="flex flex-col lg:flex-row gap-4">
-                    <div className="bg-zinc-900/30 p-1.5 rounded-xl border border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
+                    <div className="bg-white dark:bg-zinc-900/30 p-1.5 rounded-xl border border-slate-100 dark:border-white/5 flex gap-2 overflow-x-auto no-scrollbar">
                         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-zinc-400 data-[state=open]:text-white hover:text-white transition-colors">
+                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-slate-500 dark:text-zinc-400 data-[state=open]:text-slate-900 dark:text-white hover:text-slate-900 dark:text-white transition-colors">
                                 <Filter className="w-4 h-4 mr-2" />
                                 <SelectValue placeholder="Category" />
                             </SelectTrigger>
@@ -223,7 +223,7 @@ export default function TemplatesPage() {
                         </Select>
                         <div className="w-px bg-white/10 my-1" />
                         <Select value={selectedType} onValueChange={setSelectedType}>
-                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-zinc-400 data-[state=open]:text-white hover:text-white transition-colors">
+                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-slate-500 dark:text-zinc-400 data-[state=open]:text-slate-900 dark:text-white hover:text-slate-900 dark:text-white transition-colors">
                                 <SelectValue placeholder="Type" />
                             </SelectTrigger>
                             <SelectContent>
@@ -234,7 +234,7 @@ export default function TemplatesPage() {
                         </Select>
                         <div className="w-px bg-white/10 my-1" />
                         <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-zinc-400 data-[state=open]:text-white hover:text-white transition-colors">
+                            <SelectTrigger className="bg-transparent border-0 h-9 min-w-[140px] focus:ring-0 text-slate-500 dark:text-zinc-400 data-[state=open]:text-slate-900 dark:text-white hover:text-slate-900 dark:text-white transition-colors">
                                 <SelectValue placeholder="Difficulty" />
                             </SelectTrigger>
                             <SelectContent>
@@ -254,7 +254,7 @@ export default function TemplatesPage() {
                                 setSelectedType("All Types")
                                 setSelectedDifficulty("All Levels")
                             }}
-                            className="text-zinc-500 hover:text-white h-12 lg:w-auto w-full"
+                            className="text-zinc-500 hover:text-slate-900 dark:text-white h-12 lg:w-auto w-full"
                         >
                             Clear Filters
                         </Button>
@@ -274,7 +274,7 @@ export default function TemplatesPage() {
                                     {filteredTemplates.map(t => <TemplateCard key={t.id} template={t} />)}
                                 </div>
                             ) : (
-                                <div className="text-center py-20 bg-zinc-900/30 rounded-2xl border border-white/5 border-dashed">
+                                <div className="text-center py-20 bg-white dark:bg-zinc-900/30 rounded-2xl border border-slate-100 dark:border-white/5 border-dashed">
                                     <p className="text-zinc-500">No templates found matching your criteria.</p>
                                     <Button variant="link" onClick={() => setSearchQuery("")}>Clear Search</Button>
                                 </div>
@@ -283,10 +283,10 @@ export default function TemplatesPage() {
                     ) : (
                         // If NOT Filtering: Show Tabs
                         <Tabs defaultValue="Company" className="space-y-6" onValueChange={setActiveTab}>
-                            <TabsList className="bg-zinc-900/50 p-1 border border-white/5 h-12 w-full md:w-auto inline-flex">
-                                <TabsTrigger value="Company" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-zinc-400 transition-all">Company Roles ({companyTemplates.length})</TabsTrigger>
-                                <TabsTrigger value="Government" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(16,185,129,0.15)] text-zinc-400 transition-all">Government ({govtTemplates.length})</TabsTrigger>
-                                <TabsTrigger value="Medical" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-500 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(244,63,94,0.15)] text-zinc-400 transition-all">Medical ({medicalTemplates.length})</TabsTrigger>
+                            <TabsList className="bg-white/60 dark:bg-zinc-900/50 p-1 border border-slate-100 dark:border-white/5 h-12 w-full md:w-auto inline-flex">
+                                <TabsTrigger value="Company" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(139,92,246,0.15)] text-slate-500 dark:text-zinc-400 transition-all">Company Roles ({companyTemplates.length})</TabsTrigger>
+                                <TabsTrigger value="Government" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-cyan-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(16,185,129,0.15)] text-slate-500 dark:text-zinc-400 transition-all">Government ({govtTemplates.length})</TabsTrigger>
+                                <TabsTrigger value="Medical" className="h-10 px-6 data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-500 data-[state=active]:text-slate-900 dark:text-white data-[state=active]:shadow-[0_0_15px_rgba(244,63,94,0.15)] text-slate-500 dark:text-zinc-400 transition-all">Medical ({medicalTemplates.length})</TabsTrigger>
                             </TabsList>
 
                             <TabsContent value="Company" className="mt-0 animate-in fade-in slide-in-from-left-4 duration-300">
@@ -313,37 +313,37 @@ export default function TemplatesPage() {
 
             {/* Preview Modal */}
             <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
-                <DialogContent className="bg-zinc-950/95 border-white/10 text-white max-w-2xl max-h-[85vh] overflow-y-auto p-0 gap-0 rounded-2xl backdrop-blur-2xl shadow-[0_0_60px_rgba(139,92,246,0.08)]">
+                <DialogContent className="bg-white dark:bg-zinc-950/95 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white max-w-2xl max-h-[85vh] overflow-y-auto p-0 gap-0 rounded-2xl backdrop-blur-2xl shadow-[0_0_60px_rgba(139,92,246,0.08)]">
                     {previewTemplate && (
                         <>
                             <div className={`h-32 w-full bg-gradient-to-r from-violet-500/10 via-zinc-900 to-fuchsia-500/10 relative overflow-hidden flex items-center px-8 border-b border-white/5`}>
                                 <div className="absolute inset-0 bg-white/5 opacity-50 pattern-grid-lg" />
                                 <div className="flex items-center gap-6 relative z-10">
-                                    <div className={`w-16 h-16 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center ${previewTemplate.color} shadow-2xl`}>
+                                    <div className={`w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 flex items-center justify-center ${previewTemplate.color} shadow-2xl`}>
                                         {React.createElement(previewTemplate.icon, { className: "w-8 h-8" })}
                                     </div>
                                     <div className="space-y-1">
                                         <DialogTitle className="text-2xl font-bold">{previewTemplate.title}</DialogTitle>
-                                        <DialogDescription className="text-zinc-400 text-base">{previewTemplate.category}</DialogDescription>
+                                        <DialogDescription className="text-slate-500 dark:text-zinc-400 text-base">{previewTemplate.category}</DialogDescription>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="p-8 space-y-8">
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <div className="p-3 rounded-xl bg-zinc-900/50 border border-white/5 text-center">
+                                    <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 text-center">
                                         <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Type</div>
                                         <div className="font-bold text-sm">{previewTemplate.interviewType}</div>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-zinc-900/50 border border-white/5 text-center">
+                                    <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 text-center">
                                         <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Level</div>
                                         <div className="font-bold text-sm">{previewTemplate.difficulty}</div>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-zinc-900/50 border border-white/5 text-center">
+                                    <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 text-center">
                                         <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Time</div>
                                         <div className="font-bold text-sm">{previewTemplate.duration}m</div>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-zinc-900/50 border border-white/5 text-center">
+                                    <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 text-center">
                                         <div className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Count</div>
                                         <div className="font-bold text-sm">{previewTemplate.questionCount} Qs</div>
                                     </div>
@@ -351,14 +351,14 @@ export default function TemplatesPage() {
 
                                 <div>
                                     <h4 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent mb-3">Overview</h4>
-                                    <p className="text-zinc-300 leading-relaxed text-sm md:text-base">{previewTemplate.description}</p>
+                                    <p className="text-slate-600 dark:text-zinc-300 leading-relaxed text-sm md:text-base">{previewTemplate.description}</p>
                                 </div>
 
                                 <div>
                                     <h4 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-fuchsia-400 to-violet-400 bg-clip-text text-transparent mb-3">Key Topics</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {previewTemplate.topicsCovered.map(topic => (
-                                            <span key={topic} className="px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 text-sm border border-white/5">
+                                            <span key={topic} className="px-3 py-1.5 rounded-lg bg-white/5 text-slate-600 dark:text-zinc-300 text-sm border border-slate-100 dark:border-white/5">
                                                 {topic}
                                             </span>
                                         ))}
@@ -370,7 +370,7 @@ export default function TemplatesPage() {
                                         <h4 className="text-sm font-bold uppercase tracking-widest bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent mb-3">Sample Questions</h4>
                                         <ul className="space-y-3">
                                             {previewTemplate.sampleQuestions.map((q, i) => (
-                                                <li key={i} className="flex gap-3 text-sm text-zinc-300 bg-zinc-900/30 p-3 rounded-lg border border-white/5">
+                                                <li key={i} className="flex gap-3 text-sm text-slate-600 dark:text-zinc-300 bg-white dark:bg-zinc-900/30 p-3 rounded-lg border border-slate-100 dark:border-white/5">
                                                     <span className="text-zinc-500 font-mono text-xs pt-0.5">0{i + 1}</span>
                                                     <span>{q}</span>
                                                 </li>
@@ -380,7 +380,7 @@ export default function TemplatesPage() {
                                 )}
 
                                 <div className="pt-4">
-                                    <Button size="lg" className="w-full h-14 text-lg font-bold bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-white hover:from-violet-400 hover:via-fuchsia-400 hover:to-cyan-400 shadow-[0_0_30px_rgba(139,92,246,0.2)] hover:shadow-[0_0_50px_rgba(139,92,246,0.3)] transition-all duration-500 hover:-translate-y-0.5" onClick={() => handleStartInterview(previewTemplate)}>
+                                    <Button size="lg" className="w-full h-14 text-lg font-bold bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-slate-900 dark:text-white hover:from-violet-400 hover:via-fuchsia-400 hover:to-cyan-400 shadow-[0_0_30px_rgba(139,92,246,0.2)] hover:shadow-[0_0_50px_rgba(139,92,246,0.3)] transition-all duration-500 hover:-translate-y-0.5" onClick={() => handleStartInterview(previewTemplate)}>
                                         Start Interview Session <Play className="w-5 h-5 ml-2 fill-current" />
                                     </Button>
                                 </div>

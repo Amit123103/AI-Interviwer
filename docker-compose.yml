@@ -1,28 +1,18 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-    restart: unless-stopped
-
   postgres:
     image: postgres:16-alpine
-    container_name: postgres_db
+    container_name: intervyxa_ai_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ai_interviewer
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: intervyxa_ai
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  mongo_data:
-  postgres_data:
+  pgdata:

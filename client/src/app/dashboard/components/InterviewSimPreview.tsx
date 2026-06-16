@@ -30,7 +30,7 @@ export default function InterviewSimPreview() {
         setIsConnecting(true)
         // Simulate a connection protocol before routing
         setTimeout(() => {
-            router.push(`/interview/setup?persona=${selectedPersona.id}&topic=${encodeURIComponent(selectedTopic)}`)
+            router.push(`/dashboard/interview/setup?persona=${selectedPersona.id}&topic=${encodeURIComponent(selectedTopic)}`)
         }, 2000)
     }
 
@@ -59,7 +59,7 @@ export default function InterviewSimPreview() {
                                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
                                 className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selectedPersona.color} flex items-center justify-center p-0.5`}
                             >
-                                <div className="w-full h-full bg-zinc-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                                <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
                                     <div className={`absolute inset-0 bg-gradient-to-br ${selectedPersona.color} opacity-20`} />
                                     <Brain className={`w-6 h-6 ${selectedPersona.iconColor} relative z-10`} />
                                 </div>
@@ -73,7 +73,7 @@ export default function InterviewSimPreview() {
                             />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 AI Interviewer
                             </h3>
                             <AnimatePresence mode="wait">
@@ -103,7 +103,7 @@ export default function InterviewSimPreview() {
                             <button
                                 key={p.id}
                                 onClick={() => setSelectedPersona(p)}
-                                className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all relative z-10 ${selectedPersona.id === p.id ? 'text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'}`}
+                                className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all relative z-10 ${selectedPersona.id === p.id ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-zinc-400 hover:text-slate-900 dark:text-zinc-200 hover:bg-white/5'}`}
                             >
                                 {selectedPersona.id === p.id && (
                                     <motion.div
@@ -127,8 +127,8 @@ export default function InterviewSimPreview() {
                                 key={topic}
                                 onClick={() => setSelectedTopic(topic)}
                                 className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all duration-300 border ${selectedTopic === topic
-                                        ? `bg-zinc-800 border-zinc-600 text-white shadow-sm ring-1 ring-white/10`
-                                        : 'bg-white/5 border-white/5 text-zinc-400 hover:text-zinc-200 hover:bg-white/10'
+                                        ? `bg-zinc-800 border-zinc-600 text-slate-900 dark:text-white shadow-sm ring-1 ring-white/10`
+                                        : 'bg-white/5 border-white/5 text-slate-900 dark:text-zinc-400 hover:text-slate-900 dark:text-zinc-200 hover:bg-white/10'
                                     }`}
                             >
                                 {topic}
@@ -162,10 +162,10 @@ export default function InterviewSimPreview() {
                 <button
                     onClick={handleStart}
                     disabled={isConnecting}
-                    className={`w-full h-12 rounded-xl text-white font-bold text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 overflow-hidden relative group`}
+                    className={`w-full h-12 rounded-xl text-slate-900 dark:text-white font-bold text-sm shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 overflow-hidden relative group`}
                 >
                     <div className={`absolute inset-0 bg-gradient-to-r ${selectedPersona.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                    <div className="absolute inset-0 bg-black/10" />
+                    <div className="absolute inset-0 bg-white dark:bg-black/10" />
 
                     <div className="relative z-10 flex items-center gap-2">
                         <AnimatePresence mode="wait">

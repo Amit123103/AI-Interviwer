@@ -153,12 +153,12 @@ export default function AlumniNetworkPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 pb-20 pt-16 md:pt-20">
+        <div className="min-h-screen bg-white dark:bg-slate-950 pb-20 pt-16 md:pt-20">
             {/* Header / Nav */}
-            <div className="border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
+            <div className="border-b border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-950/50 backdrop-blur-xl shrink-0 z-10 sticky top-16 md:top-20">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">
+                        <Link href="/dashboard" className="text-zinc-500 hover:text-slate-900 dark:text-white transition-colors">
                             Dashboard
                         </Link>
                         <span className="text-zinc-700">/</span>
@@ -166,7 +166,7 @@ export default function AlumniNetworkPage() {
                             <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
                                 <Users className="w-4 h-4 text-amber-400" />
                             </div>
-                            <span className="font-semibold text-white">Alumni Mentorship</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">Alumni Mentorship</span>
                         </div>
                     </div>
                 </div>
@@ -175,17 +175,17 @@ export default function AlumniNetworkPage() {
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
                 {/* Intro Section */}
                 <div className="mb-12">
-                    <h1 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                    <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
                         Connect with <span className="text-amber-400">Industry Leaders</span>
                     </h1>
-                    <p className="text-zinc-400 text-lg max-w-2xl">
+                    <p className="text-slate-500 dark:text-zinc-400 text-lg max-w-2xl">
                         Schedule 1-on-1 sessions, get resume feedback, or do mock interviews with alumni who are now working at your dream companies.
                     </p>
                 </div>
 
                 {/* Featured Video Intros */}
                 <div className="mb-16">
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                         <Video className="w-5 h-5 text-amber-400" /> Featured Video Intros
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,7 +197,7 @@ export default function AlumniNetworkPage() {
                                 transition={{ delay: i * 0.1 }}
                             >
                                 <Card
-                                    className="group relative h-80 rounded-3xl overflow-hidden cursor-pointer border-white/5 hover:border-amber-500/30 transition-all duration-500 shadow-2xl"
+                                    className="group relative h-80 rounded-3xl overflow-hidden cursor-pointer border-slate-100 dark:border-white/5 hover:border-amber-500/30 transition-all duration-500 shadow-2xl"
                                     onClick={() => openVideoModal(mentor)}
                                 >
                                     <img src={mentor.videoPlaceholder} alt={mentor.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -205,8 +205,8 @@ export default function AlumniNetworkPage() {
 
                                     {/* Play Button Overlay */}
                                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-xl group-hover:scale-110 transition-transform">
-                                            <Play className="w-6 h-6 text-white fill-current ml-1" />
+                                        <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-slate-300 dark:border-white/20 shadow-xl group-hover:scale-110 transition-transform">
+                                            <Play className="w-6 h-6 text-slate-900 dark:text-white fill-current ml-1" />
                                         </div>
                                     </div>
 
@@ -214,12 +214,12 @@ export default function AlumniNetworkPage() {
                                         <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 backdrop-blur-md">Featured</Badge>
                                     </div>
 
-                                    <div className="absolute bottom-0 left-0 w-full p-6 text-white">
+                                    <div className="absolute bottom-0 left-0 w-full p-6 text-slate-900 dark:text-white">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <img src={mentor.image} alt={mentor.name} className="w-10 h-10 rounded-full border-2 border-white/20 object-cover" />
+                                            <img src={mentor.image} alt={mentor.name} className="w-10 h-10 rounded-full border-2 border-slate-300 dark:border-white/20 object-cover" />
                                             <div>
                                                 <h3 className="font-bold text-lg leading-tight">{mentor.name}</h3>
-                                                <p className="text-sm text-zinc-300 font-medium">{mentor.company}</p>
+                                                <p className="text-sm text-slate-600 dark:text-zinc-300 font-medium">{mentor.company}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -230,13 +230,13 @@ export default function AlumniNetworkPage() {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row gap-4 mb-8 sticky top-36 z-20">
+                <div className="bg-white/60 dark:bg-zinc-900/50 backdrop-blur-xl border border-slate-100 dark:border-white/5 rounded-2xl p-4 flex flex-col md:flex-row gap-4 mb-8 sticky top-36 z-20">
                     <div className="flex-1 overflow-x-auto pb-2 md:pb-0 custom-scrollbar flex gap-2">
                         {COMPANIES.map(company => (
                             <button
                                 key={company}
                                 onClick={() => setSelectedCompany(company)}
-                                className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${selectedCompany === company ? 'bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/20' : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white'}`}
+                                className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${selectedCompany === company ? 'bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/20' : 'bg-white/5 text-slate-500 dark:text-zinc-400 hover:bg-white/10 hover:text-slate-900 dark:text-white'}`}
                             >
                                 {company}
                             </button>
@@ -247,10 +247,10 @@ export default function AlumniNetworkPage() {
                         <select
                             value={selectedRole}
                             onChange={(e) => setSelectedRole(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 appearance-none outline-none focus:border-amber-500/50"
+                            className="w-full bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl px-4 py-2 appearance-none outline-none focus:border-amber-500/50"
                         >
                             {ROLES.map(role => (
-                                <option key={role} value={role} className="bg-zinc-900">{role}</option>
+                                <option key={role} value={role} className="bg-white dark:bg-zinc-900">{role}</option>
                             ))}
                         </select>
                         <Briefcase className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
@@ -261,18 +261,18 @@ export default function AlumniNetworkPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredMentors.map(mentor => (
                         <TiltCard key={mentor.id}>
-                            <Card className="bg-zinc-900/30 backdrop-blur-xl border border-white/5 p-6 hover:bg-white/[0.02] hover:border-amber-500/30 transition-all duration-300 group">
+                            <Card className="bg-white dark:bg-zinc-900/30 backdrop-blur-xl border border-slate-100 dark:border-white/5 p-6 hover:bg-white/[0.02] hover:border-amber-500/30 transition-all duration-300 group">
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-4">
                                         <div className="relative">
                                             <img src={mentor.image} alt={mentor.name} className="w-16 h-16 rounded-2xl object-cover" />
-                                            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-zinc-900 rounded-full flex items-center justify-center p-0.5">
+                                            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center p-0.5">
                                                 <div className="w-full h-full bg-emerald-500 rounded-full animate-pulse" />
                                             </div>
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors">{mentor.name}</h3>
-                                            <p className="text-sm text-zinc-400">{mentor.role}</p>
+                                            <h3 className="font-bold text-slate-900 dark:text-white text-lg group-hover:text-amber-400 transition-colors">{mentor.name}</h3>
+                                            <p className="text-sm text-slate-500 dark:text-zinc-400">{mentor.role}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg">
@@ -283,25 +283,25 @@ export default function AlumniNetworkPage() {
 
                                 <div className="flex items-center gap-2 mb-6">
                                     <Building2 className="w-4 h-4 text-zinc-500" />
-                                    <span className="text-sm font-semibold text-zinc-300">{mentor.company}</span>
+                                    <span className="text-sm font-semibold text-slate-600 dark:text-zinc-300">{mentor.company}</span>
                                 </div>
 
                                 <div className="flex flex-wrap gap-2 mb-6">
                                     {mentor.tags.map(tag => (
-                                        <Badge key={tag} variant="secondary" className="bg-white/5 hover:bg-white/10 text-xs text-zinc-300 pointer-events-none font-medium">
+                                        <Badge key={tag} variant="secondary" className="bg-white/5 hover:bg-white/10 text-xs text-slate-600 dark:text-zinc-300 pointer-events-none font-medium">
                                             {tag}
                                         </Badge>
                                     ))}
                                 </div>
 
-                                <div className="pt-6 border-t border-white/5 flex gap-3">
+                                <div className="pt-6 border-t border-slate-100 dark:border-white/5 flex gap-3">
                                     <Button
                                         className="flex-1 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold"
                                         onClick={() => openBookingModal(mentor)}
                                     >
                                         Book Session
                                     </Button>
-                                    <Button variant="outline" className="px-4 border-white/10 hover:bg-white/5 text-white">
+                                    <Button variant="outline" className="px-4 border-slate-200 dark:border-white/10 hover:bg-white/5 text-slate-900 dark:text-white">
                                         View Profile
                                     </Button>
                                 </div>
@@ -328,33 +328,33 @@ export default function AlumniNetworkPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                                className="fixed inset-0 bg-white dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                                 onClick={() => setIsBookingModalOpen(false)}
                             />
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
                             >
                                 {bookingStep === 1 ? (
                                     <>
-                                        <div className="p-6 border-b border-white/5 flex justify-between items-start bg-zinc-900/30">
+                                        <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-start bg-white dark:bg-zinc-900/30">
                                             <div className="flex items-center gap-4">
                                                 <img src={selectedMentor.image} alt={selectedMentor.name} className="w-12 h-12 rounded-full object-cover" />
                                                 <div>
-                                                    <h2 className="text-xl font-bold text-white leading-tight">{selectedMentor.name}</h2>
-                                                    <p className="text-sm text-zinc-400">1-on-1 Mentorship (45 min)</p>
+                                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">{selectedMentor.name}</h2>
+                                                    <p className="text-sm text-slate-500 dark:text-zinc-400">1-on-1 Mentorship (45 min)</p>
                                                 </div>
                                             </div>
-                                            <button onClick={() => setIsBookingModalOpen(false)} className="text-zinc-500 hover:text-white p-2 bg-white/5 rounded-full transition-colors">
+                                            <button onClick={() => setIsBookingModalOpen(false)} className="text-zinc-500 hover:text-slate-900 dark:text-white p-2 bg-white/5 rounded-full transition-colors">
                                                 <X className="w-4 h-4" />
                                             </button>
                                         </div>
 
                                         <div className="p-6 space-y-6">
                                             <div>
-                                                <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-4">
+                                                <h3 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                                                     <CalendarIcon className="w-4 h-4 text-amber-500" /> Select Date
                                                 </h3>
                                                 <div className="grid grid-cols-4 gap-3">
@@ -362,7 +362,7 @@ export default function AlumniNetworkPage() {
                                                         <button
                                                             key={day}
                                                             onClick={() => setSelectedDate(day)}
-                                                            className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all ${selectedDate === day ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-white/5 border-white/5 hover:border-white/20 text-zinc-400'}`}
+                                                            className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all ${selectedDate === day ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-white/5 border-slate-100 dark:border-white/5 hover:border-white/20 text-slate-500 dark:text-zinc-400'}`}
                                                         >
                                                             <span className="text-xs uppercase font-medium">Oct</span>
                                                             <span className="text-lg font-bold">{day + 10}</span>
@@ -375,7 +375,7 @@ export default function AlumniNetworkPage() {
                                                 initial={{ opacity: selectedDate ? 1 : 0.5, height: 'auto' }}
                                                 animate={{ opacity: selectedDate ? 1 : 0.5 }}
                                             >
-                                                <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-4">
+                                                <h3 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                                                     <Clock className="w-4 h-4 text-amber-500" /> Select Time
                                                 </h3>
                                                 <div className="grid grid-cols-3 gap-3">
@@ -384,7 +384,7 @@ export default function AlumniNetworkPage() {
                                                             key={time}
                                                             disabled={!selectedDate}
                                                             onClick={() => setSelectedTime(time)}
-                                                            className={`py-2 rounded-lg border text-sm font-semibold transition-all ${!selectedDate ? 'opacity-50 cursor-not-allowed bg-zinc-900 border-white/5 text-zinc-600' : selectedTime === time ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-white/5 border-white/5 hover:border-white/20 text-zinc-300'}`}
+                                                            className={`py-2 rounded-lg border text-sm font-semibold transition-all ${!selectedDate ? 'opacity-50 cursor-not-allowed bg-white dark:bg-zinc-900 border-slate-100 dark:border-white/5 text-zinc-600' : selectedTime === time ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : 'bg-white/5 border-slate-100 dark:border-white/5 hover:border-white/20 text-slate-600 dark:text-zinc-300'}`}
                                                         >
                                                             {time}
                                                         </button>
@@ -393,7 +393,7 @@ export default function AlumniNetworkPage() {
                                             </motion.div>
                                         </div>
 
-                                        <div className="p-6 border-t border-white/5 bg-zinc-900/30">
+                                        <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-zinc-900/30">
                                             <Button
                                                 className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-lg"
                                                 disabled={!selectedDate || !selectedTime}
@@ -408,13 +408,13 @@ export default function AlumniNetworkPage() {
                                         <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
                                             <CheckCircle2 className="w-10 h-10 text-emerald-400" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white mb-2">Session Confirmed!</h2>
-                                        <p className="text-zinc-400 mb-8 max-w-[280px]">
+                                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Session Confirmed!</h2>
+                                        <p className="text-slate-500 dark:text-zinc-400 mb-8 max-w-[280px]">
                                             You&apos;re all set for a 1-on-1 session with {selectedMentor.name}. We&apos;ll send an email with the Google Meet link.
                                         </p>
                                         <Button
                                             variant="outline"
-                                            className="w-full text-white border-white/10 hover:bg-white/5"
+                                            className="w-full text-slate-900 dark:text-white border-slate-200 dark:border-white/10 hover:bg-white/5"
                                             onClick={() => setIsBookingModalOpen(false)}
                                         >
                                             Done
@@ -434,26 +434,26 @@ export default function AlumniNetworkPage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4 md:p-10"
+                                className="fixed inset-0 bg-white dark:bg-black/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4 md:p-10"
                                 onClick={() => setIsVideoModalOpen(false)}
                             />
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-black rounded-3xl shadow-[0_0_100px_rgba(245,158,11,0.15)] z-[60] overflow-hidden border border-white/10"
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-slate-50 dark:bg-black rounded-3xl shadow-[0_0_100px_rgba(245,158,11,0.15)] z-[60] overflow-hidden border border-slate-200 dark:border-white/10"
                             >
                                 <div className="absolute top-4 right-4 z-10 flex gap-2">
                                     <button onClick={() => { setIsVideoModalOpen(false); openBookingModal(selectedMentor); }} className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded-xl text-sm transition-colors">
                                         Book Session
                                     </button>
-                                    <button onClick={() => setIsVideoModalOpen(false)} className="w-10 h-10 bg-black/50 hover:bg-black/80 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/20 transition-all">
+                                    <button onClick={() => setIsVideoModalOpen(false)} className="w-10 h-10 bg-white dark:bg-black/50 hover:bg-white dark:bg-black/80 backdrop-blur-md rounded-xl flex items-center justify-center text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 transition-all">
                                         <X className="w-5 h-5" />
                                     </button>
                                 </div>
 
                                 {/* Placeholder YouTube Video */}
-                                <div className="aspect-video w-full bg-zinc-900 border-b border-white/10 relative">
+                                <div className="aspect-video w-full bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-white/10 relative">
                                     <iframe
                                         src="https://www.youtube.com/embed/M1_1kH02qL0?autoplay=1&mute=0&controls=1"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -461,17 +461,17 @@ export default function AlumniNetworkPage() {
                                         className="absolute inset-0 w-full h-full border-0"
                                     />
                                 </div>
-                                <div className="p-6 md:p-8 bg-zinc-950 flex flex-col md:flex-row gap-6 items-start justify-between">
+                                <div className="p-6 md:p-8 bg-white dark:bg-zinc-950 flex flex-col md:flex-row gap-6 items-start justify-between">
                                     <div className="flex items-center gap-4">
                                         <img src={selectedMentor.image} alt={selectedMentor.name} className="w-16 h-16 rounded-full object-cover border-2 border-amber-500/50" />
                                         <div>
-                                            <h2 className="text-2xl font-bold text-white tracking-tight">{selectedMentor.name}</h2>
-                                            <p className="text-zinc-400 font-medium">{selectedMentor.role} at <span className="text-white">{selectedMentor.company}</span></p>
+                                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{selectedMentor.name}</h2>
+                                            <p className="text-slate-500 dark:text-zinc-400 font-medium">{selectedMentor.role} at <span className="text-slate-900 dark:text-white">{selectedMentor.company}</span></p>
                                         </div>
                                     </div>
                                     <div className="flex flex-wrap gap-2 justify-start md:justify-end">
                                         {selectedMentor.tags.map((tag: string) => (
-                                            <Badge key={tag} className="bg-white/5 hover:bg-white/10 text-zinc-300 font-medium border-white/10">
+                                            <Badge key={tag} className="bg-white/5 hover:bg-white/10 text-slate-600 dark:text-zinc-300 font-medium border-slate-200 dark:border-white/10">
                                                 {tag}
                                             </Badge>
                                         ))}

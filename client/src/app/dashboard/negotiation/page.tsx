@@ -105,17 +105,17 @@ function NegotiationContent() {
 
     if (!reportId) {
         return (
-            <div className="h-screen bg-[#050505] flex items-center justify-center p-6 aurora-glow relative overflow-hidden">
+            <div className="h-screen bg-slate-50 dark:bg-[#050505] flex items-center justify-center p-6 aurora-glow relative overflow-hidden">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
                 <div className="absolute bottom-20 right-20 w-72 h-72 bg-fuchsia-500/5 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
-                <Card className="max-w-md bg-zinc-900/40 backdrop-blur-2xl border-white/[0.06] p-8 text-center space-y-6 relative z-10 rounded-2xl">
+                <Card className="max-w-md bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border-white/[0.06] p-8 text-center space-y-6 relative z-10 rounded-2xl">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                     <div className="w-16 h-16 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-2xl flex items-center justify-center mx-auto border border-violet-500/20 shadow-[0_0_25px_rgba(139,92,246,0.15)]">
                         <Briefcase className="w-8 h-8 text-violet-400" />
                     </div>
-                    <h1 className="text-2xl font-black text-white">No Session Selected</h1>
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white">No Session Selected</h1>
                     <p className="text-zinc-500 text-sm">Please select a completed interview to start a negotiation simulation.</p>
-                    <Button onClick={() => router.push('/dashboard/history')} className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-0 shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] transition-all font-black uppercase tracking-widest text-[10px]">
+                    <Button onClick={() => router.push('/dashboard/history')} className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white border-0 shadow-[0_0_25px_rgba(139,92,246,0.3)] hover:shadow-[0_0_35px_rgba(139,92,246,0.5)] transition-all font-black uppercase tracking-widest text-[10px]">
                         View History
                     </Button>
                 </Card>
@@ -125,7 +125,7 @@ function NegotiationContent() {
 
     if (!sessionStarted) {
         return (
-            <div className="min-h-screen bg-[#050505] text-white p-4 sm:p-6 md:p-8 flex items-center justify-center relative overflow-hidden aurora-glow">
+            <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white p-4 sm:p-6 md:p-8 flex items-center justify-center relative overflow-hidden aurora-glow">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
                 <div className="absolute bottom-32 right-16 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-fuchsia-500/3 rounded-full blur-[160px] orb-float pointer-events-none" style={{ animationDelay: '5s' }} />
@@ -138,7 +138,7 @@ function NegotiationContent() {
                         breadcrumbs={[{ label: "Negotiation" }]}
                     />
 
-                    <Card className="bg-zinc-900/40 backdrop-blur-2xl border-white/[0.06] overflow-hidden rounded-2xl">
+                    <Card className="bg-white dark:bg-zinc-900/40 backdrop-blur-2xl border-white/[0.06] overflow-hidden rounded-2xl">
                         <div className="h-[2px] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500" />
                         <CardHeader className="p-6 sm:p-8 md:p-10 pb-0">
                             <CardTitle className="text-2xl sm:text-3xl font-black tracking-tighter mb-2 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">Prepare Your Strategy</CardTitle>
@@ -156,13 +156,13 @@ function NegotiationContent() {
                                         type="number"
                                         value={targetSalary}
                                         onChange={(e) => setTargetSalary(parseInt(e.target.value))}
-                                        className="bg-black/40 border-white/[0.06] p-5 sm:p-6 pl-12 text-lg sm:text-xl font-bold h-14 sm:h-16 focus:border-violet-500/30 transition-colors rounded-xl"
+                                        className="bg-white dark:bg-black/40 border-white/[0.06] p-5 sm:p-6 pl-12 text-lg sm:text-xl font-bold h-14 sm:h-16 focus:border-violet-500/30 transition-colors rounded-xl"
                                     />
                                 </div>
                             </div>
                             <Button
                                 onClick={startNegotiationSession}
-                                className="w-full py-6 sm:py-8 text-base sm:text-lg font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-white h-14 sm:h-16 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_45px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all duration-300 border-0 uppercase tracking-widest rounded-xl"
+                                className="w-full py-6 sm:py-8 text-base sm:text-lg font-black bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-600 text-slate-900 dark:text-white h-14 sm:h-16 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_45px_rgba(139,92,246,0.5)] hover:scale-[1.02] transition-all duration-300 border-0 uppercase tracking-widest rounded-xl"
                             >
                                 <Play className="w-5 h-5 mr-3" /> Start Simulation
                             </Button>
@@ -176,14 +176,14 @@ function NegotiationContent() {
     const totalComp = (currentOffer?.base || 0) + (currentOffer?.bonus || 0) + (currentOffer?.equity || 0)
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white flex flex-col relative overflow-hidden aurora-glow">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white flex flex-col relative overflow-hidden aurora-glow">
             {/* Floating ambient orbs */}
             <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
             <div className="absolute bottom-32 right-16 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '3s' }} />
             <div className="absolute top-1/2 right-0 w-64 h-64 bg-fuchsia-500/3 rounded-full blur-[120px] orb-float pointer-events-none" style={{ animationDelay: '6s' }} />
 
             {/* Header HUD */}
-            <div className="h-16 sm:h-18 border-b border-white/[0.06] bg-zinc-900/60 backdrop-blur-2xl flex items-center justify-between px-4 sm:px-6 md:px-8 shrink-0 relative z-10">
+            <div className="h-16 sm:h-18 border-b border-white/[0.06] bg-white dark:bg-zinc-900/60 backdrop-blur-2xl flex items-center justify-between px-4 sm:px-6 md:px-8 shrink-0 relative z-10">
                 <div className="flex items-center gap-3 sm:gap-4">
                     <div className="w-10 h-10 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-xl flex items-center justify-center border border-violet-500/20 shadow-[0_0_15px_rgba(139,92,246,0.15)]">
                         <DollarSign className="w-5 h-5 text-violet-400" />
@@ -214,7 +214,7 @@ function NegotiationContent() {
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Chat Interface */}
-                <div className="flex-1 flex flex-col bg-[#050505]/50">
+                <div className="flex-1 flex flex-col bg-white dark:bg-[#050505]/50">
                     <div className="flex-1 overflow-auto p-6 sm:p-8 md:p-10 space-y-6">
                         <AnimatePresence>
                             {chat.map((m, i) => (
@@ -236,7 +236,7 @@ function NegotiationContent() {
                                         <span className="text-[8px] font-black uppercase text-zinc-600 tracking-widest">{m.role === 'HR' ? 'HR Manager' : 'You'}</span>
                                         <div className={`p-4 rounded-2xl text-sm leading-relaxed ${m.role === 'Me'
                                             ? 'bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/10 text-cyan-100'
-                                            : 'bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 border border-violet-500/10 text-zinc-300'
+                                            : 'bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 border border-violet-500/10 text-slate-600 dark:text-zinc-300'
                                             }`}>
                                             {m.text}
                                         </div>
@@ -250,11 +250,11 @@ function NegotiationContent() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="p-4 sm:p-6 border-t border-white/[0.06] bg-zinc-900/30 backdrop-blur-xl">
+                    <div className="p-4 sm:p-6 border-t border-white/[0.06] bg-white dark:bg-zinc-900/30 backdrop-blur-xl">
                         <div className="max-w-4xl mx-auto flex gap-3">
                             <Input
                                 placeholder="Type your counter-offer or question..."
-                                className="bg-black/40 border-white/[0.06] p-5 h-12 rounded-xl focus:border-violet-500/30 transition-colors placeholder:text-zinc-600"
+                                className="bg-white dark:bg-black/40 border-white/[0.06] p-5 h-12 rounded-xl focus:border-violet-500/30 transition-colors placeholder:text-zinc-600"
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -262,7 +262,7 @@ function NegotiationContent() {
                             <Button
                                 onClick={handleSendMessage}
                                 disabled={isSubmitting || !userMessage.trim()}
-                                className="h-12 w-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-black shadow-[0_0_20px_rgba(139,92,246,0.25)] hover:shadow-[0_0_30px_rgba(139,92,246,0.45)] border-0 rounded-xl transition-all"
+                                className="h-12 w-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-slate-900 dark:text-white font-black shadow-[0_0_20px_rgba(139,92,246,0.25)] hover:shadow-[0_0_30px_rgba(139,92,246,0.45)] border-0 rounded-xl transition-all"
                             >
                                 {isSubmitting ? <Loader2 className="animate-spin w-4 h-4" /> : <Send className="w-4 h-4" />}
                             </Button>
@@ -271,16 +271,16 @@ function NegotiationContent() {
                 </div>
 
                 {/* Offer Details Sidebar */}
-                <div className="w-[340px] border-l border-white/[0.06] bg-zinc-900/30 backdrop-blur-2xl p-6 space-y-6 overflow-auto relative z-10 hidden lg:block">
+                <div className="w-[340px] border-l border-white/[0.06] bg-white dark:bg-zinc-900/30 backdrop-blur-2xl p-6 space-y-6 overflow-auto relative z-10 hidden lg:block">
                     {/* Current Offer */}
                     <div className="space-y-3">
                         <h3 className="text-[9px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                             Current Offer Details
                         </h3>
-                        <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/[0.06] rounded-xl p-5 space-y-4">
+                        <div className="bg-white dark:bg-zinc-900/40 backdrop-blur-xl border border-white/[0.06] rounded-xl p-5 space-y-4">
                             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent rounded-t-xl" />
                             {[
-                                { label: 'Base Salary', value: currentOffer?.base, color: 'text-white', icon: DollarSign },
+                                { label: 'Base Salary', value: currentOffer?.base, color: 'text-slate-900 dark:text-white', icon: DollarSign },
                                 { label: 'Sign-on Bonus', value: currentOffer?.bonus, color: 'text-emerald-400', icon: Zap },
                                 { label: 'Equity (RSUs)', value: currentOffer?.equity, color: 'text-violet-400', icon: TrendingUp },
                             ].map((item, i) => (
@@ -329,7 +329,7 @@ function NegotiationContent() {
                                 { text: "Focus on the 'Total Package' not just base.", icon: Briefcase },
                                 { text: "Be polite but persistent.", icon: MessageSquare },
                             ].map((tip, i) => (
-                                <div key={i} className="flex gap-3 p-3 bg-zinc-900/40 rounded-xl border border-white/[0.04] hover:border-violet-500/10 transition-all group">
+                                <div key={i} className="flex gap-3 p-3 bg-white dark:bg-zinc-900/40 rounded-xl border border-white/[0.04] hover:border-violet-500/10 transition-all group">
                                     <div className="w-7 h-7 rounded-lg bg-violet-500/5 flex items-center justify-center shrink-0 border border-violet-500/10 group-hover:shadow-[0_0_10px_rgba(139,92,246,0.1)] transition-all">
                                         <tip.icon className="w-3.5 h-3.5 text-violet-400/60" />
                                     </div>
@@ -355,7 +355,7 @@ function NegotiationContent() {
 export default function NegotiationPage() {
     return (
         <Suspense fallback={
-            <div className="flex justify-center items-center h-screen bg-[#050505] text-white aurora-glow relative overflow-hidden">
+            <div className="flex justify-center items-center h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white aurora-glow relative overflow-hidden">
                 <div className="absolute top-20 left-10 w-80 h-80 bg-violet-500/5 rounded-full blur-[140px] orb-float pointer-events-none" />
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-14 h-14 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-2xl flex items-center justify-center border border-violet-500/20 shadow-[0_0_30px_rgba(139,92,246,0.15)]">

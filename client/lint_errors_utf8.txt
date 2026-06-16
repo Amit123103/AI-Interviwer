@@ -1,4 +1,4 @@
-
+﻿
 > client@0.1.0 lint
 > eslint
 
@@ -179,7 +179,7 @@ D:\Projects\Interveiw\client\src\app\interview\coding\page.tsx:103:5
 > 104 |         try {
       | ^^^^^^^^^^^^^
 > 105 |             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      …
+      â€¦
       | ^^^^^^^^^^^^^
 > 120 |         }
       | ^^^^^^^^^^^^^
@@ -280,7 +280,7 @@ D:\Projects\Interveiw\client\src\app\interview\page.tsx:498:5
 > 499 |         const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`)
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 500 |         aiAudioRef.current = audio
-      …
+      â€¦
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 516 |         })
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -322,5 +322,5 @@ D:\Projects\Interveiw\client\src\components\ui\label.tsx
 D:\Projects\Interveiw\client\src\lib\tracking.ts
   3:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-✖ 94 problems (40 errors, 54 warnings)
+âœ– 94 problems (40 errors, 54 warnings)
 

@@ -10,13 +10,13 @@ def extract_text_from_pdf(file_content: bytes) -> str:
 
 import os
 import json
-import ollama
+from app.services.llm_service import llm_service
 
 MODEL_NAME = "llama3.1:8b"
 
 def parse_resume_content(text: str):
     try:
-        response = ollama.chat(model=MODEL_NAME, messages=[
+        response = llm_service.chat(model=MODEL_NAME, messages=[
             {"role": "system", "content": "You are a professional resume parser. Extract structured data from the resume text and return it as JSON."},
             {"role": "user", "content": f"Extract the following fields: skills, projects, internships, tools, certifications, and achievements from this resume text:\n\n{text}"}
         ], format='json')

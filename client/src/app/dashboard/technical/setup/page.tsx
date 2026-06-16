@@ -38,11 +38,11 @@ export default function TechnicalSetupPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-6 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-zinc-900 via-black to-black">
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white flex items-center justify-center p-6 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-zinc-900 via-black to-black">
             <div className="w-full max-w-4xl grid md:grid-cols-2 gap-8 items-start">
 
                 {/* Left: Preview */}
-                <Card className="bg-zinc-900/50 border-white/5 overflow-hidden aspect-video relative flex items-center justify-center">
+                <Card className="bg-white/60 dark:bg-zinc-900/50 border-slate-100 dark:border-white/5 overflow-hidden aspect-video relative flex items-center justify-center">
                     {setup.camera ? (
                         <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover transform scale-x-[-1]" />
                     ) : (
@@ -53,7 +53,7 @@ export default function TechnicalSetupPage() {
                             <p className="text-sm text-zinc-500">Camera preview will appear here</p>
                         </div>
                     )}
-                    <div className="absolute top-4 left-4 bg-black/60 px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 border border-white/10 backdrop-blur-md">
+                    <div className="absolute top-4 left-4 bg-white dark:bg-black/60 px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 border border-slate-200 dark:border-white/10 backdrop-blur-md">
                         <div className={`w-1.5 h-1.5 rounded-full ${setup.camera ? 'bg-green-500' : 'bg-red-500'}`} />
                         Live Preview
                     </div>
@@ -82,7 +82,7 @@ export default function TechnicalSetupPage() {
                         </Button>
                     )}
 
-                    <div className="pt-6 border-t border-white/5">
+                    <div className="pt-6 border-t border-slate-100 dark:border-white/5">
                         <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 block mb-4">Number of Coding Questions</label>
                         <div className="grid grid-cols-3 gap-3">
                             {[3, 5, 10].map(num => (
@@ -92,7 +92,7 @@ export default function TechnicalSetupPage() {
                                     className={`h-14 rounded-2xl border transition-all flex flex-col items-center justify-center gap-1
                                         ${setup.questions === num
                                             ? 'bg-primary border-primary text-black'
-                                            : 'bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10'}`}
+                                            : 'bg-white/60 dark:bg-zinc-900/50 border-slate-100 dark:border-white/5 text-slate-500 dark:text-zinc-400 hover:border-white/10'}`}
                                 >
                                     <span className="text-lg font-bold">{num}</span>
                                     <span className="text-[8px] uppercase tracking-widest opacity-80 font-black">Tasks</span>
@@ -117,12 +117,12 @@ export default function TechnicalSetupPage() {
 
 function CheckItem({ icon: Icon, label, status }: { icon: any, label: string, status: boolean }) {
     return (
-        <div className="flex items-center justify-between p-4 bg-zinc-900/50 border border-white/5 rounded-2xl transition-colors">
+        <div className="flex items-center justify-between p-4 bg-white/60 dark:bg-zinc-900/50 border border-slate-100 dark:border-white/5 rounded-2xl transition-colors">
             <div className="flex items-center gap-4">
                 <div className={`p-2 rounded-lg ${status ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                     <Icon className={`w-5 h-5 ${status ? 'text-green-500' : 'text-zinc-500'}`} />
                 </div>
-                <span className={`text-sm font-medium ${status ? 'text-zinc-200' : 'text-zinc-500'}`}>{label}</span>
+                <span className={`text-sm font-medium ${status ? 'text-slate-900 dark:text-zinc-200' : 'text-zinc-500'}`}>{label}</span>
             </div>
             {status ? (
                 <CheckCircle2 className="w-5 h-5 text-green-500" />

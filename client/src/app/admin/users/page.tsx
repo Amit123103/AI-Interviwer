@@ -38,7 +38,7 @@ interface UserEntry {
     email: string
     role: 'student' | 'admin' | 'sub-admin'
     accountStatus: 'active' | 'suspended'
-    amitaiCoins: number
+    intervyxaCoins: number
     level: number
     weeklyCoins: number
     stats: {
@@ -75,6 +75,20 @@ export default function UserManagement() {
     const [editData, setEditData] = useState<any>(null)
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [newUser, setNewUser] = useState({ username: '', email: '', password: '', role: 'student' })
+
+    // ── Admin Auth Guard ──
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        const session = localStorage.getItem('admin_session')
+        if (!session) { router.push('/admin/login'); return }
+        try {
+            const parsed = JSON.parse(session)
+            if (!parsed.token || parsed.expiresAt < Date.now()) {
+                localStorage.removeItem('admin_session')
+                router.push('/admin/login')
+            }
+        } catch { localStorage.removeItem('admin_session'); router.push('/admin/login') }
+    }, [router])
 
     const fetchUsers = useCallback(async () => {
         setLoading(true)
@@ -502,7 +516,7 @@ export default function UserManagement() {
                                             onClick={() => {
                                                 if (!editMode) {
                                                     setEditData({
-                                                        amitaiCoins: details.user.amitaiCoins,
+                                                        intervyxaCoins: details.user.intervyxaCoins,
                                                         level: details.user.level,
                                                         weeklyCoins: details.user.weeklyCoins,
                                                         stats: { ...details.user.stats }
@@ -552,11 +566,11 @@ export default function UserManagement() {
 
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                             <div className="space-y-2">
-                                                <label className="text-[9px] font-black uppercase tracking-widest text-zinc-600 ml-1">AmitAI Coins</label>
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-zinc-600 ml-1">Intervyxa Coins</label>
                                                 <input
                                                     type="number"
-                                                    value={editData.amitaiCoins}
-                                                    onChange={e => setEditData({ ...editData, amitaiCoins: Number(e.target.value) })}
+                                                    value={editData.intervyxaCoins}
+                                                    onChange={e => setEditData({ ...editData, intervyxaCoins: Number(e.target.value) })}
                                                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm font-bold focus:border-violet-500/50 outline-none"
                                                 />
                                             </div>
@@ -646,7 +660,7 @@ export default function UserManagement() {
                                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">Student Progression & Stats</h3>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             {[
-                                                { label: 'AmitAI Coins', value: (details.user.amitaiCoins || 0).toLocaleString(), icon: TrendingUp, color: 'text-yellow-400' },
+                                                { label: 'Intervyxa Coins', value: (details.user.intervyxaCoins || 0).toLocaleString(), icon: TrendingUp, color: 'text-yellow-400' },
                                                 { label: 'Current Level', value: `LVL ${details.user.level}`, icon: Crown, color: 'text-amber-400' },
                                                 { label: 'Weekly Earnings', value: (details.user.weeklyCoins || 0).toLocaleString(), icon: Zap, color: 'text-yellow-500' },
                                                 { label: 'Avg Interview Score', value: `${details.user.stats.averageScore}%`, icon: Shield, color: 'text-emerald-400' }
