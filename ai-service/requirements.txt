@@ -1,3 +1,4 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 fastapi
 uvicorn
 openai
@@ -5,7 +6,7 @@ pydantic
 python-dotenv
 requests
 numpy
-opencv-python
+opencv-python-headless
 mediapipe
 edge-tts
 axios

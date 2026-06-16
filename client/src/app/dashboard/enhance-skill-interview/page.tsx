@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, X, ChevronRight, Heart, Lock, Play, Star, Clock, Users, Filter, LayoutGrid, List, ArrowUpDown, AudioWaveform, Flame, Calendar, ChevronDown, ArrowLeft, Loader2 } from "lucide-react"
+import { Search, X, ChevronRight, Heart, Lock, Play, Star, Clock, Users, Filter, LayoutGrid, List, ArrowUpDown, AudioWaveform, Flame, Calendar, ChevronDown, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react"
 import TiltCard from "@/components/ui/TiltCard"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
