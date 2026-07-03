@@ -1,0 +1,10 @@
+name = "edge-server"
+main = "src/index.ts"
+compatibility_date = "2024-12-24"
+
+[observability]
+enabled = true
+
+[vars]
+# Add environment variables here
+# DATABASE_URL = "postgres://..."
